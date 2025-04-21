@@ -1,0 +1,232 @@
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #fdf6ec;
+      color: #333;
+    }
+ .volver{
+  background-color: #24ab2b;
+  border-radius: 9px;
+  text-decoration: none;
+  padding: 10px;
+  margin-right: 90%;
+  font-weight: bolder;
+  color: #fff;
+
+
+
+ }
+  .app-header {
+    background: linear-gradient(to right, #24ab2b, #66bb6a);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .logo h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+  }
+  
+  /* NAVEGACIÓN */
+  .navbar{
+    display: block;
+    margin-left: 40%;
+  }
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin-left: 50px;
+    padding: 0;
+    font-weight: bold;
+  }
+  
+  .navbar a {
+    color: white;
+    align-items: right;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 27px;
+    position: relative;
+    padding-bottom: 4px;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar a::after {
+    content: '';
+    text-align: right;
+    width: 0%;
+    height: 2px;
+    background: white;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transition: 0.3s;
+  }
+  
+  .navbar a:hover::after {
+    width: 100%;
+  }
+  
+  /* USUARIO + CARRITO */
+  .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .user-dropdown {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  #welcome-user {
+    font-weight: bold;
+    color: white;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 130%;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    overflow: hidden;
+    z-index: 10;
+  }
+  
+  .user-dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  .dropdown-content a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .cart-icon {
+    font-size: 1.2rem;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+  }
+  
+  .cart-icon:hover {
+    transform: scale(1.2);
+  }
+
+    .ofertas-header {
+      background: linear-gradient(90deg, #7dd87d, #a8e063);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .ofertas-header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    .ofertas-header p {
+      margin-top: 10px;
+      font-size: 1.2em;
+    }
+
+    .banner {
+      background-image: url("mercados-Campesinos.webp");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      height: 300px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2em;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px #000;
+      padding: 20px;
+    }
+
+    .contenedor {
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .producto {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    .producto:hover {
+      transform: translateY(-5px);
+    }
+
+    .producto img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .info {
+      padding: 15px;
+    }
+
+    .info h2 {
+      font-size: 1.3em;
+      margin: 0 0 10px;
+      color: #6a994e;
+    }
+
+    .precio {
+      color: #d62828;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .descuento {
+      background: #f4a861;
+      color: white;
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    footer {
+      background: #d06615;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }

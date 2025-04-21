@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - AgroSoft</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f2fdf5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(to right,#43a047, #66bb6a);
+            padding: 2rem;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        .volver-header {
+            position: absolute;
+            top: 1.5rem;
+            left: 2rem;
+            text-decoration: none;
+            background-color: #ffffff33;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .volver-header:hover {
+            background-color: #ffffff55;
+        }
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #ffffff;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background: #e8f5e9;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 2px solid #c8e6c9;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+        .card-title {
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #2e7d32;
+        }
+        ul {
+            padding-left: 1.2rem;
+            text-align: left;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .volver {
+            display: block;
+            text-align: center;
+            margin: 2rem auto 0;
+            text-decoration: none;
+            background-color: #66bb6a;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 1.5rem;
+            font-weight: bold;
+            width: fit-content;
+            transition: background-color 0.3s;
+        }
+        .volver:hover {
+            background-color: #388e3c;
+        }
+        footer {
+      background: #d06615;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/ManualDeUsuario/manual.html" class="volver-header">⬅ Volver</a>
+        <h1>Catálogo de Productos</h1>
+        <p>Administra tus catálogos y productos fácilmente con AgroSoft</p>
+    </header>
+
+    <main>
+        <div class="grid">
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1484/1484862.png" alt="Icono Catálogo">
+                <div class="card-title">1. Gestionar Catálogos</div>
+                <ul>
+                    <li><strong>Crear:</strong> Haz clic en "Nuevo catálogo" e introduce un nombre y descripción.</li>
+                    <li><strong>Ver:</strong> Consulta catálogos en formato lista o tarjetas visuales.</li>
+                    <li><strong>Editar:</strong> Pulsa el icono de lápiz para modificar nombre o detalles.</li>
+                    <li><strong>Eliminar:</strong> Utiliza el icono de papelera para eliminar catálogos.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/891/891419.png" alt="Icono Producto">
+                <div class="card-title">2. Gestión de Productos</div>
+                <ul>
+                    <li><strong>Registrar:</strong> Añade productos con nombre, precio, stock y categoría.</li>
+                    <li><strong>Modificar:</strong> Edita productos desde la lista al instante.</li>
+                    <li><strong>Consultar:</strong> Usa el buscador para localizar productos fácilmente.</li>
+                    <li><strong>Filtrar:</strong> Aplica filtros por categoría o precio.</li>
+                </ul>
+            </div>
+        </div>
+        <a href="index.html" class="volver">⬅ Volver al inicio</a>
+    </main>
+    <footer>
+        © 2025 AgroSoft - Todos los derechos reservados
+      </footer>
+    
+</body>
+</html>

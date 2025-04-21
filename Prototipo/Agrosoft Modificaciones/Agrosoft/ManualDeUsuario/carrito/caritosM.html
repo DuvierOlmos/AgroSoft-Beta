@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito y Pedidos - AgroSoft</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #fefefe;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(to right,#43a047, #66bb6a);
+            padding: 2rem;
+            color: white;
+            position: relative;
+            text-align: center;
+        }
+        .volver-header {
+            position: absolute;
+            top: 1.5rem;
+            left: 2rem;
+            text-decoration: none;
+            background-color: #ffffff33;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .volver-header:hover {
+            background-color: #ffffff55;
+        }
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #eff0f0;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background: #e0f2f1;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 2px solid #b2dfdb;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+        .card-title {
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #00796b;
+        }
+        ul {
+            padding-left: 1.2rem;
+            text-align: left;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .volver {
+            display: block;
+            text-align: center;
+            margin: 2rem auto 0;
+            text-decoration: none;
+            background-color: #5bdb54;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 1.5rem;
+            font-weight: bold;
+            width: fit-content;
+            transition: background-color 0.3s;
+        }
+        .volver:hover {
+            background-color: #13b23b;
+        }
+        footer {
+        background:#d06615;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/ManualDeUsuario/manual.html" class="volver-header">⬅ Volver</a>
+        <h1>Carrito y Pedidos</h1>
+        <p>Gestiona tus compras y pedidos fácilmente con AgroSoft</p>
+    </header>
+
+    <main>
+        <div class="grid">
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="Icono Carrito">
+                <div class="card-title">1. Gestión del Carrito</div>
+                <ul>
+                    <li><strong>Añadir:</strong> Haz clic en "Añadir al carrito" en el producto deseado.</li>
+                    <li><strong>Eliminar:</strong> Pulsa el icono de papelera para quitar productos del carrito.</li>
+                    <li><strong>Ver:</strong> Accede al carrito desde el icono en la parte superior derecha.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <img src="https://cdn-icons-png.flaticon.com/512/1040/1040230.png" alt="Icono Pedido">
+                <div class="card-title">2. Gestión de Pedidos</div>
+                <ul>
+                    <li><strong>Confirmar:</strong> Desde el carrito, haz clic en "Realizar pedido".</li>
+                    <li><strong>Modificar:</strong> Edita cantidad o dirección antes de confirmar.</li>
+                    <li><strong>Consultar:</strong> Revisa el historial de pedidos en tu perfil.</li>
+                </ul>
+            </div>
+        </div>
+        <a href="index.html" class="volver">⬅ Volver al inicio</a>
+    </main>
+    <footer>
+        © 2025 AgroSoft - Todos los derechos reservados
+      </footer>    
+</body>
+</html>
