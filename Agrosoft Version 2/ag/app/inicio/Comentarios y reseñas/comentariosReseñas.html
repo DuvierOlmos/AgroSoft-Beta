@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comentarios y Reseñas</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="app-header">
+    <button class="hamburger-btn">☰</button>
+    <div class="logo">
+        <img src="img/1.PNG" alt="Logo de la empresa">
+        <h1>AgroSoft</h1>
+    </div>
+    <nav class="navbar">
+        <ul>
+            <li><a href="/inicio/blog/blog.html">Blog</a></li>
+            <li><a href="/inicio/catalogo/verCatalogo.html">Catálogo</a></li>
+            <li><a href="/inicio/Comentarios y reseñas/comentariosReseñas.html">Comentarios</a></li>
+            <li><a href="/inicio/gestionar PQR/gestonPQR.HTML">PQRS</a></li>
+            <li><a href="/inicio/Ofertas y descuentos/descuentoOefrtas.html">Ofertas</a></li>
+        </ul>
+    </nav>
+    <div class="user-actions">
+        <div class="user-dropdown">
+            <span id="welcome-user">👤 Usuario ⌄</span>
+            <div class="dropdown-content">
+                <a href="perfil.html">Iniciar Sesion</a>
+            </div>
+        </div>
+        <a href="../Editar_Carrito_de_Compra/Editar_Carrito.html" class="cart-icon">🛒</a>
+    </div>
+</header>
+
+<aside class="sidebar">
+    <button class="close-btn">×</button>
+    <nav class="sidebar-nav">
+        <ul>
+            <li><a href="/inicio/blog/blog.html">Blog</a></li>
+            <li><a href="/inicio/catalogo/verCatalogo.html">Catálogo</a></li>
+            <li><a href="/inicio/Comentarios y reseñas/comentariosReseñas.html">Comentarios</a></li>
+            <li><a href="/inicio/gestionar PQR/gestonPQR.HTML">PQRS</a></li>
+            <li><a href="/inicio/Ofertas y descuentos/descuentoOefrtas.html">Ofertas</a></li>
+        </ul>
+    </nav>
+</aside>
+</header>
+
+<div class="ofertas-header">
+  <h1>Comentarios y Reseñas- AgroSoft</h1>
+    <p>Cuéntanos tus inquietudes, estamos aquí para ayudarte</p>
+  </div>
+
+  <div class="banner"></div>
+</header>
+
+
+  <div class="container">
+    </div>
+
+
+  <div class="container">
+
+    <div class="product-card">
+      <img src="img/images (1).jpg" alt="Producto">
+      <div class="product-name">Tomate </div>
+      <div class="description">Fresco, jugoso y 100% natural. Nuestro<br>
+
+<b>Presentación: </b>por libra<br>
+<b>Origen:</b> Cultivado localmente en fincas agroecológicas<br>
+<b>Beneficios:</b> Rico en antioxidantes, vitamina C y licopeno</div>
+    </div>
+
+    <div class="reviews-card">
+      <h2>Reseñas del producto</h2>
+      <div class="rating">
+        <div class="stars">★★★★★</div>
+        <span>(4.8 de 5)</span>
+      </div>
+      <div class="reviews-count">24 reseñas positivas</div>
+
+      <div class="comment">
+        <p><strong>Juan P.:</strong></p>
+        <p>Excelente producto, mis cultivos mejoraron mucho.</p>
+      </div>
+      <div class="comment">
+        <p><strong>Laura M.:</strong></p>
+        <p>Lo recomiendo 100%, muy efectivo y natural.</p>
+      </div>
+      <div class="comment">
+        <p><strong>Carlos G.:</strong></p>
+        <p>Buena calidad y entrega rápida.</p>
+      </div>
+
+      <a href="#" class="ver-mas">Ver todas las reseñas</a>
+    </div>
+  </div>
+  <div class="container">
+    <!-- Producto y Reseñas como antes... -->
+  </div>
+
+
+  <div class="container">
+ 
+    <div class="product-card">
+      <img src="img/uvas.jpg" alt="Producto">
+      <div class="product-name">Uvas </div>
+      <div class="description">Fresco, jugoso y 100% natural. Nuestro<br>
+
+<b>Presentación: </b>por libra<br>
+<b>Origen:</b> Cultivado localmente en fincas agroecológicas<br>
+<b>Beneficios:</b> Rico en antioxidantes, vitamina C y licopeno</div>
+    </div>
+
+    <div class="reviews-card">
+      <h2>Reseñas del producto</h2>
+      <div class="rating">
+        <div class="stars">★★★★★</div>
+        <span>(4.8 de 5)</span>
+      </div>
+      <div class="reviews-count">24 reseñas positivas</div>
+
+      <div class="comment">
+        <p><strong>Juan P.:</strong></p>
+        <p>Excelente producto, mis cultivos mejoraron mucho.</p>
+      </div>
+      <div class="comment">
+        <p><strong>Laura M.:</strong></p>
+        <p>Lo recomiendo 100%, muy efectivo y natural.</p>
+      </div>
+      <div class="comment">
+        <p><strong>Carlos G.:</strong></p>
+        <p>Buena calidad y entrega rápida.</p>
+      </div>
+      <a href="#" class="ver-mas">Ver todas las reseñas</a>
+    </div>
+  </div>
+<div class="volver">
+  <button onclick="goBack()">Volver</button>
+
+  <script>
+  function goBack() {
+    window.history.back();
+  }
+  </script>
+  
+</div>
+  <footer>
+    © 2025 AgroSoft - Todos los derechos reservados
+  </footer>
+
+  <script>
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const sidebar = document.querySelector('.sidebar');
+    const closeBtn = document.querySelector('.close-btn');
+
+    if (hamburgerBtn && sidebar && closeBtn) {
+        hamburgerBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+    }
+</script>
+</body>
+</html>

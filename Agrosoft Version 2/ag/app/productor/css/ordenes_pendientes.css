@@ -1,0 +1,133 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background-color: #f4fdf8;
+    color: #333;
+}
+.sidebar {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 240px;
+    background-color: #e8f5e9;
+    height: calc(100% - 80px);
+    padding: 2rem 1rem;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar h2 {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 1rem;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    display: block;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar ul li a:hover {
+    background-color: #c8e6c9;
+    color: #2e7d32;
+  }
+
+/* Estilos del Header (puedes ajustar según tu header general) */
+.app-header {
+    background: linear-gradient(to right, #388e3c, #66bb6a);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo h1 {
+    font-size: 2.1rem;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+}
+
+.container {
+    padding: 20px;
+    margin-left: 300px;
+}
+
+.ordenes-retrasadas-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.ordenes-retrasadas-container h2 {
+    color: #d32f2f; /* Rojo para indicar retraso */
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#lista-ordenes-retrasadas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.orden-retrasada-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.info-orden h3 {
+    color: #f44336; /* Un tono de rojo para el número de pedido */
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.info-orden p {
+    color: #555;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.info-orden strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.estado-retrasado {
+    color: #f44336;
+    font-weight: bold;
+}
+
+.boton-contacto {
+    background-color: #ff9800; /* Naranja para acción */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.boton-contacto:hover {
+    background-color: #f57c00;
+}
