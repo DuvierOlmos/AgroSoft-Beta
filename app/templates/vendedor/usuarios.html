@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfiles de Usuarios y Pedidos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/usuario.css') }}">
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo"><h1>AgroSoft</h1></div>
+    <nav class="navbar">
+      <div class="barra-busqueda">
+        <input type="text" id="campo-busqueda" placeholder="Buscar...">
+        <button id="boton-buscar">Buscar</button>
+        <div id="resultados-busqueda"></div>
+      </div>
+    </nav>
+    <div class="user-actions">
+      <div class="user-dropdown">
+        <span id="welcome-user">👤 Usuario ⌄</span>
+        <div class="dropdown-content">
+          <a href="#">Perfil</a>
+          <a href="{{ url_for('usuarios') }}" id="logout">Cerrar Sesión</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container"> 
+    <div class="sidebar">
+      <h2>Menú</h2>
+      <ul>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#" onclick="mostrarDatos()">Despliegue de Datos</a></li>
+        <li><a href="#" onclick="mostrarCobros()">Cuentas por cobrar</a></li>
+        <li><a href="#">Órdenes de productos</a></li>
+        <li><a href="#">Inventarios</a></li>
+      </ul>
+    </div>
+
+    <h1 class="titulo">Perfiles de Usuarios</h1>   
+
+    <div class="usuarios-container">
+      {% for usuario in [
+        {"nombre": "Ana Pérez", "descripcion": "Apasionada por la naturaleza y la fotografía.", "ubicacion": "Medellín", "correo": "ana.perez@email.com", "img": "img/Tokyo+-+Headshot+-+Photographer+Anthony+Wood+(5).jpg"},
+        {"nombre": "Juan Rodríguez", "descripcion": "Desarrollador web y amante de los videojuegos.", "ubicacion": "Bogotá", "correo": "juan.rodriguez@email.com", "img": "img/images.jpg"},
+        {"nombre": "Sofía Gómez", "descripcion": "Estudiante de diseño gráfico y viajera frecuente.", "ubicacion": "Cali", "correo": "sofia.gomez@email.com", "img": "img/istockphoto-1194465593-612x612.jpg"},
+        {"nombre": "Juan Rodríguez", "descripcion": "Desarrollador web y amante de los videojuegos.", "ubicacion": "Bogotá", "correo": "juan.rodriguez@email.com", "img": "img/istockphoto-805011810-612x612.jpg"},
+        {"nombre": "Juan Rodríguez", "descripcion": "Desarrollador web y amante de los videojuegos.", "ubicacion": "Bogotá", "correo": "juan.rodriguez@email.com", "img": "img/istockphoto-1357723739-612x612.jpg"},
+        {"nombre": "Juan Rodríguez", "descripcion": "Desarrollador web y amante de los videojuegos.", "ubicacion": "Bogotá", "correo": "juan.rodriguez@email.com", "img": "img/personas-arrogantes-wide_webp.webp"}
+      ] %}
+      <div class="usuario-perfil">
+        <img src="{{ url_for('static', filename=usuario.img) }}" width="250px" alt="Foto de {{ usuario.nombre }}">
+        <div class="info-usuario">
+          <h2>{{ usuario.nombre }}</h2>
+          <p class="descripcion">{{ usuario.descripcion }}</p>
+          <p class="ubicacion"><i class="fas fa-map-marker-alt"></i> {{ usuario.ubicacion }}, Colombia</p>
+          <p class="contacto"><i class="fas fa-envelope"></i> {{ usuario.correo }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div id="info-pedido-usuario" class="modal-pedido">
+      <div class="modal-contenido">
+        <span class="cerrar-modal">&times;</span>
+        <h2>Pedidos de <span id="nombre-cliente-modal"></span></h2>
+        <ul id="lista-productos-pedido"></ul>
+      </div>
+    </div>
+
+    <div id="notificacion-pedido" class="notificacion">
+      ¡Nuevo pedido realizado por <span id="nombre-cliente-pedido-notif"></span>!
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+  <script src="{{ url_for('static', filename='js/usuario.js') }}"></script>
+</body>
+</html>

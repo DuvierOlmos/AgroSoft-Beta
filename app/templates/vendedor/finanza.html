@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Calculadora de Finanzas del Productor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/finanza.css') }}" />
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo">
+            <h1>AgroSoft</h1>
+        </div>
+        <nav class="navbar">
+            <div class="barra-busqueda">
+                <input type="text" id="campo-busqueda" placeholder="Buscar..." />
+                <button id="boton-buscar">Buscar</button>
+                <div id="resultados-busqueda"></div>
+            </div>
+        </nav>
+        <div class="user-actions">
+            <div class="user-dropdown">
+                <span id="welcome-user">👤 Usuario ⌄</span>
+                <div class="dropdown-content">
+                  <a href="#">Perfil</a>
+                  <a href="../inicio/blog/blog.html" id="logout">Cerrar Sesion</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar">
+        <h2>Menú</h2>
+        <ul>
+            <li><a href="./productor.html">Inicio</a></li>
+            <li><a href="#" onclick="mostrarDatos()">Despliegue de Datos</a></li>
+            <li><a href="#" onclick="mostrarCobros()">Cuentas por cobrar</a></li>
+            <li><a href="./Ordenes.html">Ordenes de productos</a></li>
+            <li><a href="./inventario.html">Inventarios</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <form method="POST" action="{{ url_for('finanza') }}">
+            <section class="ingresos-section">
+                <h2>Ingresos</h2>
+                <div class="input-group">
+                    <label for="ingresos-totales">Ingresos Totales:</label>
+                    <input type="number" id="ingresos-totales" name="ingresos-totales" value="0" min="0" required />
+                </div>
+            </section>
+
+            <section class="costos-section">
+                <h2>Costos</h2>
+                <div class="costos-directos">
+                    <h3>Costos Directos (Variables)</h3>
+                    <div class="input-group">
+                        <label for="costo-semillas">Costo de Semillas/Plantas:</label>
+                        <input type="number" id="costo-semillas" name="costo-semillas" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="costo-fertilizantes">Costo de Fertilizantes/Abonos:</label>
+                        <input type="number" id="costo-fertilizantes" name="costo-fertilizantes" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="costo-pesticidas">Costo de Pesticidas/Herbicidas:</label>
+                        <input type="number" id="costo-pesticidas" name="costo-pesticidas" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="costo-mano-obra-directa">Costo de Mano de Obra Directa:</label>
+                        <input type="number" id="costo-mano-obra-directa" name="costo-mano-obra-directa" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="otros-costos-directos">Otros Costos Directos:</label>
+                        <input type="number" id="otros-costos-directos" name="otros-costos-directos" value="0" min="0" required />
+                    </div>
+                </div>
+
+                <div class="costos-indirectos">
+                    <h3>Costos Indirectos (Fijos)</h3>
+                    <div class="input-group">
+                        <label for="costo-arriendo">Costo de Arriendo/Tierra:</label>
+                        <input type="number" id="costo-arriendo" name="costo-arriendo" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="costo-depreciacion">Depreciación de Equipos/Infraestructura:</label>
+                        <input type="number" id="costo-depreciacion" name="costo-depreciacion" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="costo-servicios">Costo de Servicios (Agua, Luz, etc.):</label>
+                        <input type="number" id="costo-servicios" name="costo-servicios" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="costo-mano-obra-indirecta">Costo de Mano de Obra Indirecta (Administración, etc.):</label>
+                        <input type="number" id="costo-mano-obra-indirecta" name="costo-mano-obra-indirecta" value="0" min="0" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="otros-costos-indirectos">Otros Costos Indirectos:</label>
+                        <input type="number" id="otros-costos-indirectos" name="otros-costos-indirectos" value="0" min="0" required />
+                    </div>
+                </div>
+            </section>
+
+            <section class="resultados-section">
+                <h2>Resultados Financieros</h2>
+                <div class="resultado">
+                    <label>Ganancia Bruta:</label>
+                    <span id="ganancia-bruta">{{ resultados.ganancia_bruta }}</span>
+                </div>
+                <div class="resultado">
+                    <label>Ganancia Neta:</label>
+                    <span id="ganancia-neta">{{ resultados.ganancia_neta }}</span>
+                </div>
+                <div class="resultado">
+                    <label>Margen de Ganancia Bruta (%):</label>
+                    <span id="margen-ganancia-bruta">{{ resultados.margen_ganancia_bruta }}</span>
+                </div>
+                <div class="resultado">
+                    <label>Margen de Ganancia Neta (%):</label>
+                    <span id="margen-ganancia-neta">{{ resultados.margen_ganancia_neta }}</span>
+                </div>
+            </section>
+
+            <button type="submit">Calcular Finanzas</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/finanza.js') }}"></script>
+</body>
+</html>

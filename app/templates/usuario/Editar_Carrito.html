@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrito AgroSoft</title>
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  
+  <!-- CSS local -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='usuario/css/editarCarrito.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="app-header">
+    <button class="hamburger-btn">☰</button>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='usuario/img/1.PNG') }}" alt="Logo de la empresa" />
+      <h1>AgroSoft</h1>
+    </div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="{{ url_for('usuario.blog') }}">Blog</a></li>
+        <li><a href="{{ url_for('usuario.verCatalogo') }}">Catálogo</a></li>
+        <li><a href="{{ url_for('usuario.comentariosReseñas') }}">Comentario</a></li>
+        <li><a href="{{ url_for('usuario.getionPQR') }}">PQRS</a></li>
+        <li><a href="{{ url_for('usuario.DescuentoOfertas') }}">Ofertas</a></li>
+      </ul>
+    </nav>
+    <div class="user-actions">
+      <div class="user-dropdown">
+        <span id="welcome-user">👤 Usuario ⌄</span>
+        <div class="dropdown-content">
+          <a href="{{ url_for('usuario.perfil') }}">Iniciar Sesión</a>
+        </div>
+      </div>
+      <a href="{{ url_for('usuario.carrito') }}" class="cart-icon">🛒</a>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <button class="close-btn">×</button>
+    <nav class="sidebar-nav">
+     <ul>
+        <li><a href="{{ url_for('usuario.blog') }}">Blog</a></li>
+        <li><a href="{{ url_for('usuario.verCatalogo') }}">Catálogo</a></li>
+        <li><a href="{{ url_for('usuario.comentariosReseñas') }}">Comentario</a></li>
+        <li><a href="{{ url_for('usuario.getionPQR') }}">PQRS</a></li>
+        <li><a href="{{ url_for('usuario.DescuentoOfertas') }}">Ofertas</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="ofertas-header">
+    <h1>Tu carrito de Compras</h1>
+    <p>Tu mejor elección es ahora</p>
+  </div>
+
+  <div class="banner"></div>
+
+  <div class="container">
+    <!-- Menú lateral -->
+    <div class="sidebar">
+      <h2>Menú</h2>
+      <ul>
+        <li><a href="{{ url_for('usuario.carrito') }}">Carrito de Compras</a></li>
+        <li><a href="{{ url_for('usuario.ofertas') }}">Ofertas</a></li>
+        <li>Categorías</li>
+        <li>Notificaciones</li>
+        <li>Favoritos</li>
+      </ul>
+    </div>
+
+    <div class="contenido-principal">
+      <!-- Productos -->
+      <div class="products">
+        <div class="product">
+          <img src="{{ url_for('static', filename='usuario/img/images.jpg') }}" alt="Papa" />
+          <h3>PAPA PASTUSA</h3>
+          <p>$23.000</p>
+          <button class="agregar">Agregar</button>
+        </div>
+        <div class="product">
+          <img src="{{ url_for('static', filename='usuario/img/Platano-maduro-1.webp') }}" alt="Plátano" />
+          <h3>PLÁTANO MADURO</h3>
+          <p>$28.000</p>
+          <button class="agregar">Agregar</button>
+        </div>
+        <div class="product">
+          <img src="{{ url_for('static', filename='usuario/img/green-apples.jpg') }}" alt="Banano" />
+          <h3>Banano</h3>
+          <p>$28.000</p>
+          <button class="agregar">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrito">
+      <div class="header-carrito">
+        <h2>Tu carrito</h2>
+      </div>
+
+      <div class="carrito-items">
+        <div class="carrito-item">
+          <img src="{{ url_for('static', filename='usuario/img/images.jpg') }}" alt="Producto" width="80px" />
+          <div class="carrito-item-detalles">
+            <span class="carrito-titulo">Papas</span>
+            <div class="selector-cantidad">
+              <i class="fa-solid fa-minus restar-catidad" id="resta"></i>
+              <input type="number" placeholder="1" min="1" value="1" class="carrito-item-cantidad" />
+              <i class="fa-solid fa-plus sumar-cantidad" id="suma"></i>
+            </div>
+            <span class="carrito-item-precio">$25.000</span>
+          </div>
+          <span class="eliminar">
+            <i class="fa-solid fa-trash"></i>
+          </span>
+        </div>
+
+        <!-- Total del carrito -->
+        <div class="carrito-total">
+          <div class="fila">
+            <strong>Total:</strong>
+            <span class="carrito-precio-total">234.864</span>
+          </div>
+          <button class="pagar">Pagar <i class="fa-solid fa-briefcase"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="volver" style="text-align:center; margin: 2rem 0;">
+    <button onclick="goBack()" style="
+      background-color: #6cc341;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 1.5rem;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    ">Volver</button>
+
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+  </div>
+
+  <footer>
+    © 2025 AgroSoft - Todos los derechos reservados
+  </footer>
+
+  <script>
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const sidebar = document.querySelector('.sidebar');
+    const closeBtn = document.querySelector('.close-btn');
+
+    if (hamburgerBtn && sidebar && closeBtn) {
+      hamburgerBtn.addEventListener('click', () => {
+        sidebar.classList.add('active');
+      });
+
+      closeBtn.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+      });
+    }
+  </script>
+  <script src="{{ url_for('static', filename='usuario/js/carrito.js') }}"></script>
+</body>
+</html>
+
