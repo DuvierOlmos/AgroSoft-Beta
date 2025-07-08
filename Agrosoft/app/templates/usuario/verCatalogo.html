@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo - Agrosoft</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/verCatalogo.css') }}" />
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='img/1.PNG') }}" alt="Logo de la empresa" />
+            <h1>Agrosoft</h1>
+        </div>
+        <div class="search-bar">
+            <form action="{{ url_for('catalogo.buscar') }}" method="GET">
+                <input type="text" name="q" placeholder="Buscar productos..." />
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+
+        <div class="user-actions">
+            <div class="user-dropdown">
+                <span id="welcome-user">👤 Usuario ⌄</span>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('auth.login') }}">Iniciar Sesión</a>
+                </div>
+            </div>
+            <a href="{{ url_for('carrito.editar') }}" class="cart-icon">🛒</a>
+        </div>
+    </header>
+
+    <div class="slideshow">
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='img/farming-6959629_1280.jpg') }}" alt="Producto 1" />
+        </div>
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='img/garden-radish-7300875_1280.jpg') }}" alt="Producto 2" />
+        </div>
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='img/grapes-8306833_1280.jpg') }}" alt="Producto 3" />
+        </div>
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='img/carrot-1565597_1280.jpg') }}" alt="Producto 4" />
+        </div>
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='img/corn-3705687_1280.jpg') }}" alt="Producto 5" />
+        </div>
+        <div class="slide fade">
+            <img src="{{ url_for('static', filename='img/apples-1872997_1280.jpg') }}" alt="Producto 6" />
+        </div>
+    </div>
+
+    <div class="button">
+        <button class="button-btn"><a href="{{ url_for('usuario.blog') }}">Blog</a></button>
+        <button class="button-btn"><a href="{{ url_for('usuario.verCatalogo') }}">Catálogo</a></button>
+        <button class="button-btn"><a href="{{ url_for('usuario.comentariosReseñas') }}">Comentario</a></button>
+        <button class="button-btn"><a href="{{ url_for('usuario.getionPQR') }}">PQRS</a></button>
+        <button class="button-btn"><a href="{{ url_for('usuario.DescuentoOfertas') }}">Ofertas</a></button>
+    </div>
+
+    <div class="section-title">
+        <h2>Catálogo de productos</h2>
+        <div class="title-decoration"></div>
+    </div>
+
+    <main class="container">
+        <div class="products-grid">
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/papapastusa.png') }}" alt="Papa pastusa" />
+                <div class="product-info">
+                    <div class="product-category">Tubérculos</div>
+                    <h3 class="product-title">Papa pastusa</h3>
+                    <p class="producer">Productor: Carlos Ordez</p>
+                    <div class="product-price">$1,199 COP x lb</div>
+                    <span class="product-stock">Disponible</span>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/green-apples.jpg') }}" alt="Manzana verde" />
+                <div class="product-info">
+                    <div class="product-category">Frutas</div>
+                    <h3 class="product-title">Manzana verde</h3>
+                    <p class="producer">Productor: Juan Pinilla</p>
+                    <div class="product-price">$20,900 COP x lb</div>
+                    <span class="product-stock">Disponible</span>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/mora.jpg') }}" alt="Mora" />
+                <div class="product-info">
+                    <div class="product-category">Frutas</div>
+                    <h3 class="product-title">Mora</h3>
+                    <p class="producer">Productor: Juan Garzón</p>
+                    <div class="product-price">$2,499 COP x lb</div>
+                    <span class="product-out-of">Agotado</span>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/yuca.jpg') }}" alt="Yuca" />
+                <div class="product-info">
+                    <div class="product-category">Tubérculos</div>
+                    <h3 class="product-title">Yuca</h3>
+                    <p class="producer">Productor: Jaime Pérez</p>
+                    <div class="product-price">$2,399 COP x lb</div>
+                    <span class="product-stock">Disponible</span>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/Roasted_coffee_beans.jpg') }}" alt="Café" />
+                <div class="product-info">
+                    <div class="product-category">Granos</div>
+                    <h3 class="product-title">Café</h3>
+                    <p class="producer">Productor: Francisco Pedroza</p>
+                    <div class="product-price">$19,799 COP x lb</div>
+                    <span class="product-stock">Disponible</span>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/arracacha.jpg') }}" alt="Arracacha" />
+                <div class="product-info">
+                    <div class="product-category">Tubérculos</div>
+                    <h3 class="product-title">Arracacha</h3>
+                    <p class="producer">Productor: Lucía Hernández</p>
+                    <div class="product-price">$4,900 COP x lb</div>
+                    <span class="product-stock">Disponible</span>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/Cafe.jpg') }}" alt="Abono para café" />
+                <div class="product-info">
+                    <div class="product-category">Insumos agrícolas</div>
+                    <h3 class="product-title">Abono para café</h3>
+                    <p class="producer">Productor: José Domínguez</p>
+                    <div class="product-price">$22,900 COP</div>
+                    <span class="product-stock">Disponible</span>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="{{ url_for('static', filename='img/Banano.jpeg') }}" alt="Banano" />
+                <div class="product-info">
+                    <div class="product-category">Frutas</div>
+                    <h3 class="product-title">Banano</h3>
+                    <p class="producer">Productor: Carla Hurtado</p>
+                    <div class="product-price">$2,900 COP x lb</div>
+                    <span class="product-stock">Disponible</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/auth1.js') }}"></script>
+</body>
+</html>

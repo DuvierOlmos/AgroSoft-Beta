@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro de Usuario</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='auth/css/registro.css') }}" />
+</head>
+<body>
+  <div class="auth-container">
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulario de Registro -->
+    <form method="POST" action="{{ url_for('auth.register') }}">
+      <h2>Registro de Usuario</h2>
+
+      <div class="form-group">
+        <label for="usuario">Usuario:</label>
+        <input type="text" name="usuario" id="usuario" placeholder="Tu usuario" required />
+      </div>
+
+      <div class="form-group">
+        <label for="correo">Correo electrónico:</label>
+        <input type="email" name="correo" id="correo" placeholder="tucorreo@ejemplo.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" name="contraseña" id="contraseña" placeholder="••••••••" required />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmar">Confirmar contraseña:</label>
+        <input type="password" name="confirmar" id="confirmar" placeholder="Repite tu contraseña" required />
+      </div>
+
+      <div class="form-group">
+        <label for="rol">Tipo de cuenta:</label>
+        <select name="rol" id="rol" required>
+          <option value="">Selecciona un rol</option>
+          <option value="1">Cliente</option>
+          <option value="2">Administrador</option>
+          <option value="3">Productor</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="documento">Documento de identidad:</label>
+        <input type="text" name="documento" id="documento" placeholder="Tu número de documento" required />
+      </div>
+
+      <button type="submit" class="btn">Registrarse</button>
+
+      <p class="auth-link">
+        ¿Ya tienes cuenta?
+        <a href="{{ url_for('auth.login') }}">Inicia sesión aquí</a>
+      </p>
+    </form>
+  </div>
+     <script>
+  document.getElementById('registerForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Obtener valores del formulario adaptados a tu base de datos
+    const nombre_usuario = document.getElementById('nombre_usuario').value.trim();
+    const correo_electronico = document.getElementById('correo_electronico').value.trim();
+    const contrasena = document.getElementById('contrasena').value;
+    const confirmar = document.getElementById('confirmar').value;
+    const id_rol = document.getElementById('id_rol').value;
+    const documento_identidad = document.getElementById('documento_identidad').value.trim();
+
+    // Validaciones básicas
+    if (!nombre_usuario || !correo_electronico || !contrasena || !confirmar || !id_rol || !documento_identidad) {
+      alert("Por favor, rellena todos los campos.");
+      return;
+    }
+
+    if (contrasena !== confirmar) {
+      alert("Las contraseñas no coinciden.");
+      return;
+    }
+
+    // Enviar al servidor con fetch (POST)
+    fetch('/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        usuario: nombre_usuario,
+        correo: correo_electronico,
+        contraseña: contrasena,
+        confirmar: confirmar,
+        rol: id_rol,
+        documento: documento_identidad
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert("Registro exitoso. Ahora puedes iniciar sesión.");
+        window.location.href = "/auth/login";
+      } else {
+        alert("Error: " + data.message);
+      }
+    })
+    .catch(err => {
+      alert("Error en el registro.");
+      console.error(err);
+    });
+  });
+</script>
+
+</body>
+</html>

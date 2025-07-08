@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Usuarios</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='DashboardAdmin/css/styleDashAdmin.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='DashboardAdmin/css/styleGestprod.css') }}">
+</head>
+
+<body>
+  <aside>
+    <h2>Admin Panel</h2>
+    <ul>
+      <li onclick="showModule('usuarios')"><i class="fas fa-users"></i> Gestionar Usuarios</li>
+      <li onclick="showModule('GestionarCatalogo')"><i class="fas fa-tags"></i> Gestionar Catalogo de Productos</li>
+      <li onclick="showModule('pqrs')"><i class="fas fa-envelope-open-text"></i> PQRS</li>
+      <li onclick="showModule('comentarios')"><i class="fas fa-comment-dots"></i> Comentarios</li>
+      <li onclick="showModule('pedidos')"><i class="fas fa-truck"></i> Pedidos</li>
+    </ul>
+    <div class="nav-links">
+       <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </div>
+    
+  </aside>
+
+  <main>
+    <!-- Tabla de usuarios -->
+    <section id="usuarios">
+      <h3>Gestión de Usuarios</h3>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for usuario in usuarios %}
+          <tr>
+            <td>{{ usuario.id_usuario }}</td>
+            <td>{{ usuario.nombre_usuario }}</td>
+            <td>{{ usuario.correo_electronico }}</td>
+            <td>{{ usuario.nombre_rol }}</td>
+            <td>{{ usuario.estado }}</td>
+            <td>
+              <form action="{{ url_for('admin.editar_usuario') }}" method="POST" style="display: inline;">
+                <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
+                <input type="text" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" required>
+                <input type="email" name="correo_electronico" value="{{ usuario.correo_electronico }}" required>
+                <select name="id_rol" required>
+                  <option value="1" {% if usuario.nombre_rol == 'cliente' %}selected{% endif %}>Cliente</option>
+                  <option value="2" {% if usuario.nombre_rol == 'proveedor' %}selected{% endif %}>Proveedor</option>
+                  <option value="3" {% if usuario.nombre_rol == 'admin' %}selected{% endif %}>Administrador</option>
+                </select>
+                <input type="submit" value="Actualizar">
+              </form>
+
+              <form action="{{ url_for('admin.cambiar_estado_usuario') }}" method="POST" style="display: inline;">
+                <input type="hidden" name="id_usuario" value="{{ usuario.id_usuario }}">
+                <input type="hidden" name="nuevo_estado" value="{{ 'Inactivo' if usuario.estado == 'Activo' else 'Activo' }}">
+                <input type="submit" value="{{ 'Desactivar' if usuario.estado == 'Activo' else 'Activar' }}">
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+  <section id="GestionarCatalogo" style="display:none;">
+  <h3>Gestión de Categorías</h3>
+  <form id="categoryForm" method="POST" action="{{ url_for('admin.guardar_categoria') }}">
+    <input type="hidden" id="categoriaid" name="id_categoria">
+    <input type="text" id="categoriaName" name="nombre_categoria" placeholder="Nombre de la categoría" required>
+    <input type="text" id="categoriaDescripcion" name="descripcion_categoria" placeholder="Descripción" required>
+    <select id="categoriaEstado" name="estado_categoria">
+      <option value="Activo">Activo</option>
+      <option value="Inactivo">Inactivo</option>
+    </select>
+    <button type="submit">Guardar</button>
+  </form>
+
+  <input type="text" id="productSearch" placeholder="Buscar..." />
+
+  <table id="categoryTable" border="1">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for categoria in categorias %}
+  <tr>
+
+    <td>{{ categoria.nombre_categoria }}</td>
+    <td>{{ categoria.descripcion_categoria }}</td>
+    <td>{{ categoria.estado }}</td>
+    <td>
+     <button class="edit-btn" data-id="{{ categoria.id_categoria }}" data-nombre="{{ categoria.nombre_categoria }}" data-descripcion="{{ categoria.descripcion_categoria }}">Editar</button>
+
+      <form action="{{ url_for('admin.cambiar_estado_categoria') }}" method="POST" style="display:inline;">
+        <input type="hidden" name="id_categoria" value="{{ categoria.id_categoria }}">
+        <input type="hidden" name="nuevo_estado" value="{{ 'Inactivo' if categoria.estado_categoria == 'Activo' else 'Activo' }}">
+        <input type="submit" value="{{ 'Desactivar' if categoria.estado_categoria == 'Activo' else 'Activar' }}">
+        
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+  </table>  
+</section>
+
+
+
+
+    <section id="pqrs" style="display: none;">
+      <h3>Gestionar PQRS</h3>
+      <form id="pqrsForm">
+        <input type="text" id="pqrsNombre" placeholder="Nombre" required>
+        <input type="email" id="pqrsEmail" placeholder="Correo electrónico" required>
+        <select id="pqrsTipo">
+          <option value="Petición">Petición</option>
+          <option value="Queja">Queja</option>
+          <option value="Reclamo">Reclamo</option>
+          <option value="Sugerencia">Sugerencia</option>
+        </select>
+        <input type="text" id="pqrsMensaje" placeholder="Mensaje" required>
+        <button type="submit" class="save-btn">Enviar PQRS</button>
+      </form>
+      <input type="text" id="buscarPQRS" placeholder="Buscar por nombre, correo, tipo o estado" style="margin-top:20px; padding: 8px; width: 100%; max-width: 400px;">
+      <table id="pqrsTable">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Tipo</th>
+            <th>Mensaje</th>
+            <th>Estado</th>
+            <th>Respuesta</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="comentarios" style="display: none;">
+      <h3>Gestionar Comentarios</h3>
+      <form id="comentarioForm">
+        <input type="text" id="comentarioNombre" placeholder="Nombre" required>
+        <input type="text" id="comentarioProducto" placeholder="Producto" required>
+        <textarea id="comentarioTexto" placeholder="Comentario" required></textarea>
+        <input type="number" id="comentarioCalificacion" placeholder="Calificación (1-5)" min="1" max="5" required>
+        <input type="hidden" id="comentarioIndice">
+        <button type="submit" class="save-btn">Guardar Comentario</button>
+      </form>
+      <input type="text" id="buscarComentario" placeholder="Buscar por nombre o producto" style="margin-bottom: 10px; padding: 8px; width: 100%; max-width: 400px;">
+      <table id="comentarioTable">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Producto</th>
+            <th>Comentario</th>
+            <th>Calificación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="pedidos" style="display: none;">
+      <h3>Gestionar Pedidos</h3>
+      <form id="pedidoForm">
+        <input type="text" id="pedidoCliente" placeholder="Nombre del Cliente" required>
+        <input type="text" id="pedidoProducto" placeholder="Producto" required>
+        <input type="number" id="pedidoCantidad" placeholder="Cantidad" required>
+        <select id="pedidoEstado">
+          <option value="Pendiente">Pendiente</option>
+          <option value="Enviado">Enviado</option>
+          <option value="Entregado">Entregado</option>
+        </select>
+        <button type="submit" class="save-btn">Registrar Pedido</button>
+      </form>
+      <input type="text" id="buscarPedido" placeholder="Buscar por cliente o producto" style="margin-top: 20px; padding: 8px; width: 100%; max-width: 400px;">
+      <table id="pedidoTable">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='DashboardAdmin/js/funGestUsu.js') }}"></script>
+  <script src="{{ url_for('static', filename='DashboardAdmin/js/funcGestC.js') }}"></script>
+  <script src="{{ url_for('static', filename='DashboardAdmin/js/funcGestPQRS.js') }}"></script>
+  <script src="{{ url_for('static', filename='DashboardAdmin/js/funcGesComent.js') }}"></script>
+  <script src="{{ url_for('static', filename='DashboardAdmin/js/funcGesPedidos.js') }}"></script>
+  <script>
+  function showModule(id) {
+    const sections = document.querySelectorAll('main > section');
+    sections.forEach(section => {
+      section.style.display = 'none';
+    });
+
+    const selected = document.getElementById(id);
+    if (selected) {
+      selected.style.display = 'block';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const modulo = params.get('modulo') || 'usuarios';
+  showModule(modulo);
+});
+
+</script>
+
+</body>
+</html>

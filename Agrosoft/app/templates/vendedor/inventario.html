@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inventario de Productos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='productor/inventario.css') }}">
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo"><h1>AgroSoft</h1></div>
+    <nav class="navbar">
+      <div class="barra-busqueda">
+        <input type="text" id="campo-busqueda" placeholder="Buscar...">
+        <button id="boton-buscar">🔍</button>
+        <div id="resultados-busqueda"></div>
+      </div>
+    </nav>
+    <div class="user-actions">
+      <span id="welcome-user">👤 {{ session.usuario }} ⌄</span>
+      <div class="dropdown-content">
+        <a href="#">Perfil</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="sidebar">
+    <h2>Menú</h2>
+    <ul>
+      <li><a href="{{ url_for('productor.ver_inventario') }}">Inventario</a></li>
+      <li><a href="{{ url_for('ordenes.index') }}">Órdenes</a></li>
+      
+    </ul>
+  </div>
+
+  <main>
+    <h1>Mi Inventario</h1>
+
+    {% if productos %}
+      <div class="mostrarProductos">
+        {% for p in productos %}
+          <div class="producto-card">
+            
+            <img src="{{ p[5] if p|length > 5 else url_for('static','img/placeholder.png') }}" alt="{{ p[1] }}">
+            <div class="informacion">
+              <p><strong>ID:</strong> {{ p[0] }}</p>
+              <p><strong>Nombre:</strong> {{ p[1] }}</p>
+              <p><strong>Categoría:</strong> {{ p[2] }}</p>
+              <p class="precio"><strong>Cantidad:</strong> {{ p[3] }}</p>
+              <p><strong>Ubicación:</strong> {{ p[4] }}</p>
+            </div>
+            <a href="{{ url_for('productor.editar_producto', id_producto=p[0]) }}" class="button">Editar</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="contenedorMensaje">
+        <p class="noExsiteError">No tienes productos registrados.</p>
+      </div>
+    {% endif %}
+  </main>
+
+  <script src="{{ url_for('static', filename='js/consultar.js') }}"></script>
+</body>
+</html>
