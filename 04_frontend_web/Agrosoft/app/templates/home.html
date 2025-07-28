@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrosoft</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="row align-items-center "> 
+                
+                <div class="col-md-3 d-flex align-items-center "> 
+                    <img src="{{ url_for('static', filename='img/output-onlinepngtools-com.png') }}" alt="Agrosoft Logo" class="logo-img"> 
+                    <h1 class="logo-text ms-3">Agro<span style="color: #FF9800; border-bottom: 2px solid black; padding-bottom: 0.2px;">Soft</span></h1>
+                </div> 
+
+                <div class="col-md-5 col-12 mt-3 mt-md-0 ms-md-auto "> 
+                    <div class="input-group search-bar mx-auto"> 
+                        <input type="text" class="form-control" placeholder="Buscar productos..." aria-label="Buscar productos">
+                        <button class="btn btn-primary" type="button"></button>
+                    </div>
+                </div>
+
+                <div class="col-auto d-flex ms-6 mt-3 mt-md-0"> 
+                    <a href="{{ url_for('auth.login') }}" class="btn-icon me-2">👤</a> 
+                    <a href="./Editar_Carrito_de_Compra/Editar_Carrito.html" class="btn-icon">🛒<span class="cart-count">0</span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-navbar">
+        <div class="container">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/inicio/blog/blog.html">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/inicio/catalogo/verCatalogo.html">Catálogo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pedidos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/inicio/gestionar PQR/gestonPQR.HTML">PQRS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/inicio/Ofertas y descuentos/descuentoOefrtas.html">Ofertas</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+    
+        <section class="featured-carousel p-4 rounded shadow-sm">
+            <h2 class="section-title">PRODUCTOS DESTACADOS DE LA SEMANA</h2>
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="{{ url_for('static', filename='img/potatoes-2329648_1280.jpg') }}" class="d-block product-image mx-auto" alt="Uva campesina">
+                        <div class="product-info text-center mt-3">
+                            <h3>Uvas pequeñas</h3>
+                            <p class="producer">Productor: Juan Pérez</p>
+                            <p class="price">$25.900 x libra</p>
+                            <div class="product-actions d-flex justify-content-center align-items-center">
+                                <button class="btn btn-secondary btn-add">+</button>
+                                <span class="quantity mx-2">1</span>
+                                <button class="btn btn-secondary btn-remove">-</button>
+                                <button class="btn btn-success btn-cart ms-3">Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{{ url_for('static', filename='img/banana-2192128_1280.jpg') }}" class="d-block product-image mx-auto" alt="Platano verde">
+                        <div class="product-info text-center mt-3">
+                            <h3>Platano verde</h3>
+                            <p class="producer">Productor: María Gómez</p>
+                            <p class="price">$4.000 x libra</p>
+                            <div class="product-actions d-flex justify-content-center align-items-center">
+                                <button class="btn btn-secondary btn-add">+</button>
+                                <span class="quantity mx-2">1</span>
+                                <button class="btn btn-secondary btn-remove">-</button>
+                                <button class="btn btn-success btn-cart ms-3">Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{{ url_for('static', filename='img/apples-1004886_1280.jpg') }}" class="d-block product-image mx-auto" alt="Manzana roja">
+                        <div class="product-info text-center mt-3">
+                            <h3>Manzana roja</h3>
+                            <p class="producer">Productor: Carlos Rojas</p>
+                            <p class="price">$7.999 x kilo</p>
+                            <div class="product-actions d-flex justify-content-center align-items-center">
+                                <button class="btn btn-secondary btn-add">+</button>
+                                <span class="quantity mx-2">1</span>
+                                <button class="btn btn-secondary btn-remove">-</button>
+                                <button class="btn btn-success btn-cart ms-3">Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-interval="2000" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </section>
+
+        ---
+
+        <section class="recent-products">
+            <h2 class="section-title">Nuevos Productos</h2>
+            <div class="row products-grid">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card product-card h-100">
+                        <img src="{{ url_for('static', filename='img/potatoes-2329648_1280.jpg') }}" class="card-img-top product-image" alt="papa pastusa">
+                        <div class="card-body product-details">
+                            <h3 class="card-title">Papa pastusa</h3>
+                            <p class="card-text producer">Productor: Ana Torres</p>
+                            <p class="card-text price">$12.999 x kilo</p>
+                            <button class="btn btn-primary btn-add-cart">Añadir al carrito</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card product-card h-100">
+                        <img src="{{ url_for('static', filename='img/carrots-4765284_1280.jpg') }}" class="card-img-top product-image" alt="Zanahorias orgánicas">
+                        <div class="card-body product-details">
+                            <h3 class="card-title">Zanahoria Orgánica</h3>
+                            <p class="card-text producer">Productor: Luis Mendoza</p>
+                            <p class="card-text price">$3.500 x libra</p>
+                            <button class="btn btn-primary btn-add-cart">Añadir al carrito</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card product-card h-100">
+                        <img src="{{ url_for('static', filename='img/arroz-integral-portada.jpg') }}" class="card-img-top product-image" alt="Arroz integral">
+                        <div class="card-body product-details">
+                            <h3 class="card-title">Arroz Integral</h3>
+                            <p class="card-text producer">Productor: Cooperativa La Esperanza</p>
+                            <p class="card-text price">$18.000 x kilo</p>
+                            <button class="btn btn-primary btn-add-cart">Añadir al carrito</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card product-card h-100">
+                        <img src="{{ url_for('static', filename='img/fresh-eggs-2581036_1280.jpg') }}" class="card-img-top product-image" alt="Huevos campesinos">
+                        <div class="card-body product-details">
+                            <h3 class="card-title">Huevos Campesinos</h3>
+                            <p class="card-text producer">Productor: Doña Rosa</p>
+                            <p class="card-text price">$15.000 x 30 unidades</p>
+                            <button class="btn btn-primary btn-add-cart">Añadir al carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white pt-5 pb-4">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-md-6 mb-4">
+                    <h5 class=" mb-3">Acerca de nosotros</h5>
+                    <p class="fs-6">
+                        Somos un aplicativo web que tiene como objetivo mejorar la comercialización de productos agrícolas, 
+                        mejorando la competitividad en el mercado de los pequeños y medianos productores campesinos de Colombia.
+                    </p>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class=" mb-3">¿Quieres vender tus productos?</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="mailto:Agrosoft@gmail.com" class="text-white text-decoration-none">
+                                <i class="bi bi-envelope-fill me-2"></i>Agrosoft@gmail.com
+                            </a>
+                        </li>
+                        <li>
+                            <a href="tel:+57123525676" class="text-white text-decoration-none">
+                                <i class="bi bi-telephone-fill me-2"></i>+57 123 525 676
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <h5 class=" mb-3">Redes sociales</h5>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3 fs-4">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="text-white me-3 fs-4">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" class="text-white me-3 fs-4">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                        <a href="#" class="text-white fs-4">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-top pt-3 text-center">
+                <p class="mb-0 text-light">© 2025 Agrosoft. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

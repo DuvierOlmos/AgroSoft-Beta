@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Blog</title>
+</head>
+<body>
+    <header class="app-header">
+        <button class="hamburger-btn">☰</button>
+        <div class="logo">  
+            <img src="img/1.PNG" alt="Logo de la empresa">
+            <h1>AgroSoft</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/inicio/blog/blog.html">Blog</a></li>
+                <li><a href="/inicio/catalogo/verCatalogo.html">Catálogo</a></li>
+                <li><a href="/inicio/Comentarios y reseñas/comentariosReseñas.html">Comentario</a></li>
+                <li><a href="/inicio/gestionar PQR/gestonPQR.HTML">PQRS</a></li>
+                <li><a href="/inicio/Ofertas y descuentos/descuentoOefrtas.html">Ofertas</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <div class="user-dropdown">
+                <span id="welcome-user">👤 Usuario ⌄</span>
+                <div class="dropdown-content">
+                    <a href="perfil.html">Iniciar Sesion</a>
+                </div>
+            </div>
+            <a href="../Editar_Carrito_de_Compra/Editar_Carrito.html" class="cart-icon">🛒</a>
+        </div>
+    </header>
+
+    <aside class="sidebar">
+        <button class="close-btn">×</button>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="/inicio/blog/blog.html">Blog</a></li>
+                <li><a href="/inicio/catalogo/verCatalogo.html">Catálogo</a></li>
+                <li><a href="/inicio/Comentarios y reseñas/comentariosReseñas.html">Comentarios</a></li>
+                <li><a href="/inicio/gestionar PQR/gestonPQR.HTML">PQRS</a></li>
+                <li><a href="/inicio/Ofertas y descuentos/descuentoOefrtas.html">Ofertas</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="ofertas-header">
+        <h1>Blog  - AgroSoft</h1>
+        <p>Mejorando la comercializacion de productos agricolas</p>
+    </div>
+
+    <div class="banner">
+        <ul>
+            <li>
+                <img src="img/istockphoto-1319254587-1024x1024.jpg" alt="">
+            </li>
+            <li>
+                <img src="img/close-up-soil-sprout.jpg" alt="">
+            </li>
+            <li>
+                <img src="img/herd-black-white-cows-grassland.jpg" alt="">
+            </li>
+            <li>
+                <img src="img/img3.jpg" alt="">
+            </li>
+            <li>
+                <img src="img/farmers-2425936_1280.jpg" alt="">
+            </li>
+        </ul>
+    </div>
+
+    <main class="contenido-blog">
+        <section class="acerca-metas-contenedor">
+            <div class="acerca-img">
+                <img src="img/imgd.jpg" alt="Agricultor">
+            </div>
+            <div class="acerca-texto">
+                <h2>Acerca de nosotros</h2>
+                <p>
+                    Estamos detras del dessarrollo implementado asi lo agricola asiendo este aplicativo que permite gestionar el inventario y la comercialización de productos agrícolas,
+                    mejorando la competitividad en el mercado de pequeños y medianos productores de Colombia.
+                    Aseguramos precios justos y procesos simplificados.
+                </p>
+            </div>
+        </section>
+
+        <section class="acerca-metas-contenedor metas-invertido">
+            <div class="metas-texto">
+                <h2>Metas</h2>
+                <ul class="lista-metas">
+                    <li>Incrementar la visibilidad de los pequeños agricultores.</li>
+                    <li>Facilitar procesos de venta y distribución.</li>
+                    <li>Reducir intermediarios innecesarios.</li>
+                    <li>Crear una red sólida de comercio agrícola.</li>
+                </ul>
+            </div>
+            <div class="metas-img">
+                <img src="img/img5.jpg" alt="Cultivo">
+            </div>
+        </section>
+    </main>
+
+    <section class="volver-container">
+        <button onclick="goBack()">Volver</button>
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+        </script>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p class="text">© 2025 AgroSoft - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        const hamburgerBtn = document.querySelector('.hamburger-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const closeBtn = document.querySelector('.close-btn');
+
+        if (hamburgerBtn && sidebar && closeBtn) {
+            hamburgerBtn.addEventListener('click', () => {
+                sidebar.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f9f6;
+  
+}.app-header {
+  background: linear-gradient(to right, #388e3c, #66bb6a);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo h1 {
+  font-size: 2.1rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.logo img {
+  height: 90px;
+  width: 153px;
+}
+
+/* NAVEGACIÓN */
+.navbar{
+  display: block;
+  margin-left: 30%;
+}
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin-left: 50px;
+  padding: 0;
+  font-weight: bold;
+}
+
+.navbar a {
+  color: white;
+  align-items: right;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 4px;
+  transition: all 0.3s ease;
+}
+
+.navbar a::after {
+  content: '';
+  text-align: right;
+  width: 0%;
+  height: 2px;
+  background: white;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transition: 0.3s;
+}
+
+.navbar a:hover::after {
+  width: 100%;
+}
+
+/* USUARIO + CARRITO */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+#welcome-user {
+  font-weight: bold;
+  color: white;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 130%;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  min-width: 160px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.user-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.dropdown-content a:hover {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.cart-icon {
+  font-size: 1.2rem;
+  color: white;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.cart-icon:hover {
+  transform: scale(1.2);
+}
+.ofertas-header {
+  background: linear-gradient(90deg, #7dd87d, #a8e063);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.ofertas-header h1 {
+  margin: 0;
+  font-size: 2.5em;
+}
+
+.ofertas-header p {
+  margin-top: 10px;
+  font-size: 1.2em;
+}
+
+.banner {
+  background-image: url("Campesino.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px #000;
+  padding: 20px;
+}
+
+
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.product-card, .reviews-card {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.product-name {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.description {
+  color: #666;
+  font-size: 0.95em;
+  margin-top: 5px;
+}
+
+.stars {
+  color: #ffcc00;
+  font-size: 1.2em;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.reviews-count {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.comment {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.comment p {
+  margin: 5px 0;
+  font-size: 0.9em;
+}
+
+.ver-mas {
+  margin-top: 20px;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.ver-mas:hover {
+  background-color: #43a047;
+}
+footer {
+  background: #d06615;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 40px;
+}
+
+.volver button{
+  display: block;
+  text-decoration: none;
+  margin-bottom: 100px;
+  text-align: center;
+  margin: 2rem auto 0;
+  width: fit-content; 
+  background-color: #6cc341;
+  padding: 0.8rem 2rem;
+  border-radius: 1.5rem;
+  transition: background-color 0.3s;
+
+}
+.hamburger-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: white;
+  padding: 5px;
+  margin-top: 80px;
+  z-index: 1001;
+  cursor: pointer;
+  display: none; 
+}
+
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px; 
+  width: 260px;
+  height: 100%;
+  background: white; 
+  color: var(--text-dark);
+  padding: 2rem 1.5rem;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  display: none; 
+}
+
+.sidebar.active {
+  left: 0;
+  display: block;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-dark);
+  font-size: 2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebar-nav a {
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+
+.sidebar-nav a:hover {
+  color: var(--secondary-color);
+}
+
+
+@media (max-width: 768px) {
+  .app-header {
+      padding: 1rem;
+      flex-direction: row;
+      justify-content: space-between;
+  }
+
+  .logo h1 {
+      font-size: 1.5rem;
+  }
+
+  .logo img {
+      height: 60px;
+      width: auto;
+  }
+
+  .navbar {
+      display: none;
+  }
+
+  .user-actions {
+      gap: 0.5rem;
+  }
+
+  .user-dropdown span {
+      font-size: 0.9rem;
+  }
+
+  .cart-icon {
+      font-size: 1.1rem;
+  }
+
+  .hamburger-btn {
+      display: block; 
+  }
+
+  .sidebar {
+      display: none; 
+      left: -260px; 
+  }
+
+  .sidebar.active {
+      display: block; 
+      left: 0;
+  }
+
+  .close-btn {
+      display: block; 
+  }
+
+
+}
+
+
+@media (min-width: 769px) {
+  .hamburger-btn {
+      display: none; 
+  }
+
+  .sidebar {
+      display: none;
+  }
+}

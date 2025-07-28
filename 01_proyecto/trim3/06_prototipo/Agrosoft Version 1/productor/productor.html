@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo">
+            <h1>AgroSoft</h1>
+        </div>
+        <nav class="navbar">
+            <div class="barra-busqueda">
+                <input type="text" id="campo-busqueda" placeholder="Buscar...">
+                <button id="boton-buscar">Buscar</button>
+                <div id="resultados-busqueda"></div>
+            </div>
+        </nav>
+        <div class="user-actions">
+            <div class="user-dropdown">
+                <span id="welcome-user">👤 Usuario ⌄</span>
+                <div class="dropdown-content">
+                    <a href="#">Perfil</a>
+                    <a href="../inicio/blog/blog.html" id="logout">Cerrar Sesion</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <h2>Menú</h2>
+            <ul>
+                <li><a href="./productor.html">Inicio</a></li>
+                <li><a href="#" onclick="mostrarDatos()">Despliegue de Datos</a></li>
+                <li><a href="#" onclick="mostrarCobros()">Cuentas por cobrar</a></li>
+                <li><a href="./Ordenes.html">Ordenes de productos</a></li>
+                <li><a href="./inventario.html">Inventarios</a></li>
+            </ul>
+        </div>
+
+        <main class="main-content">
+            <section class="dashboard-item" style="background-color: rgb(106, 194, 106);">
+                <div class="porcentage" id="raw-porcentage">0.1%</div>
+                <div class="value" id="value">3</div>
+                <h2><a href="ordenesFaltante.html">Ordenes Retrasadas</a></h2>
+            </section>
+            <section class="dashboard-item" style="background-color: rgb(255, 155, 84);">
+                <div class="porcentage" id="raw-porcentage">0%</div>
+                <div class="value" id="value">0</div>
+                <h2><a href="#">Ordebes para liberar hoy</a></h2>
+            </section>
+            <section class="dashboard-item" style="background-color: rgb(235, 96, 96);">
+                <div class="porcentage" id="raw-porcentage">0.1%</div>
+                <div class="value" id="value">6</div>
+                <h2><a href="usuarios.html">Usuarios</a></h2>
+            </section>
+            <section class="dashboard-item" style="background-color: rgb(248, 221, 74);">
+                <div class="numero">
+                    <div class="porcentage" id="raw-porcentage">5%</div>
+                    <div class="value" id="value">650.00</div>
+                </div>
+                <h2><a href="finanza.html">Finanzas</a></h2>
+            </section>
+
+            <section class="dashboard-item grafica-ventas">
+                <h2>Gráfica de Ventas Mensuales</h2>
+                <canvas id="ventasChart"></canvas>
+            </section>
+        </main>
+
+        <div id="contenedores-datos" class="contenedores-datos oculto">
+            <div class="contenedor-produccion">
+                <h3>📦 Producción Actual</h3>
+                <p>Tomates: 12.500 kg</p>
+                <p>Pimientos: 8.200 kg</p>
+                <p>Estado: 85% cosechado</p>
+            </div>
+
+            <div class="contenedor-ventas">
+                <h3>💰 Ventas Recientes</h3>
+                <p>Total mensual: <strong>€18.300</strong></p>
+                <p>Cliente: Almacén Rivera</p>
+                <p>Última venta: 3.000 kg de tomate</p>
+            </div>
+
+            <div class="contenedor-inventario">
+                <h3>🚜 Inventario Agrícola</h3>
+                <ul>
+                    <li>Tractor John Deere (en uso)</li>
+                    <li>Fertilizante NPK: 40%</li>
+                    <li>Semillas de lechuga: 2.000 unidades</li>
+                </ul>
+            </div>
+        </div>
+        <script>
+            function mostrarDatos() {
+                const cont = document.getElementById("contenedores-datos");
+                cont.classList.toggle("oculto");
+            }
+        </script>
+        <div id="contenedores-cobros" class="contenedores-cobros oculto">
+            <div class="item-cobro">
+                <h4>Cliente: Agrocampo SL</h4>
+                <p>Monto pendiente: €2.500</p>
+                <p>Vencimiento: 20/04/2025</p>
+            </div>
+
+            <div class="item-cobro">
+                <h4>Cliente: CampoFértil</h4>
+                <p>Monto pendiente: €1.200</p>
+                <p>Vencimiento: 25/04/2025</p>
+            </div>
+
+            <div class="item-cobro">
+                <h4>Cliente: Semillas del Sur</h4>
+                <p>Monto pendiente: €3.800</p>
+                <p>Vencimiento: 01/05/2025</p>
+            </div>
+        </div>
+        <script>
+            function mostrarCobros() {
+            const cobros = document.getElementById("contenedores-cobros");
+            cobros.classList.toggle("oculto");
+            }
+        </script>
+    </div>
+
+    <script src="js/productor.js"></script>
+</body>
+</html>

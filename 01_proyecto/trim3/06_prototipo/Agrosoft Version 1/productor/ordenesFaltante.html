@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Órdenes Pendientes de Entrega</title>
+    <link rel="stylesheet" href="css/ordenes_pendientes.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="logo">
+            <h1>AgroSoft</h1>
+        </div>
+        <nav class="navbar">
+            </nav>
+        <div class="user-actions">
+            </div>
+    </header>
+    <div class="sidebar">
+        <h2>Menú</h2>
+        <ul>
+          <li><a href="./productor.html">Inicio</a></li>
+          <li><a href="#" onclick="mostrarDatos()">Despliegue de Datos</a></li>
+          <li><a href="#" onclick="mostrarCobros()">Cuentas por cobrar</a></li>
+          <li><a href="./Ordenes.html">Ordenes de productos</a></li>
+          <li><a href="./inventario.html">Inventarios</a></li>
+    </ul>
+</div>
+
+    <div class="container">
+        <div class="ordenes-retrasadas-container">
+            <h2>Órdenes Pendientes de Entrega</h2>
+            <div id="lista-ordenes-retrasadas">
+                <p>Cargando órdenes pendientes...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/ordenes_pendientes.js"></script>
+</body>
+</html>

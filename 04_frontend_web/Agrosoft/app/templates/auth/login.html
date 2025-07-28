@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='auth/css/login.css') }}" />
+</head>
+<body>
+  <div class="auth-container">
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Formulario de Login -->
+    <form method="POST" action="{{ url_for('auth.login') }}">
+      <h2>Iniciar Sesión</h2>
+
+      <div class="form-group">
+        <label for="usuario">Usuario:</label>
+        <input type="text" name="usuario" id="usuario" placeholder="Tu usuario" required />
+      </div>
+
+      <div class="form-group">
+        <label for="contraseña">Contraseña:</label>
+        <input type="password" name="contraseña" id="contraseña" placeholder="Tu contraseña" required />
+      </div>
+
+      <button type="submit" class="btn">Ingresar</button>
+
+      <p class="auth-link">
+        ¿No tienes cuenta?
+        <a href="{{ url_for('auth.register') }}">Regístrate aquí</a>
+      </p>
+    </form>
+  </div>
+</body>
+</html>

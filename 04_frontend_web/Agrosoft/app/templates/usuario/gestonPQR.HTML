@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de PQRS - AgroSoft</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='usuario/css/pqrs.css') }}" />
+</head>
+<body>
+  <header class="app-header">
+    <button class="hamburger-btn">☰</button>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='usuario/img/1.PNG') }}" alt="Logo de la empresa" />
+        <h1>AgroSoft</h1>
+    </div>
+    <nav class="navbar">
+        <ul>
+        <li><a href="{{ url_for('usuario.blog') }}">Blog</a></li>
+        <li><a href="{{ url_for('usuario.verCatalogo') }}">Catálogo</a></li>
+        <li><a href="{{ url_for('usuario.comentariosReseñas') }}">Comentario</a></li>
+        <li><a href="{{ url_for('usuario.getionPQR') }}">PQRS</a></li>
+        <li><a href="{{ url_for('usuario.DescuentoOfertas') }}">Ofertas</a></li>
+      </ul>
+    </nav>
+    <div class="user-actions">
+        <div class="user-dropdown">
+            <span id="welcome-user">👤 Usuario ⌄</span>
+            <div class="dropdown-content">
+                <a href="{{ url_for('usuario.perfil') }}">Iniciar Sesión</a>
+            </div>
+        </div>
+        <a href="{{ url_for('usuario.carrito') }}" class="cart-icon">🛒</a>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+      <button class="close-btn">×</button>
+      <nav class="sidebar-nav">
+        <ul>
+        <li><a href="{{ url_for('usuario.blog') }}">Blog</a></li>
+        <li><a href="{{ url_for('usuario.verCatalogo') }}">Catálogo</a></li>
+        <li><a href="{{ url_for('usuario.comentariosReseñas') }}">Comentario</a></li>
+        <li><a href="{{ url_for('usuario.getionPQR') }}">PQRS</a></li>
+        <li><a href="{{ url_for('usuario.DescuentoOfertas') }}">Ofertas</a></li>
+      </ul>
+      </nav>
+  </aside>
+
+  <div class="ofertas-header">
+    <h1>Gestión de PQRS - AgroSoft</h1>
+    <p>Cuéntanos tus inquietudes, estamos aquí para ayudarte</p>
+  </div>
+
+  <div class="banner"></div>
+
+  <section>
+    <div class="formulario">
+      <h2>Enviar una PQRS</h2>
+      <form>
+        <label for="tipo">Tipo de PQRS</label>
+        <select id="tipo" name="tipo" required>
+          <option value="">Seleccione una opción</option>
+          <option value="peticion">Petición</option>
+          <option value="queja">Queja</option>
+          <option value="reclamo">Reclamo</option>
+          <option value="sugerencia">Sugerencia</option>
+        </select>
+
+        <label for="asunto">Asunto</label>
+        <input type="text" id="asunto" name="asunto" placeholder="Asunto de la PQRS" required />
+
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion" rows="5" placeholder="Escribe aquí los detalles..." required></textarea>
+
+        <button type="submit">Enviar PQRS</button>
+      </form>
+    </div>
+
+    <div class="pqr-lista">
+      <h2>Tus PQRS Registradas</h2>
+
+      <div class="pqr-item">
+        <h4>Petición - Soporte técnico</h4>
+        <p>Solicito ayuda para actualizar mi catálogo de productos. Gracias.</p>
+      </div>
+
+      <div class="pqr-item">
+        <h4>Reclamo - Producto no entregado</h4>
+        <p>Realicé un pedido y no ha llegado después de una semana. Código de pedido #456789</p>
+      </div>
+
+      <div class="pqr-item">
+        <h4>Sugerencia - Mejora en interfaz</h4>
+        <p>Sería útil ver los productos más vendidos en la página de inicio.</p>
+      </div>
+    </div>
+
+    <div class="volver">
+      <button onclick="goBack()">Volver</button>
+
+      <script>
+      function goBack() {
+        window.history.back();
+      }
+      </script>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 AgroSoft - Todos los derechos reservados
+  </footer>
+
+  <script>
+    const hamburgerBtn = document.querySelector('.hamburger-btn');
+    const sidebar = document.querySelector('.sidebar');
+    const closeBtn = document.querySelector('.close-btn');
+
+    if (hamburgerBtn && sidebar && closeBtn) {
+        hamburgerBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+    }
+  </script>
+</body>
+</html>
+

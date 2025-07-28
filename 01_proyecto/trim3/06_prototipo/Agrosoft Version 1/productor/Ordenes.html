@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Órdenes - AgroSoft</title>
+  <link rel="stylesheet" href="css/ordenes.css"> <!-- Aquí usas el CSS que diste arriba -->
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="logo">
+      <h1>AgroSoft</h1>
+    </div>
+    <div class="navbar">
+      <div class="barra-busqueda">
+        <input type="text" id="campo-busqueda" placeholder="Buscar órdenes...">
+        <button id="boton-buscar">Buscar</button>
+      </div>
+    </div>
+    <div class="user-actions">
+      <div class="user-dropdown">
+        <span>Usuario ▾</span>
+        <div class="dropdown-content">
+          <a href="#">Perfil</a>
+          <a href="../inicio/blog/blog.html" id="logout">Cerrar Sesion</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <h2>Menú</h2>
+    <ul>
+        <div class="sidebar">
+            <h2>Menú</h2>
+                <ul>
+                    <li><a href="./productor.html">Inicio</a></li>
+                    <li><a href="#" onclick="mostrarDatos()">Despliegue de Datos</a></li>
+                    <li><a href="#" onclick="mostrarCobros()">Cuentas por cobrar</a></li>
+                    <li><a href="./Ordenes.html">Ordenes de productos</a></li>
+                    <li><a href="./inventario.html">Inventarios</a></li>
+              </ul>
+          
+  </aside>
+
+  <main style="margin-left: 260px; padding: 2rem;">
+    <h2>Gestión de Órdenes</h2>
+
+    <div class="form">
+      <label for="cliente">Cliente:</label>
+      <input type="text" id="cliente" placeholder="Nombre del cliente"><br>
+
+      <label for="producto">Producto:</label>
+      <input type="text" id="producto" placeholder="Nombre del producto"><br>
+
+      <label for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" placeholder="Cantidad"><br>
+
+      <label for="fecha">Fecha:</label>
+      <input type="date" id="fecha"><br>
+
+      <button onclick="agregarOrden()">Agregar Orden</button>
+    </div>
+
+    <div id="product-list">
+      <h2>Órdenes registradas</h2>
+      <div id="lista-ordenes"></div>
+    </div>
+  </main>
+
+  <script>
+    const listaOrdenes = document.getElementById('lista-ordenes');
+
+    function agregarOrden() {
+      const cliente = document.getElementById('cliente').value;
+      const producto = document.getElementById('producto').value;
+      const cantidad = document.getElementById('cantidad').value;
+      const fecha = document.getElementById('fecha').value;
+
+      const ordenHTML = `
+        <div class="product-item">
+          <div>
+            <strong>${cliente}</strong> ordenó <strong>${cantidad}</strong> unidades de <strong>${producto}</strong> para el <strong>${fecha}</strong>
+          </div>
+          <div class="product-actions">
+            <button class="edit-button">Editar</button>
+            <button class="delete-button" onclick="this.parentElement.parentElement.remove()">Eliminar</button>
+          </div>
+        </div>`;
+
+      listaOrdenes.insertAdjacentHTML('beforeend', ordenHTML);
+
+      // Limpiar campos
+      document.getElementById('cliente').value = '';
+      document.getElementById('producto').value = '';
+      document.getElementById('cantidad').value = '';
+      document.getElementById('fecha').value = '';
+    }
+  </script>
+
+    <!-- CONTENEDORES QUE APARECEN -->
+<div id="contenedores-datos" class="contenedores-datos oculto">
+    <div class="contenedor-produccion">
+      <h3>📦 Producción Actual</h3>
+      <p>Tomates: 12.500 kg</p>
+      <p>Pimientos: 8.200 kg</p>
+      <p>Estado: 85% cosechado</p>
+    </div>
+  
+    <div class="contenedor-ventas">
+      <h3>💰 Ventas Recientes</h3>
+      <p>Total mensual: <strong>€18.300</strong></p>
+      <p>Cliente: Almacén Rivera</p>
+      <p>Última venta: 3.000 kg de tomate</p>
+    </div>
+  
+    <div class="contenedor-inventario">
+      <h3>🚜 Inventario Agrícola</h3>
+      <ul>
+        <li>Tractor John Deere (en uso)</li>
+        <li>Fertilizante NPK: 40%</li>
+        <li>Semillas de lechuga: 2.000 unidades</li>
+      </ul>
+    </div>
+  </div>
+  <script>
+      function mostrarDatos() {
+        const cont = document.getElementById("contenedores-datos");
+        cont.classList.toggle("oculto");
+      }
+      </script>
+      <!-- CONTENEDORES VERTICALES: CUENTAS POR COBRAR -->
+  <div id="contenedores-cobros" class="contenedores-cobros oculto">
+      <div class="item-cobro">
+        <h4>Cliente: Agrocampo SL</h4>
+        <p>Monto pendiente: €2.500</p>
+        <p>Vencimiento: 20/04/2025</p>
+      </div>
+    
+      <div class="item-cobro">
+        <h4>Cliente: CampoFértil</h4>
+        <p>Monto pendiente: €1.200</p>
+        <p>Vencimiento: 25/04/2025</p>
+      </div>
+    
+      <div class="item-cobro">
+        <h4>Cliente: Semillas del Sur</h4>
+        <p>Monto pendiente: €3.800</p>
+        <p>Vencimiento: 01/05/2025</p>
+      </div>
+    </div>
+    <script>
+      function mostrarCobros() {
+      const cobros = document.getElementById("contenedores-cobros");
+      cobros.classList.toggle("oculto");
+    }
+    </script>
+    
+    
+      </div>
+</body>
+</html>

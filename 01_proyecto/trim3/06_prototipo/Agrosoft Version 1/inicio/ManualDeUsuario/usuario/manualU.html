@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - AgroSoft</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f2fdf5;
+            margin: 0;
+
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(to right, #43a047, #66bb6a);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+        .volver-header {
+            position: absolute;
+            top: 1.5rem;
+            left: 2rem;
+            text-decoration: none;
+            background-color: #ffffff33;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .volver-header:hover {
+            background-color: #ffffff55;
+        }
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2e7d32;
+            margin-top: 2rem;
+        }
+        p, li {
+            line-height: 1.6;
+        }
+        ul {
+            margin-left: 1.5rem;
+        }
+        .step {
+            background: #e8f5e9;
+            border-left: 5px solid #66bb6a;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+            transition: transform 0.2s;
+        }
+        .step:hover {
+            transform: scale(1.02);
+        }
+        .step-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #2e7d32;
+        }
+        .icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: #43a047;
+        }
+        .volver button{
+        display: block;
+        text-decoration: none;
+        margin-bottom: 100px;
+        text-align: center;
+        margin: 2rem auto 0;
+        width: fit-content; /* Se ajusta al contenido */
+        background-color: #6cc341;
+        padding: 0.8rem 2rem;
+        border-radius: 1.5rem;
+        transition: background-color 0.3s;
+
+        }
+        .volver:hover {
+            background-color: #388e3c;
+        }
+        footer {
+        background: #d06615;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/ManualDeUsuario/manual.html" class="volver-header">⬅ Volver</a>
+        <h1>Gestión de Usuarios</h1>
+        <p>Aprende a administrar fácilmente los usuarios dentro de AgroSoft</p>
+    </header>
+
+    <main>
+        <div class="step">
+            <div class="step-title"><span class="icon">🔐</span>1. Iniciar sesión</div>
+            <p>Accede a <strong>AgroSoft</strong> introduciendo tu <strong>correo electrónico</strong> y <strong>contraseña</strong> en la página principal. Al iniciar sesión correctamente, serás redirigido al panel de control donde gestionarás tu actividad.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-title"><span class="icon">➕</span>2. Registrar nuevos usuarios</div>
+            <p>Haz clic en <strong>"Nuevo usuario"</strong>. Se abrirá un formulario donde deberás completar los siguientes campos:</p>
+            <ul>
+                <li>Nombre completo</li>
+                <li>Correo electrónico</li>
+                <li>Rol del usuario (Administrador, Vendedor, etc.)</li>
+                <li>Contraseña segura</li>
+            </ul>
+            <p>Una vez llenos los datos, pulsa en <strong>Guardar</strong> para completar el registro.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-title"><span class="icon">✏️</span>3. Editar o eliminar usuarios</div>
+            <p>Desde la lista de usuarios:</p>
+            <ul>
+                <li>Para <strong>editar</strong>: haz clic en el icono de lápiz y modifica los datos necesarios.</li>
+                <li>Para <strong>eliminar</strong>: pulsa el icono de papelera y confirma la acción.</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <div class="step-title"><span class="icon">👤</span>4. Gestionar perfil personal</div>
+            <p>Haz clic en tu nombre (esquina superior derecha) y selecciona <strong>"Perfil"</strong>. Desde allí puedes:</p>
+            <ul>
+                <li>Actualizar nombre o correo</li>
+                <li>Cambiar contraseña</li>
+                <li>Subir una foto de perfil (opcional)</li>
+            </ul>
+            <p>No olvides guardar los csambios antes de salir.</p>
+        </div>
+        <div>
+            <a href="/registar_usuario/index.html" class="volver">⬅ Gestionar</a></div>
+    </main>
+    <footer>
+        © 2025 AgroSoft - Transformando el agro con tecnología
+    </footer>
+</body>
+</html>

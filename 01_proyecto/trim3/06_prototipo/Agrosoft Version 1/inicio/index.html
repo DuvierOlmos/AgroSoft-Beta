@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agrosoft </title>
+    <link rel="stylesheet" href="css/index.css">
+    
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+          <div class="logo">
+            <img src="./img/1.PNG" alt="Logo de la empresa">
+            <h1>Agro<span>soft</span></h1>
+          </div>
+      
+          <div class="search-user-container">
+            <div class="search-bar">
+              <input type="text" placeholder="Buscar productos...">
+              <button type="submit">🔍</button>
+            </div>
+      
+            <div class="user-actions">
+              <a href="/iniciar sesion/index.html" class="btn-icon">👤</a>
+              <a href="./Editar_Carrito_de_Compra/Editar_Carrito.html" class="btn-icon">
+                🛒<span class="cart-count">0</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <nav class="main-navbar">
+        <ul>
+          <li><a href="/inicio/blog/blog.html">Blog</a></li>
+          <li><a href="/inicio/catalogo/verCatalogo.html">Catálogo</a></li>
+          <li><a href="/inicio/Comentarios y reseñas/comentariosReseñas.html">Comentarios</a></li>
+          <li><a href="/inicio/gestionar PQR/gestonPQR.HTML">PQRS</a></li>
+          <li><a href="/inicio/Ofertas y descuentos/descuentoOefrtas.html">Ofertas</a></li>
+        </ul>
+      </nav>
+      
+
+    <main>
+        <!-- Carrusel de productos destacados -->
+        <section class="featured-carousel">
+            <h2 class="section-title">PRODUCTOS DESTACADOS DE LA SEMANA</h2>
+            <div class="carousel-container">
+                <div class="carousel-track">
+                    <div class="carousel-slide active">
+                        <img src="./img/grapes-553462_1280.jpg" alt="Uva campesina" class="product-image">
+                        <div class="product-info">
+                            <h3>Uvas pequeñas</h3>
+                            <p class="producer">Productor: Juan Pérez</p>
+                            <p class="price">$25.900 x libra</p>
+                            <div class="product-actions">
+                                <button class="btn-add">+</button>
+                                <span class="quantity">1</span>
+                                <button class="btn-remove">-</button>
+                                <button class="btn-cart">Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="./img/banana-2192128_1280.jpg" alt="Platano verde" class="product-image">
+                        <div class="product-info">
+                            <h3>Platano verde</h3>
+                            <p class="producer">Productor: María Gómez</p>
+                            <p class="price">$4.000 x libra</p>
+                            <div class="product-actions">
+                                <button class="btn-add">+</button>
+                                <span class="quantity">1</span>
+                                <button class="btn-remove">-</button>
+                                <button class="btn-cart">Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="./img/apples-1004886_1280.jpg" alt="Manzana roja" class="product-image">
+                        <div class="product-info">
+                            <h3>Manzana roja</h3>
+                            <p class="producer">Productor: Carlos Rojas</p>
+                            <p class="price">$7.999 x kilo</p>
+                            <div class="product-actions">
+                                <button class="btn-add">+</button>
+                                <span class="quantity">1</span>
+                                <button class="btn-remove">-</button>
+                                <button class="btn-cart">Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn prev">‹</button>
+                <button class="carousel-btn next">›</button>
+            </div>
+        </section>
+
+        <!-- Productos recientes -->
+        <section class="recent-products">
+            <h2 class="section-title">Nuevos Productos</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <img src="./img/potatoes-2329648_1280.jpg" alt="papa pastusa" class="product-image">
+                    <div class="product-details">
+                        <h3>Papa pastusa</h3>
+                        <p class="producer">Productor: Ana Torres</p>
+                        <p class="price">$12.999 x kilo</p>
+                        <button class="btn-add-cart">Añadir al carrito</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="./img/carrots-4765284_1280.jpg" alt="Zanahorias orgánicas" class="product-image">
+                    <div class="product-details">
+                        <h3>Zanahoria Orgánica</h3>
+                        <p class="producer">Productor: Luis Mendoza</p>
+                        <p class="price">$3.500 x libra</p>
+                        <button class="btn-add-cart">Añadir al carrito</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="./img/arroz-integral-portada.jpg" alt="Arroz integral" class="product-image">
+                    <div class="product-details">
+                        <h3>Arroz Integral</h3>
+                        <p class="producer">Productor: Cooperativa La Esperanza</p>
+                        <p class="price">$18.000 x kilo</p>
+                        <button class="btn-add-cart">Añadir al carrito</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="./img/fresh-eggs-2581036_1280.jpg" alt="Huevos campesinos" class="product-image">
+                    <div class="product-details">
+                        <h3>Huevos Campesinos</h3>
+                        <p class="producer">Productor: Doña Rosa</p>
+                        <p class="price">$15.000 x 30 unidades</p>
+                        <button class="btn-add-cart">Añadir al carrito</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Acerca de nosotros</h3>
+                <p>Somos un aplicativo web que tiene como objetivo mejorar la comercialización de productos agrícolas, mejorando la competitividad en el mercado, de los pequeños y medianos productores o (Campesinos) de Colombia, asegurando precios justos para los clientes.</p>
+            </div>
+            <div class="footer-section">
+                <h3>¿Quieres vender tus productos? ¡Contactanos!</h3>
+                <p><i class="icon">✉️</i> Agrosoft@gmail.com</p>
+                <p><i class="icon">📱</i> +57 123 525 676</p>
+            </div>
+            <div class="footer-section">
+                <h3>Redes sociales</h3>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="icon">📘</i></a>
+                    <a href="#" aria-label="Instagram"><i class="icon">📷</i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="icon">💬</i></a>
+
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Agrosoft.</p>
+        </div>
+    </footer>
+
+    <script src="../inicio/js/indexUsuario.js"></script>
+</body>
+</html>
