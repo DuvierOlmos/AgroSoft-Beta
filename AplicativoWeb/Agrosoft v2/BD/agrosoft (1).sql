@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-11-2025 a las 20:25:46
+-- Tiempo de generación: 11-12-2025 a las 21:11:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -45,7 +45,9 @@ INSERT INTO `carrito` (`id_carrito`, `id_usuario`, `fecha_creacion`, `fecha_ulti
 (3, 3, '2025-06-02 14:00:00', '2025-06-03 09:00:00', 'Abandonado'),
 (4, 4, '2025-06-04 16:30:00', '2025-06-10 18:00:00', 'Activo'),
 (5, 5, '2025-05-18 11:00:00', '2025-05-25 10:00:00', 'Completado'),
-(6, 6, '2025-06-01 09:15:00', '2025-06-02 08:30:00', 'Abandonado');
+(6, 6, '2025-06-01 09:15:00', '2025-06-02 08:30:00', 'Abandonado'),
+(7, 56, '2025-11-24 22:08:52', '2025-12-11 19:48:48', 'Activo'),
+(8, 66, '2025-11-25 20:14:19', '2025-11-27 20:43:58', 'Activo');
 
 -- --------------------------------------------------------
 
@@ -154,7 +156,8 @@ INSERT INTO `comentario_resena` (`id_comentario_resena`, `id_usuario`, `id_produ
 (12, 5, 1, 4, 'Muy buen producto, aunque el empaque podría mejorar un poco.', '2025-09-28 11:28:41', 'Aprobado', NULL),
 (13, 36, 42, 5, 'rico\n', '2025-10-10 20:15:56', 'Aprobado', NULL),
 (14, 37, 43, 3, 'rico', '2025-10-10 20:20:36', 'Aprobado', NULL),
-(15, 56, 44, 5, 'estaban rico', '2025-10-29 21:57:06', 'Aprobado', NULL);
+(15, 56, 44, 5, 'estaban rico', '2025-10-29 21:57:06', 'Aprobado', NULL),
+(16, 56, 1, 4, 'muy bueno', '2025-12-10 22:50:25', 'Aprobado', NULL);
 
 -- --------------------------------------------------------
 
@@ -167,7 +170,7 @@ CREATE TABLE `descuentos` (
   `id_productor` int(11) DEFAULT NULL,
   `nombre_descuento` varchar(100) NOT NULL,
   `tipo_descuento` varchar(20) NOT NULL,
-  `valor_descuento` decimal(5,2) NOT NULL,
+  `valor_descuento` decimal(15,3) NOT NULL,
   `fecha_inicio` datetime NOT NULL,
   `fecha_fin` datetime NOT NULL,
   `codigo_descuento` varchar(50) DEFAULT NULL,
@@ -180,25 +183,24 @@ CREATE TABLE `descuentos` (
 --
 
 INSERT INTO `descuentos` (`id_descuento`, `id_productor`, `nombre_descuento`, `tipo_descuento`, `valor_descuento`, `fecha_inicio`, `fecha_fin`, `codigo_descuento`, `activo`, `estado`) VALUES
-(1, 55, 'Descuento Primavera', 'Porcentaje', 0.15, '2025-03-01 00:00:00', '2025-05-31 23:59:59', 'PRIMAVERA15', 1, 'Aprobado'),
-(2, 55, 'Descuento Verano', 'Porcentaje', 0.20, '2025-06-01 00:00:00', '2025-08-31 23:59:59', 'VERANO20', 1, 'Aprobado'),
-(3, NULL, 'Descuento Invierno', 'Monto Fijo', 10.00, '2025-12-01 00:00:00', '2025-12-31 23:59:59', 'INVIERNO10', 1, ''),
-(4, NULL, 'Descuento Otoño', 'Porcentaje', 0.10, '2025-09-01 00:00:00', '2025-11-30 23:59:59', 'OTOÑO10', 1, ''),
-(5, NULL, 'Descuento Cliente Nuevo', 'Monto Fijo', 5.00, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'NUEVO5', 1, ''),
-(6, NULL, 'Descuento Festivo', 'Porcentaje', 0.25, '2025-12-24 00:00:00', '2025-12-26 23:59:59', 'FESTIVO25', 1, ''),
-(7, NULL, 'Descuento Semana Santa', 'Porcentaje', 0.18, '2025-04-10 00:00:00', '2025-04-20 23:59:59', 'SEMANA18', 1, ''),
-(8, NULL, 'Descuento Aniversario', 'Monto Fijo', 15.00, '2025-07-15 00:00:00', '2025-07-20 23:59:59', 'ANIVERSARIO15', 1, ''),
-(9, NULL, 'Descuento Black Friday', 'Porcentaje', 0.30, '2025-11-27 00:00:00', '2025-11-29 23:59:59', 'BLACK30', 1, ''),
-(10, NULL, 'Descuento Cyber Monday', 'Porcentaje', 0.28, '2025-11-30 00:00:00', '2025-12-01 23:59:59', 'CYBER28', 1, ''),
-(11, NULL, 'Descuento Productos Frescos', 'Monto Fijo', 3.00, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'FRESCOS3', 1, ''),
-(12, NULL, 'Descuento Navidad', 'Porcentaje', 0.22, '2025-12-15 00:00:00', '2025-12-25 23:59:59', 'NAVIDAD22', 1, ''),
-(13, NULL, 'Descuento Fin de Semana', 'Monto Fijo', 7.00, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'FINSEM7', 1, ''),
-(14, NULL, 'Descuento Clientes Frecuentes', 'Porcentaje', 0.12, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'FRECUENTE12', 1, ''),
-(15, NULL, 'Descuento Liquidación', 'Porcentaje', 0.40, '2025-06-01 00:00:00', '2025-06-15 23:59:59', 'LIQUIDA40', 1, ''),
-(19, NULL, 'Tomate', '', 10.00, '2025-10-23 00:00:00', '2025-10-23 00:00:00', NULL, 1, 'Rechazado'),
-(26, 55, 'Descuento 10', 'Porcentaje', 10.00, '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 1, 'Aprobado'),
-(27, 55, 'Descuento 10', 'Porcentaje', 10.00, '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 1, 'Pendiente'),
-(28, 55, 'Descuento 10', 'Porcentaje', 10.00, '2025-10-28 00:00:00', '2025-10-28 00:00:00', NULL, 1, 'Pendiente');
+(1, 55, 'Descuento Primavera', 'Porcentaje', 2.000, '2025-03-01 00:00:00', '2025-05-31 23:59:59', 'PRIMAVERA15', 1, 'Aprobado'),
+(2, 55, 'Descuento Verano', 'Porcentaje', 1.000, '2025-06-01 00:00:00', '2025-08-31 23:59:59', 'VERANO20', 1, 'Aprobado'),
+(3, NULL, 'Descuento Invierno', 'Monto Fijo', 3.000, '2025-12-01 00:00:00', '2025-12-31 23:59:59', 'INVIERNO10', 1, 'Aprobado'),
+(4, NULL, 'Descuento Otoño', 'Porcentaje', 4.000, '2025-09-01 00:00:00', '2025-11-30 23:59:59', 'OTOÑO10', 1, 'Aprobado'),
+(5, NULL, 'Descuento Cliente Nuevo', 'Monto Fijo', 1.000, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'NUEVO5', 1, 'Aprobado'),
+(6, NULL, 'Descuento Festivo', 'Porcentaje', 5.000, '2025-12-24 00:00:00', '2025-12-26 23:59:59', 'FESTIVO25', 1, 'Aprobado'),
+(7, NULL, 'Descuento Semana Santa', 'Porcentaje', 1.300, '2025-04-10 00:00:00', '2025-04-20 23:59:59', 'SEMANA18', 1, 'Aprobado'),
+(8, NULL, 'Descuento Aniversario', 'Monto Fijo', 2.300, '2025-07-15 00:00:00', '2025-07-20 23:59:59', 'ANIVERSARIO15', 1, 'Aprobado'),
+(9, NULL, 'Descuento Black Friday', 'Porcentaje', 1.100, '2025-11-27 00:00:00', '2025-11-29 23:59:59', 'BLACK30', 1, 'Aprobado'),
+(10, NULL, 'Descuento Cyber Monday', 'Porcentaje', 1.200, '2025-11-30 00:00:00', '2025-12-01 23:59:59', 'CYBER28', 1, 'Aprobado'),
+(11, NULL, 'Descuento Productos Frescos', 'Monto Fijo', 1.000, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'FRESCOS3', 1, 'Aprobado'),
+(12, NULL, 'Descuento Navidad', 'Porcentaje', 4.200, '2025-12-15 00:00:00', '2025-12-25 23:59:59', 'NAVIDAD22', 1, 'Aprobado'),
+(13, NULL, 'Descuento Fin de Semana', 'Monto Fijo', 5.100, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'FINSEM7', 1, 'Aprobado'),
+(14, NULL, 'Descuento Clientes Frecuentes', 'Porcentaje', 2.000, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 'FRECUENTE12', 1, 'Aprobado'),
+(19, NULL, 'Tomate', '', 1.000, '2025-10-23 00:00:00', '2025-10-23 00:00:00', 'FOUND1', 1, 'Rechazado'),
+(26, 55, 'Descuento 10', 'Porcentaje', 1.100, '2025-10-28 00:00:00', '2025-10-28 00:00:00', 'FIRST23', 1, 'Aprobado'),
+(27, 55, 'Descuento 10', 'Porcentaje', 3.000, '2025-10-28 00:00:00', '2025-10-28 00:00:00', 'PAWN31', 1, 'Aprobado'),
+(28, 55, 'Descuento 10', 'Porcentaje', 3.000, '2025-10-28 00:00:00', '2025-10-28 00:00:00', 'AEA32', 1, 'Aprobado');
 
 -- --------------------------------------------------------
 
@@ -225,7 +227,8 @@ INSERT INTO `detalle_carrito` (`id_detalle_carrito`, `id_carrito`, `id_producto`
 (3, 3, 3, 2, 30.000, 45.000),
 (4, 4, 4, 7, 12.000, 84.000),
 (5, 5, 5, 2, 50.000, 100.000),
-(6, 6, 6, 4, 25.000, 100.000);
+(6, 6, 6, 4, 25.000, 100.000),
+(33, 7, 6, 1, 2.100, 2.100);
 
 -- --------------------------------------------------------
 
@@ -254,7 +257,21 @@ INSERT INTO `detalle_pedido` (`id_detalle_pedido`, `id_pedido`, `id_producto`, `
 (4, 4, 4, 1, 20.000, 20.000, 2.000),
 (5, 5, 5, 4, 6.500, 26.000, 1.500),
 (6, 6, 6, 2, 15.000, 30.000, 0.000),
-(14, 54, 39, 10, 2000.000, 20000.000, 0.000);
+(14, 54, 39, 10, 2000.000, 20000.000, 0.000),
+(15, 1002, 1, 1, 15.500, 15.500, 0.000),
+(16, 1002, 3, 1, 12.200, 12.200, 0.000),
+(17, 1003, 6, 2, 2.100, 4.200, 0.000),
+(18, 1004, 11, 3, 2.800, 8.400, 0.000),
+(19, 1005, 1, 1, 15.500, 15.500, 0.000),
+(20, 1006, 1, 1, 15.500, 15.500, 0.000),
+(21, 1006, 3, 2, 12.200, 24.400, 0.000),
+(22, 1007, 1, 1, 15.500, 15.500, 0.000),
+(23, 1007, 3, 1, 12.200, 12.200, 0.000),
+(24, 1008, 3, 1, 12.200, 12.200, 0.000),
+(25, 1009, 1, 1, 15.500, 15.500, 0.000),
+(26, 1009, 5, 1, 3.500, 3.500, 0.000),
+(27, 1009, 4, 1, 9.800, 9.800, 0.000),
+(28, 1009, 3, 1, 12.200, 12.200, 0.000);
 
 --
 -- Disparadores `detalle_pedido`
@@ -336,17 +353,19 @@ CREATE TABLE `inventario` (
 INSERT INTO `inventario` (`id_inventario`, `id_producto`, `id_agricultor`, `vendido`, `fecha_Compra`, `cantidad_disponible`, `fecha_ultima_actualizacion`, `ubicacion_almacenamiento`) VALUES
 (1, 1, 55, 10, NULL, 100, '2025-10-28 22:02:22', 'Finca El Roble'),
 (2, 2, 33, 0, NULL, 19, '2025-10-20 22:20:02', 'Finca El Roble'),
-(3, 3, 55, 0, NULL, 2, '2025-10-28 20:12:30', 'Finca El Roble'),
+(3, 3, 55, 11, NULL, 2, '2025-11-04 15:12:17', 'Finca El Roble'),
 (4, 4, 32, 0, NULL, 120, '2025-09-14 21:00:10', 'Vereda La Esperanza'),
 (5, 5, 33, 0, NULL, 60, '2025-09-14 21:00:10', 'Vereda La Esperanza'),
 (6, 6, 34, 0, NULL, 30, '2025-09-14 21:00:10', 'Vereda La Esperanza'),
-(7, 2, 55, 0, '2025-10-01 00:00:00', 19, '2025-10-20 22:20:02', 'Almacén Norte'),
-(8, 39, 55, 0, NULL, 3, '2025-10-21 19:44:31', NULL),
+(7, 2, 55, 11, '2025-10-01 00:00:00', 19, '2025-11-04 15:11:37', 'Almacén Norte'),
+(8, 39, 55, 23, NULL, 3, '2025-11-04 15:19:14', NULL),
 (9, 40, 55, 0, NULL, 23, '2025-10-21 22:17:30', NULL),
 (10, 41, 55, 0, NULL, 12, '2025-10-23 19:14:29', NULL),
 (11, 42, 55, 0, NULL, 24, '2025-10-24 20:46:39', NULL),
 (12, 43, 55, 0, NULL, 2, '2025-10-27 21:48:19', NULL),
-(13, 44, 55, 0, NULL, 23, '2025-10-28 22:05:41', NULL);
+(13, 44, 55, 4, NULL, 23, '2025-11-04 20:43:17', NULL),
+(14, 45, 55, 0, NULL, 56, '2025-11-04 20:44:03', NULL),
+(15, 46, 55, 0, NULL, 23, '2025-12-10 22:47:43', NULL);
 
 -- --------------------------------------------------------
 
@@ -426,66 +445,76 @@ CREATE TABLE `pedidos` (
   `fecha_entrega_estimada` datetime DEFAULT NULL,
   `fecha_entrega_real` datetime DEFAULT NULL,
   `numero_seguimiento` varchar(100) DEFAULT NULL,
-  `notas_pedido` text DEFAULT NULL
+  `notas_pedido` text DEFAULT NULL,
+  `motivo_cancelacion` varchar(255) DEFAULT NULL,
+  `fecha_actualizacion` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pedidos`
 --
 
-INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha_pedido`, `total_pedido`, `id_metodo_pago`, `direccion_envio`, `ciudad_envio`, `codigo_postal_envio`, `id_estado_pedido`, `fecha_entrega_estimada`, `fecha_entrega_real`, `numero_seguimiento`, `notas_pedido`) VALUES
-(1, 1, '2025-05-10 10:15:00', 150.75, 1, 'Cra 10 #20-30', 'Bogotá', '110111', 3, '2025-05-15 18:00:00', '2025-05-14 17:30:00', 'TRACK001', 'Entregar en horario de oficina.'),
-(2, 2, '2025-05-11 11:00:00', 80.00, 2, 'Calle 45 #67-89', 'Medellín', '050021', 4, '2025-05-16 12:00:00', NULL, 'TRACK002', NULL),
-(3, 3, '2025-05-12 09:30:00', 200.00, 3, 'Av 3 #12-34', 'Cali', '760001', 2, '2025-05-17 16:00:00', NULL, 'TRACK003', 'Revisar productos antes de enviar.'),
-(4, 4, '2025-05-13 14:45:00', 350.50, 4, 'Cra 8 #44-12', 'Barranquilla', '080001', 1, '2025-05-18 19:00:00', NULL, 'TRACK004', 'Cliente pidió factura.'),
-(5, 5, '2025-05-14 16:20:00', 120.00, 5, 'Calle 9 #10-11', 'Pereira', '660001', 5, '2025-05-19 17:00:00', '2025-05-19 16:45:00', 'TRACK005', NULL),
-(6, 6, '2025-05-15 08:10:00', 450.25, 1, 'Transv 21 #55-32', 'Bucaramanga', '680001', 4, '2025-05-20 15:00:00', '2025-05-19 14:30:00', 'TRACK006', 'Dejar con conserje si no está el cliente.'),
-(7, 7, '2025-05-16 12:00:00', 75.00, 2, 'Calle 70 #88-90', 'Cartagena', '130001', 3, '2025-05-21 13:00:00', NULL, 'TRACK007', NULL),
-(8, 8, '2025-05-17 13:30:00', 95.00, 3, 'Av 6N #13-14', 'Cúcuta', '540001', 2, '2025-05-22 17:00:00', NULL, 'TRACK008', NULL),
-(9, 9, '2025-05-18 15:40:00', 220.00, 4, 'Cra 15 #22-33', 'Ibagué', '730001', 1, '2025-05-23 18:00:00', NULL, 'TRACK009', 'Cliente solicitó llamada previa.'),
-(10, 10, '2025-05-19 10:25:00', 130.00, 5, 'Calle 100 #20-10', 'Neiva', '410001', 5, '2025-05-24 16:00:00', '2025-05-24 15:50:00', 'TRACK010', NULL),
-(11, 11, '2025-05-20 09:15:00', 300.00, 1, 'Oficina 1', 'Bogotá', '110111', 4, '2025-05-25 18:00:00', '2025-05-24 17:30:00', 'TRACK011', NULL),
-(12, 12, '2025-05-21 14:00:00', 50.00, 2, 'Cra 9 #33-22', 'Cali', '760001', 3, '2025-05-26 12:00:00', NULL, 'TRACK012', NULL),
-(13, 13, '2025-05-22 08:45:00', 400.00, 3, 'Calle 50 #60-70', 'Medellín', '050021', 2, '2025-05-27 16:00:00', NULL, 'TRACK013', NULL),
-(14, 14, '2025-05-23 11:30:00', 250.75, 4, 'Cra 18 #40-20', 'Cartagena', '130001', 1, '2025-05-28 19:00:00', NULL, 'TRACK014', 'Entregar a seguridad.'),
-(15, 15, '2025-05-24 17:45:00', 175.00, 5, 'Oficina 9', 'Barranquilla', '080001', 5, '2025-05-29 17:00:00', '2025-05-29 16:55:00', 'TRACK015', NULL),
-(16, 16, '2025-05-25 10:00:00', 190.00, 1, 'Av Central #33-44', 'Manizales', '170001', 4, '2025-05-30 15:00:00', '2025-05-29 14:30:00', 'TRACK016', NULL),
-(17, 17, '2025-05-26 13:15:00', 85.00, 2, 'Cra 77 #10-10', 'Cúcuta', '540001', 3, '2025-05-31 13:00:00', NULL, 'TRACK017', NULL),
-(18, 18, '2025-05-27 14:30:00', 220.00, 3, 'Calle 13 #8-20', 'Pasto', '520001', 2, '2025-06-01 17:00:00', NULL, 'TRACK018', 'Verificar dirección.'),
-(19, 19, '2025-05-28 16:00:00', 140.00, 4, 'Calle 6 #1-23', 'Tunja', '150001', 1, '2025-06-02 18:00:00', NULL, 'TRACK019', NULL),
-(20, 20, '2025-05-29 09:30:00', 165.00, 5, 'Zona Industrial 5', 'Montería', '230001', 5, '2025-06-03 16:00:00', '2025-06-03 15:50:00', 'TRACK020', NULL),
-(21, 21, '2025-05-30 10:10:00', 130.50, 1, 'Finca El Roble', 'Tolima', '730001', 4, '2025-06-04 18:00:00', '2025-06-03 17:30:00', 'TRACK021', NULL),
-(22, 22, '2025-05-31 11:20:00', 70.00, 2, 'Vereda La Esperanza', 'Huila', '410001', 3, '2025-06-05 12:00:00', NULL, 'TRACK022', NULL),
-(23, 23, '2025-06-01 09:00:00', 210.00, 3, 'Finca San José', 'Nariño', '520001', 2, '2025-06-06 16:00:00', NULL, 'TRACK023', NULL),
-(24, 24, '2025-06-02 14:50:00', 320.00, 4, 'Zona Rural Km 12', 'Meta', '180001', 1, '2025-06-07 19:00:00', NULL, 'TRACK024', 'Llamar antes de entregar.'),
-(25, 25, '2025-06-03 16:30:00', 100.00, 5, 'Camino Real #123', 'Cauca', '760001', 5, '2025-06-08 17:00:00', '2025-06-08 16:50:00', 'TRACK025', NULL),
-(26, 26, '2025-06-04 09:45:00', 275.00, 1, 'Sector El Bosque', 'Antioquia', '050021', 4, '2025-06-09 15:00:00', '2025-06-08 14:30:00', 'TRACK026', NULL),
-(27, 27, '2025-06-05 11:10:00', 90.00, 2, 'Finca Las Palmas', 'Caldas', '170001', 3, '2025-06-10 13:00:00', NULL, 'TRACK027', NULL),
-(28, 28, '2025-06-06 13:25:00', 230.00, 3, 'Km 4 Vía al Mar', 'La Guajira', '440001', 2, '2025-06-11 17:00:00', NULL, 'TRACK028', NULL),
-(29, 29, '2025-06-07 15:00:00', 125.00, 4, 'Vereda Los Pinos #45', 'Santander', '680001', 1, '2025-06-12 18:00:00', NULL, 'TRACK029', 'Por favor, dejar en portería si no hay nadie.'),
-(30, 30, '2025-06-08 10:20:00', 180.00, 5, 'Calle 7 #89-12', 'Villavicencio', '500001', 5, '2025-06-13 17:00:00', '2025-06-13 16:50:00', 'TRACK030', 'Cliente pidió embalaje extra para regalo.'),
-(31, 31, '2025-06-09 11:00:00', 190.00, 1, 'Cra 50 #100-110', 'Cali', '760001', 4, '2025-06-14 17:00:00', '2025-06-13 16:45:00', 'TRACK031', 'Incluir tarjeta de cumpleaños.'),
-(32, 32, '2025-06-10 09:30:00', 150.50, 2, 'Calle 80 #20-30', 'Pereira', '660001', 3, '2025-06-15 13:00:00', NULL, 'TRACK032', 'Revisar condiciones de garantía.'),
-(33, 33, '2025-06-11 12:00:00', 200.00, 3, 'Av 2 #15-20', 'Medellín', '050021', 2, '2025-06-16 17:00:00', NULL, 'TRACK033', 'Verificar disponibilidad de producto.'),
-(34, 34, '2025-06-12 10:30:00', 250.75, 4, 'Calle 45 #34-56', 'Barranquilla', '080001', 1, '2025-06-17 19:00:00', NULL, 'TRACK034', 'Llamar antes de la entrega.'),
-(35, 35, '2025-06-13 14:00:00', 120.00, 5, 'Cra 21 #56-67', 'Ibagué', '730001', 5, '2025-06-18 15:00:00', '2025-06-18 14:45:00', 'TRACK035', NULL),
-(36, 36, '2025-06-14 16:20:00', 130.25, 1, 'Calle 90 #22-35', 'Cúcuta', '540001', 4, '2025-06-19 18:00:00', '2025-06-18 17:30:00', 'TRACK036', 'Cliente solicitó factura.'),
-(37, 37, '2025-06-15 10:00:00', 170.50, 2, 'Calle 100 #30-40', 'Neiva', '410001', 3, '2025-06-20 12:00:00', NULL, 'TRACK037', 'Confirmar producto antes de enviar.'),
-(38, 38, '2025-06-16 09:45:00', 220.00, 3, 'Cra 80 #15-25', 'Medellín', '050021', 2, '2025-06-21 16:00:00', NULL, 'TRACK038', 'Incluir nota personalizada.'),
-(39, 39, '2025-06-17 12:15:00', 180.00, 4, 'Calle 50 #70-80', 'Pasto', '520001', 1, '2025-06-22 17:00:00', NULL, 'TRACK039', 'Cliente pidió llamada antes de la entrega.'),
-(40, 40, '2025-06-18 13:00:00', 150.00, 5, 'Av 100 #40-50', 'Manizales', '170001', 5, '2025-06-23 16:00:00', '2025-06-23 15:45:00', 'TRACK040', NULL),
-(41, 41, '2025-06-19 14:30:00', 220.25, 1, 'Calle 110 #10-20', 'Cali', '760001', 4, '2025-06-24 17:00:00', '2025-06-23 16:30:00', 'TRACK041', 'Entregar en horario nocturno.'),
-(42, 42, '2025-06-20 10:45:00', 180.75, 2, 'Cra 70 #22-33', 'Barranquilla', '080001', 3, '2025-06-25 15:00:00', NULL, 'TRACK042', 'Confirmar dirección antes de enviar.'),
-(43, 43, '2025-06-21 13:30:00', 260.00, 3, 'Calle 60 #90-100', 'Pereira', '660001', 2, '2025-06-26 17:00:00', NULL, 'TRACK043', 'Incluir tarjeta de agradecimiento.'),
-(44, 44, '2025-06-22 11:10:00', 210.50, 4, 'Cra 15 #50-60', 'Neiva', '410001', 1, '2025-06-27 18:00:00', NULL, 'TRACK044', 'Verificar estado del producto.'),
-(45, 45, '2025-06-23 09:20:00', 170.00, 5, 'Calle 30 #45-50', 'Medellín', '050021', 5, '2025-06-28 16:00:00', '2025-06-28 15:50:00', 'TRACK045', NULL),
-(46, 46, '2025-06-24 14:00:00', 195.75, 1, 'Calle 120 #15-25', 'Cali', '760001', 4, '2025-06-29 18:00:00', '2025-06-28 17:30:00', 'TRACK046', 'Dejar paquete en conserjería.'),
-(47, 47, '2025-06-25 13:15:00', 140.00, 2, 'Calle 50 #80-90', 'Pereira', '660001', 3, '2025-06-30 14:00:00', NULL, 'TRACK047', 'Llamar antes de entregar.'),
-(48, 48, '2025-06-26 11:50:00', 230.00, 3, 'Calle 40 #60-70', 'Medellín', '050021', 2, '2025-07-01 16:00:00', NULL, 'TRACK048', 'Verificar cantidad antes de envío.'),
-(49, 49, '2025-06-27 12:40:00', 270.50, 4, 'Av 25 #20-30', 'Neiva', '410001', 1, '2025-07-02 19:00:00', NULL, 'TRACK049', 'Confirmar antes de enviar.'),
-(50, 50, '2025-06-28 09:00:00', 160.00, 5, 'Calle 110 #25-35', 'Manizales', '170001', 5, '2025-07-03 17:00:00', '2025-07-03 16:40:00', 'TRACK050', NULL),
-(53, 55, '2025-10-21 14:59:03', 0.00, 1, '', '', NULL, 4, NULL, NULL, NULL, NULL),
-(54, 55, '2025-10-21 14:59:50', 0.00, 1, 'calle 45c #13-27este', 'Soacha', '00001', 1, NULL, NULL, '3103304505', NULL);
+INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha_pedido`, `total_pedido`, `id_metodo_pago`, `direccion_envio`, `ciudad_envio`, `codigo_postal_envio`, `id_estado_pedido`, `fecha_entrega_estimada`, `fecha_entrega_real`, `numero_seguimiento`, `notas_pedido`, `motivo_cancelacion`, `fecha_actualizacion`) VALUES
+(1, 1, '2025-05-10 10:15:00', 150.75, 1, 'Cra 10 #20-30', 'Bogotá', '110111', 4, '2025-05-15 18:00:00', '2025-05-14 17:30:00', 'TRACK001', 'Entregar en horario de oficina.', NULL, NULL),
+(2, 2, '2025-05-11 11:00:00', 80.00, 2, 'Calle 45 #67-89', 'Medellín', '050021', 2, '2025-05-16 12:00:00', NULL, 'TRACK002', NULL, NULL, NULL),
+(3, 3, '2025-05-12 09:30:00', 200.00, 3, 'Av 3 #12-34', 'Cali', '760001', 1, '2025-05-17 16:00:00', NULL, 'TRACK003', 'Revisar productos antes de enviar.', NULL, NULL),
+(4, 4, '2025-05-13 14:45:00', 350.50, 4, 'Cra 8 #44-12', 'Barranquilla', '080001', 1, '2025-05-18 19:00:00', NULL, 'TRACK004', 'Cliente pidió factura.', NULL, NULL),
+(5, 5, '2025-05-14 16:20:00', 120.00, 5, 'Calle 9 #10-11', 'Pereira', '660001', 5, '2025-05-19 17:00:00', '2025-05-19 16:45:00', 'TRACK005', NULL, NULL, NULL),
+(6, 6, '2025-05-15 08:10:00', 450.25, 1, 'Transv 21 #55-32', 'Bucaramanga', '680001', 4, '2025-05-20 15:00:00', '2025-05-19 14:30:00', 'TRACK006', 'Dejar con conserje si no está el cliente.', NULL, NULL),
+(7, 7, '2025-05-16 12:00:00', 75.00, 2, 'Calle 70 #88-90', 'Cartagena', '130001', 3, '2025-05-21 13:00:00', NULL, 'TRACK007', NULL, NULL, NULL),
+(8, 8, '2025-05-17 13:30:00', 95.00, 3, 'Av 6N #13-14', 'Cúcuta', '540001', 2, '2025-05-22 17:00:00', NULL, 'TRACK008', NULL, NULL, NULL),
+(9, 9, '2025-05-18 15:40:00', 220.00, 4, 'Cra 15 #22-33', 'Ibagué', '730001', 1, '2025-05-23 18:00:00', NULL, 'TRACK009', 'Cliente solicitó llamada previa.', NULL, NULL),
+(10, 10, '2025-05-19 10:25:00', 130.00, 5, 'Calle 100 #20-10', 'Neiva', '410001', 5, '2025-05-24 16:00:00', '2025-05-24 15:50:00', 'TRACK010', NULL, NULL, NULL),
+(11, 11, '2025-05-20 09:15:00', 300.00, 1, 'Oficina 1', 'Bogotá', '110111', 4, '2025-05-25 18:00:00', '2025-05-24 17:30:00', 'TRACK011', NULL, NULL, NULL),
+(12, 12, '2025-05-21 14:00:00', 50.00, 2, 'Cra 9 #33-22', 'Cali', '760001', 3, '2025-05-26 12:00:00', NULL, 'TRACK012', NULL, NULL, NULL),
+(13, 13, '2025-05-22 08:45:00', 400.00, 3, 'Calle 50 #60-70', 'Medellín', '050021', 2, '2025-05-27 16:00:00', NULL, 'TRACK013', NULL, NULL, NULL),
+(14, 14, '2025-05-23 11:30:00', 250.75, 4, 'Cra 18 #40-20', 'Cartagena', '130001', 1, '2025-05-28 19:00:00', NULL, 'TRACK014', 'Entregar a seguridad.', NULL, NULL),
+(15, 15, '2025-05-24 17:45:00', 175.00, 5, 'Oficina 9', 'Barranquilla', '080001', 5, '2025-05-29 17:00:00', '2025-05-29 16:55:00', 'TRACK015', NULL, NULL, NULL),
+(16, 16, '2025-05-25 10:00:00', 190.00, 1, 'Av Central #33-44', 'Manizales', '170001', 4, '2025-05-30 15:00:00', '2025-05-29 14:30:00', 'TRACK016', NULL, NULL, NULL),
+(17, 17, '2025-05-26 13:15:00', 85.00, 2, 'Cra 77 #10-10', 'Cúcuta', '540001', 3, '2025-05-31 13:00:00', NULL, 'TRACK017', NULL, NULL, NULL),
+(18, 18, '2025-05-27 14:30:00', 220.00, 3, 'Calle 13 #8-20', 'Pasto', '520001', 2, '2025-06-01 17:00:00', NULL, 'TRACK018', 'Verificar dirección.', NULL, NULL),
+(19, 19, '2025-05-28 16:00:00', 140.00, 4, 'Calle 6 #1-23', 'Tunja', '150001', 1, '2025-06-02 18:00:00', NULL, 'TRACK019', NULL, NULL, NULL),
+(20, 20, '2025-05-29 09:30:00', 165.00, 5, 'Zona Industrial 5', 'Montería', '230001', 5, '2025-06-03 16:00:00', '2025-06-03 15:50:00', 'TRACK020', NULL, NULL, NULL),
+(21, 21, '2025-05-30 10:10:00', 130.50, 1, 'Finca El Roble', 'Tolima', '730001', 4, '2025-06-04 18:00:00', '2025-06-03 17:30:00', 'TRACK021', NULL, NULL, NULL),
+(22, 22, '2025-05-31 11:20:00', 70.00, 2, 'Vereda La Esperanza', 'Huila', '410001', 3, '2025-06-05 12:00:00', NULL, 'TRACK022', NULL, NULL, NULL),
+(23, 23, '2025-06-01 09:00:00', 210.00, 3, 'Finca San José', 'Nariño', '520001', 2, '2025-06-06 16:00:00', NULL, 'TRACK023', NULL, NULL, NULL),
+(24, 24, '2025-06-02 14:50:00', 320.00, 4, 'Zona Rural Km 12', 'Meta', '180001', 1, '2025-06-07 19:00:00', NULL, 'TRACK024', 'Llamar antes de entregar.', NULL, NULL),
+(25, 25, '2025-06-03 16:30:00', 100.00, 5, 'Camino Real #123', 'Cauca', '760001', 5, '2025-06-08 17:00:00', '2025-06-08 16:50:00', 'TRACK025', NULL, NULL, NULL),
+(26, 26, '2025-06-04 09:45:00', 275.00, 1, 'Sector El Bosque', 'Antioquia', '050021', 4, '2025-06-09 15:00:00', '2025-06-08 14:30:00', 'TRACK026', NULL, NULL, NULL),
+(27, 27, '2025-06-05 11:10:00', 90.00, 2, 'Finca Las Palmas', 'Caldas', '170001', 3, '2025-06-10 13:00:00', NULL, 'TRACK027', NULL, NULL, NULL),
+(28, 28, '2025-06-06 13:25:00', 230.00, 3, 'Km 4 Vía al Mar', 'La Guajira', '440001', 2, '2025-06-11 17:00:00', NULL, 'TRACK028', NULL, NULL, NULL),
+(29, 29, '2025-06-07 15:00:00', 125.00, 4, 'Vereda Los Pinos #45', 'Santander', '680001', 1, '2025-06-12 18:00:00', NULL, 'TRACK029', 'Por favor, dejar en portería si no hay nadie.', NULL, NULL),
+(30, 30, '2025-06-08 10:20:00', 180.00, 5, 'Calle 7 #89-12', 'Villavicencio', '500001', 5, '2025-06-13 17:00:00', '2025-06-13 16:50:00', 'TRACK030', 'Cliente pidió embalaje extra para regalo.', NULL, NULL),
+(31, 31, '2025-06-09 11:00:00', 190.00, 1, 'Cra 50 #100-110', 'Cali', '760001', 4, '2025-06-14 17:00:00', '2025-06-13 16:45:00', 'TRACK031', 'Incluir tarjeta de cumpleaños.', NULL, NULL),
+(32, 32, '2025-06-10 09:30:00', 150.50, 2, 'Calle 80 #20-30', 'Pereira', '660001', 3, '2025-06-15 13:00:00', NULL, 'TRACK032', 'Revisar condiciones de garantía.', NULL, NULL),
+(33, 33, '2025-06-11 12:00:00', 200.00, 3, 'Av 2 #15-20', 'Medellín', '050021', 2, '2025-06-16 17:00:00', NULL, 'TRACK033', 'Verificar disponibilidad de producto.', NULL, NULL),
+(34, 34, '2025-06-12 10:30:00', 250.75, 4, 'Calle 45 #34-56', 'Barranquilla', '080001', 1, '2025-06-17 19:00:00', NULL, 'TRACK034', 'Llamar antes de la entrega.', NULL, NULL),
+(35, 35, '2025-06-13 14:00:00', 120.00, 5, 'Cra 21 #56-67', 'Ibagué', '730001', 5, '2025-06-18 15:00:00', '2025-06-18 14:45:00', 'TRACK035', NULL, NULL, NULL),
+(36, 36, '2025-06-14 16:20:00', 130.25, 1, 'Calle 90 #22-35', 'Cúcuta', '540001', 4, '2025-06-19 18:00:00', '2025-06-18 17:30:00', 'TRACK036', 'Cliente solicitó factura.', NULL, NULL),
+(37, 37, '2025-06-15 10:00:00', 170.50, 2, 'Calle 100 #30-40', 'Neiva', '410001', 3, '2025-06-20 12:00:00', NULL, 'TRACK037', 'Confirmar producto antes de enviar.', NULL, NULL),
+(38, 38, '2025-06-16 09:45:00', 220.00, 3, 'Cra 80 #15-25', 'Medellín', '050021', 2, '2025-06-21 16:00:00', NULL, 'TRACK038', 'Incluir nota personalizada.', NULL, NULL),
+(39, 39, '2025-06-17 12:15:00', 180.00, 4, 'Calle 50 #70-80', 'Pasto', '520001', 1, '2025-06-22 17:00:00', NULL, 'TRACK039', 'Cliente pidió llamada antes de la entrega.', NULL, NULL),
+(40, 40, '2025-06-18 13:00:00', 150.00, 5, 'Av 100 #40-50', 'Manizales', '170001', 5, '2025-06-23 16:00:00', '2025-06-23 15:45:00', 'TRACK040', NULL, NULL, NULL),
+(41, 41, '2025-06-19 14:30:00', 220.25, 1, 'Calle 110 #10-20', 'Cali', '760001', 4, '2025-06-24 17:00:00', '2025-06-23 16:30:00', 'TRACK041', 'Entregar en horario nocturno.', NULL, NULL),
+(42, 42, '2025-06-20 10:45:00', 180.75, 2, 'Cra 70 #22-33', 'Barranquilla', '080001', 3, '2025-06-25 15:00:00', NULL, 'TRACK042', 'Confirmar dirección antes de enviar.', NULL, NULL),
+(43, 43, '2025-06-21 13:30:00', 260.00, 3, 'Calle 60 #90-100', 'Pereira', '660001', 2, '2025-06-26 17:00:00', NULL, 'TRACK043', 'Incluir tarjeta de agradecimiento.', NULL, NULL),
+(44, 44, '2025-06-22 11:10:00', 210.50, 4, 'Cra 15 #50-60', 'Neiva', '410001', 1, '2025-06-27 18:00:00', NULL, 'TRACK044', 'Verificar estado del producto.', NULL, NULL),
+(45, 45, '2025-06-23 09:20:00', 170.00, 5, 'Calle 30 #45-50', 'Medellín', '050021', 5, '2025-06-28 16:00:00', '2025-06-28 15:50:00', 'TRACK045', NULL, NULL, NULL),
+(46, 46, '2025-06-24 14:00:00', 195.75, 1, 'Calle 120 #15-25', 'Cali', '760001', 4, '2025-06-29 18:00:00', '2025-06-28 17:30:00', 'TRACK046', 'Dejar paquete en conserjería.', NULL, NULL),
+(47, 47, '2025-06-25 13:15:00', 140.00, 2, 'Calle 50 #80-90', 'Pereira', '660001', 3, '2025-06-30 14:00:00', NULL, 'TRACK047', 'Llamar antes de entregar.', NULL, NULL),
+(48, 48, '2025-06-26 11:50:00', 230.00, 3, 'Calle 40 #60-70', 'Medellín', '050021', 2, '2025-07-01 16:00:00', NULL, 'TRACK048', 'Verificar cantidad antes de envío.', NULL, NULL),
+(49, 49, '2025-06-27 12:40:00', 270.50, 4, 'Av 25 #20-30', 'Neiva', '410001', 1, '2025-07-02 19:00:00', NULL, 'TRACK049', 'Confirmar antes de enviar.', NULL, NULL),
+(50, 50, '2025-06-28 09:00:00', 160.00, 5, 'Calle 110 #25-35', 'Manizales', '170001', 5, '2025-07-03 17:00:00', '2025-07-03 16:40:00', 'TRACK050', NULL, NULL, NULL),
+(53, 55, '2025-10-21 14:59:03', 0.00, 1, '', '', NULL, 4, NULL, NULL, NULL, NULL, NULL, NULL),
+(54, 55, '2025-10-21 14:59:50', 0.00, 1, 'calle 45c #13-27este', 'Soacha', '00001', 1, NULL, NULL, '3103304505', NULL, NULL, NULL),
+(1002, 56, '2025-11-24 22:12:21', 27700.00, 4, 'cra #30-45', 'Bogotá D.C.', '110333', 4, NULL, NULL, 'AGRO-22341375', 'LLAMAR', 'no', '2025-11-24 22:17:44'),
+(1003, 66, '2025-11-25 20:17:00', 4200.00, 4, 'cra #31-47', 'Bogotá D.C.', '110333', 4, NULL, NULL, 'AGRO-01820634', 'llamar', 'Me arrepenti', '2025-11-25 20:17:52'),
+(1004, 66, '2025-11-27 20:43:58', 8400.00, 5, 'cra #30-41', 'Bogotá D.C.', '110333', 1, NULL, NULL, 'AGRO-76238082', 'llamar', NULL, NULL),
+(1005, 56, '2025-12-10 20:14:23', 15500.00, 4, 'AAAAAA', 'Bogotá D.C.', 'AAAAAA', 1, NULL, NULL, 'AGRO-97663842', 'AAA', NULL, NULL),
+(1006, 56, '2025-12-10 21:45:28', 39900.00, 4, 'cra 1', 'Bogotá D.C.', '111111', 4, NULL, NULL, 'AGRO-03128039', 'LLamar antes', 'Ya no lo quiero', '2025-12-10 21:45:55'),
+(1007, 56, '2025-12-10 21:52:37', 27700.00, 4, 'cra 1', 'Bogotá D.C.', '111111', 4, NULL, NULL, 'AGRO-03557731', 'LLAMAR ANTES', 'ya no lo quiero', '2025-12-10 21:53:00'),
+(1008, 56, '2025-12-10 21:56:02', 12200.00, 4, 'AAAAAA', 'Bogotá D.C.', '111111', 4, NULL, NULL, 'AGRO-03762380', '', 'Cancelado por el usuario', '2025-12-11 19:48:36'),
+(1009, 56, '2025-12-10 22:52:00', 41000.00, 4, 'cra 1', 'Bogotá D.C.', '111111', 4, NULL, NULL, 'AGRO-07120925', 'llamar antes', 'No me gusto', '2025-12-10 22:53:50');
 
 -- --------------------------------------------------------
 
@@ -500,6 +529,13 @@ CREATE TABLE `perfiles` (
   `biografia` text DEFAULT NULL,
   `url_foto` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `perfiles`
+--
+
+INSERT INTO `perfiles` (`id_perfil`, `id_usuario`, `nombre_completo`, `biografia`, `url_foto`) VALUES
+(1, 55, 'Juliana Tique Ortiz', 'productor se cerial', 'https://www.maga.gob.gt/wp-content/uploads/2024/09/Dia-Mundial-de-la-Agricultura1-1200x800.jpeg');
 
 -- --------------------------------------------------------
 
@@ -586,7 +622,7 @@ CREATE TABLE `producto` (
   `id_producto` bigint(20) NOT NULL,
   `nombre_producto` varchar(200) NOT NULL,
   `descripcion_producto` text DEFAULT NULL,
-  `precio_unitario` decimal(10,3) NOT NULL,
+  `precio_unitario` decimal(15,3) NOT NULL,
   `unidad_medida` varchar(50) NOT NULL,
   `url_imagen` varchar(255) DEFAULT NULL,
   `id_SubCategoria` int(11) NOT NULL,
@@ -602,24 +638,26 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id_producto`, `nombre_producto`, `descripcion_producto`, `precio_unitario`, `unidad_medida`, `url_imagen`, `id_SubCategoria`, `id_usuario`, `estado_producto`, `fecha_creacion`, `fecha_ultima_modificacion`, `cantidad`) VALUES
-(1, 'Carne Molida Especial ', 'Carne de res magra, ideal para guisos y hamburguesas.', 15.500, 'kg', 'https://cdn.pixabay.com/photo/2021/10/18/09/45/ground-beef-6720584_1280.jpg', 3, 55, 'Activo', '2025-09-14 21:00:10', '2025-10-21 14:53:47', 24),
+(1, 'Carne Molida Especial ', 'Carne de res magra, ideal para guisos y hamburguesas.', 15.500, 'kg', 'https://cdn.pixabay.com/photo/2021/10/18/09/45/ground-beef-6720584_1280.jpg', 3, 55, 'Activo', '2025-09-14 21:00:10', '2025-12-10 22:53:50', 23),
 (2, 'Bistec de Res', 'Cortes seleccionados de res, perfectos para asar.', 18.750, 'kg', 'https://cdn.pixabay.com/photo/2019/07/25/01/23/beef-4361462_1280.jpg', 3, 52, 'Inactivo', '2025-09-14 21:00:10', '2025-10-20 22:20:10', 3),
-(3, 'Pechuga de Pollo', 'Pechuga de pollo fresca, sin hueso ni piel.', 12.200, 'kg', 'https://cdn.pixabay.com/photo/2014/03/05/01/20/chicken-breast-279848_1280.jpg', 2, 55, 'Activo', '2025-09-14 21:00:10', '2025-10-21 14:54:18', 510),
-(4, 'Muslos de Pollo', 'Muslos de pollo con piel y hueso, ideales para hornear.', 9.800, 'kg', 'https://cdn.pixabay.com/photo/2021/12/14/15/32/chicken-6870740_1280.jpg', 2, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:48', 6),
-(5, 'Naranjas Jugosas', 'Naranjas frescas y dulces, perfectas para jugo.', 3.500, 'kg', 'https://cdn.pixabay.com/photo/2019/10/21/14/54/oranges-4566274_1280.jpg', 5, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:51', 12),
-(6, 'Limones Verdes', 'Limones ácidos, ideales para bebidas y cocina.', 2.100, 'kg', 'https://cdn.pixabay.com/photo/2019/04/22/05/39/lemons-4145762_1280.jpg', 5, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:41', 420),
+(3, 'Pechuga de Pollo', 'Pechuga de pollo fresca, sin hueso ni piel.', 12.200, 'kg', 'https://cdn.pixabay.com/photo/2014/03/05/01/20/chicken-breast-279848_1280.jpg', 2, 55, 'Activo', '2025-09-14 21:00:10', '2025-12-11 19:48:36', 510),
+(4, 'Muslos de Pollo', 'Muslos de pollo con piel y hueso, ideales para hornear.', 9.800, 'kg', 'https://cdn.pixabay.com/photo/2021/12/14/15/32/chicken-6870740_1280.jpg', 2, 3, 'Activo', '2025-09-14 21:00:10', '2025-12-10 22:53:50', 6),
+(5, 'Naranjas Jugosas', 'Naranjas frescas y dulces, perfectas para jugo.', 3.500, 'kg', 'https://cdn.pixabay.com/photo/2019/10/21/14/54/oranges-4566274_1280.jpg', 5, 3, 'Activo', '2025-09-14 21:00:10', '2025-12-10 22:53:50', 12),
+(6, 'Limones Verdes', 'Limones ácidos, ideales para bebidas y cocina.', 2.100, 'kg', 'https://cdn.pixabay.com/photo/2019/04/22/05/39/lemons-4145762_1280.jpg', 5, 3, 'Activo', '2025-09-14 21:00:10', '2025-11-25 20:17:52', 420),
 (7, 'Arroz Blanco', 'Arroz de grano largo, básico en la cocina.', 4.100, 'kg', 'https://cdn.pixabay.com/photo/2021/11/15/12/36/rice-6798016_1280.jpg', 9, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 21:56:24', 1),
 (8, 'Avena en Hojuelas', 'Avena integral para desayunos y repostería.', 6.700, 'unidad', 'https://cdn.pixabay.com/photo/2023/10/16/12/09/oatmeal-8319100_1280.jpg', 9, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:35', 239),
 (9, 'Huevos Criollos (Docena)', 'Huevos de gallina criolla, frescos y de granja.', 10.000, 'docena', 'https://cdn.pixabay.com/photo/2018/06/29/15/35/egg-3506222_1280.jpg', 10, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:32', 120),
 (10, 'Leche Entera UHT', 'Leche de vaca entera, larga duración.', 4.500, 'litro', 'https://cdn.pixabay.com/photo/2018/06/05/12/25/milk-3455408_1280.jpg', 12, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:28', 12),
-(11, 'Papa Pastusa', 'Papa de tamaño mediano, ideal para todo uso.', 2.800, 'kg', 'https://speedy.uenicdn.com/c194ffac-4196-44c0-8789-37a7e42038e4/c512_a/image/upload/v1562254294/service_images/shutterstock_347630291.jpg', 14, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:25', 39),
+(11, 'Papa Pastusa', 'Papa de tamaño mediano, ideal para todo uso.', 2.800, 'kg', 'https://speedy.uenicdn.com/c194ffac-4196-44c0-8789-37a7e42038e4/c512_a/image/upload/v1562254294/service_images/shutterstock_347630291.jpg', 14, 3, 'Activo', '2025-09-14 21:00:10', '2025-11-27 20:43:58', 36),
 (12, 'Lechuga Romana', 'Lechuga fresca de hojas crujientes.', 1.500, 'unidad', 'https://cdn.pixabay.com/photo/2018/06/29/07/26/salad-3505392_960_720.jpg', 17, 3, 'Activo', '2025-09-14 21:00:10', '2025-10-01 22:01:18', 25),
 (39, 'tomate', 'rico', 2.000, '2', 'https://i0.wp.com/placeres.pe/wp-content/uploads/2023/08/tomate.jpg?fit=1200%2C797&ssl=1', 16, 55, 'Inactivo', '2025-10-20 22:36:07', '2025-10-27 15:30:05', 42),
 (40, 'tomate', 'rico', 20.000, '100', 'https://i0.wp.com/placeres.pe/wp-content/uploads/2023/08/tomate.jpg?fit=1200%2C797&ssl=1', 16, 55, 'Inactivo', '2025-10-21 22:16:55', '2025-10-27 15:29:57', NULL),
 (41, 'tomate', 'rico', 12.000, '100', 'https://i0.wp.com/placeres.pe/wp-content/uploads/2023/08/tomate.jpg?fit=1200%2C797&ssl=1', 16, 55, 'Inactivo', '2025-10-23 19:14:29', '2025-10-27 15:11:09', NULL),
 (42, 'Mora', 'Ricas', 20.000, '100', 'https://www.lekue.com/cdn-cgi/image/format=auto,onerror=redirect/media/wysiwyg/LEKUE/lekueblogs/istock-521496072ok-1.jpg', 6, 55, 'Activo', '2025-10-24 20:43:36', '2025-10-27 15:35:23', NULL),
 (43, 'tomate', 'rico', 1200.000, '100', 'https://i0.wp.com/placeres.pe/wp-content/uploads/2023/08/tomate.jpg?fit=1200%2C797&ssl=1', 16, 55, 'Inactivo', '2025-10-24 21:50:30', '2025-10-28 22:04:04', NULL),
-(44, 'tomate', 'rico', 20.000, '100', 'https://definicion.de/wp-content/uploads/2015/01/tomate-1.jpg', 16, NULL, 'Activo', '2025-10-28 22:04:33', '2025-10-28 22:05:41', NULL);
+(44, 'tomate', 'rico', 20000.000, '100', 'https://definicion.de/wp-content/uploads/2015/01/tomate-1.jpg', 16, NULL, 'Inactivo', '2025-10-28 22:04:33', '2025-11-04 20:43:26', NULL),
+(45, 'tomate', 'rico', 10.000, '122', 'https://i0.wp.com/placeres.pe/wp-content/uploads/2023/08/tomate.jpg?fit=1200%2C797&ssl=1', 16, NULL, 'Activo', '2025-11-04 20:44:03', '2025-11-04 15:52:06', NULL),
+(46, 'Carne', 'Carne de res', 15.000, '1kg', 'https://thefoodtech.com/wp-content/uploads/2020/05/carne-de-res.jpg', 3, NULL, 'Activo', '2025-12-10 22:47:16', '2025-12-10 22:47:43', NULL);
 
 -- --------------------------------------------------------
 
@@ -640,6 +678,12 @@ INSERT INTO `producto_descuento` (`id_producto`, `id_descuento`) VALUES
 (1, 27),
 (1, 28),
 (6, 6),
+(7, 27),
+(8, 6),
+(9, 27),
+(10, 6),
+(11, 6),
+(12, 27),
 (42, 26);
 
 -- --------------------------------------------------------
@@ -717,7 +761,13 @@ INSERT INTO `producto_oferta` (`id_producto`, `id_oferta`) VALUES
 (3, 3),
 (4, 4),
 (5, 5),
-(6, 6);
+(6, 6),
+(7, 1),
+(8, 4),
+(9, 5),
+(10, 1),
+(11, 3),
+(12, 5);
 
 -- --------------------------------------------------------
 
@@ -871,9 +921,13 @@ INSERT INTO `usuarios` (`id_usuario`, `nombre_usuario`, `password_hash`, `correo
 (50, 'mariana.morales', '0530e0d1838430054034151bbc8a67fa1d5db9c9', 'mariana.morales@example.com', 3, '300000028', 'Activo'),
 (51, 'Juan Suarez', 'bd4b67accb1f47a860c9d70b5684752722edb435', 'jZuares@example.com', 1, '12005678', 'Activo'),
 (52, '1234', '', 'juliana@gmail.com', 3, '1024482979', 'activo'),
-(54, 'julia', '$2b$10$cN5hBcsvzvC/L3TWun8A4OcihoG6rSByADKkLngDBFS5NTRXmZNBq', 'julia@gmail.com', 1, '1021203101', 'Activo'),
+(54, 'julia', '$2b$10$cN5hBcsvzvC/L3TWun8A4OcihoG6rSByADKkLngDBFS5NTRXmZNBq', 'julia@gmail.com', 2, '1021203101', 'Activo'),
 (55, 'juliana', '$2b$10$wKFyjI8orX7MDN/EdBJbAeLWvQFnPxWMWzraDujETa.66gHdF.RZG', 'julianaaa@gmail.com', 3, '1024512302', 'Activo'),
-(56, 'Albeiro Ramos', '$2b$10$d/p9slCQeYdIOs45EPxvA.YsInEdvrbteMYCx7PqfyPMpJ52uP2y6', 'Profealbeiro2020@gmail.com', 1, '1234567', 'Activo');
+(56, 'Albeiro Ramos', '$2b$10$d/p9slCQeYdIOs45EPxvA.YsInEdvrbteMYCx7PqfyPMpJ52uP2y6', 'Profealbeiro2020@gmail.com', 1, '1234567', 'Activo'),
+(57, 'julio', '$2b$10$LAT06vMkful3OGdFQXxdiOgmOyjeyqFarUcNarhAz868Y6JWL5VN2', 'julio@gmail.com', 3, '2036521236', 'Activo'),
+(58, 'johanL2', '$2b$10$xkc56RPHKIH.NeEbE8gEZeGNL5lPsArQbZR3kd9/elSIOCR2Bn.zy', 'Jh@gmail.com', 2, '11022334455', 'Activo'),
+(59, 'johanL4', '$2b$10$juVmu68QgpzsKCmfiDI1Yug6Ov2xJVySI1nIQuTAUsF8oU3S2PjZK', 'johan@gmail.com', 3, '1234567891', 'Activo'),
+(66, 'Juan', '$2b$10$eJQ1Qtq2DmBVvbzEjhUje.soc7rWzUZrZS.VVsyh/cX3UFDPBdkle', 'juan@gmail.com', 1, '123456789', 'Activo');
 
 --
 -- Índices para tablas volcadas
@@ -1069,7 +1123,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id_carrito` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_carrito` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `categorias`
@@ -1081,7 +1135,7 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `comentario_resena`
 --
 ALTER TABLE `comentario_resena`
-  MODIFY `id_comentario_resena` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_comentario_resena` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `descuentos`
@@ -1093,13 +1147,13 @@ ALTER TABLE `descuentos`
 -- AUTO_INCREMENT de la tabla `detalle_carrito`
 --
 ALTER TABLE `detalle_carrito`
-  MODIFY `id_detalle_carrito` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_detalle_carrito` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_pedido`
 --
 ALTER TABLE `detalle_pedido`
-  MODIFY `id_detalle_pedido` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_detalle_pedido` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de la tabla `estado_pedido`
@@ -1117,7 +1171,7 @@ ALTER TABLE `estado_pqrs`
 -- AUTO_INCREMENT de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  MODIFY `id_inventario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_inventario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `metodo_pago`
@@ -1135,13 +1189,13 @@ ALTER TABLE `ofertas`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id_pedido` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1002;
+  MODIFY `id_pedido` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1010;
 
 --
 -- AUTO_INCREMENT de la tabla `perfiles`
 --
 ALTER TABLE `perfiles`
-  MODIFY `id_perfil` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_perfil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `pqrs`
@@ -1153,7 +1207,7 @@ ALTER TABLE `pqrs`
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  MODIFY `id_producto` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id_producto` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT de la tabla `producto_imagenes`
@@ -1183,7 +1237,7 @@ ALTER TABLE `tipo_pqrs`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id_usuario` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- Restricciones para tablas volcadas
