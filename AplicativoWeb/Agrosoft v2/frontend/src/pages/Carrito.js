@@ -15,10 +15,8 @@ import { useNotification } from "../context/NotificationContext";
 import { useCarrito } from "../context/CarritoContext";
 import ShippingFormModal from "../components/ShippingFormModal";
 import PaymentModal from "../components/PaymentModal";
+import { generarPDFCarrito } from "../services/pdfCarritoService"; 
 import "../style/Carrito.css";
-
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 const Carrito = () => {
   const {
@@ -81,6 +79,7 @@ const Carrito = () => {
     }).format(numericPrice);
   };
 
+  // NUEVA FUNCIÓN MEJORADA - Usa el servicio profesional
   const generarReportePDF = () => {
     if (!carritoData?.items) {
       addNotification('No hay productos en el carrito para generar reporte', 'warning');
@@ -90,293 +89,151 @@ const Carrito = () => {
     setProcessingAction(true);
 
     try {
+      const { subtotal } = calcularTotales();
 
-      const pdfElement = document.createElement('div');
-      pdfElement.style.position = 'absolute';
-      pdfElement.style.left = '-9999px';
-      pdfElement.style.top = '0';
-      pdfElement.style.width = '800px';
-      pdfElement.style.padding = '40px';
-      pdfElement.style.backgroundColor = 'white';
-      pdfElement.style.fontFamily = 'Arial, sans-serif';
-      pdfElement.style.color = '#333';
+      // Usar el servicio profesional de PDF
+      generarPDFCarrito(carritoData, usuario, subtotal)
+        .then(result => {
+          console.log('PDF generado exitosamente:', result);
+          addNotification('Cotización generada exitosamente', 'success');
+          setProcessingAction(false);
+        })
+        .catch(error => {
+          console.error('Error generando PDF profesional:', error);
 
-      // Contenido del PDF
-      pdfElement.innerHTML = `
-        <div id="pdf-content">
-          <!-- Encabezado -->
-          <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #28a745; padding-bottom: 20px;">
-            <h1 style="color: #2d5016; margin: 0; font-size: 28px; font-weight: bold;">AGROSOFT SAS</h1>
-            <p style="color: #666; margin: 5px 0; font-size: 14px;">Sistema Integral de Gestión Agrícola</p>
-            <p style="color: #666; margin: 5px 0; font-size: 12px;">NIT: 901.234.567-8 • Tel: +57 1 234 5678</p>
-            <p style="color: #666; margin: 5px 0; font-size: 12px;">Bogotá D.C., Colombia</p>
-          </div>
-          
-          <!-- Información del Reporte -->
-          <div style="margin-bottom: 25px;">
-            <h2 style="color: #2d5016; margin: 0 0 15px 0; font-size: 20px; text-align: center;">
-              REPORTE DE COTIZACIÓN
-            </h2>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-              <div>
-                <strong>Fecha de generación:</strong> ${new Date().toLocaleString('es-CO')}
-              </div>
-              <div>
-                <strong>No. de Reporte:</strong> AG-${Date.now().toString().slice(-6)}
-              </div>
-            </div>
-            <div style="margin-bottom: 10px;">
-              <strong>Cliente:</strong> ${usuario.nombre_usuario}
-            </div>
-            <div style="margin-bottom: 10px;">
-              <strong>Email:</strong> ${usuario.email || 'No registrado'}
-            </div>
-          </div>
-          
-          <!-- Tabla de Productos -->
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px;">
-            <thead>
-              <tr style="background-color: #2d5016; color: white;">
-                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Producto</th>
-                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Cantidad</th>
-                <th style="border: 1px solid #ddd; padding: 12px; text-align: center;">Unidad</th>
-                <th style="border: 1px solid #ddd; padding: 12px; text-align: right;">Precio Unitario</th>
-                <th style="border: 1px solid #ddd; padding: 12px; text-align: right;">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${carritoData.items.map((item, index) => {
+      
+          generarReporteSimplePDF();
+
+          setProcessingAction(false);
+        });
+
+    } catch (error) {
+      console.error('Error en generación de PDF:', error);
+      addNotification('Error al generar el reporte PDF', 'error');
+      setProcessingAction(false);
+    }
+  };
+
+  
+  const generarReporteSimplePDF = () => {
+    if (!carritoData?.items) return;
+
+    const { subtotal, totalItems } = calcularTotales();
+
+  
+    import("jspdf").then(({ default: jsPDF }) => {
+      const pdf = new jsPDF();
+
+      pdf.setFont('helvetica');
+      pdf.setFontSize(20);
+      pdf.setTextColor(45, 80, 22);
+      pdf.text('AGROSOFT SAS', 105, 20, { align: 'center' });
+
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('Sistema Integral de Gestión Agrícola', 105, 28, { align: 'center' });
+
+      pdf.setDrawColor(234, 128, 6);
+      pdf.setLineWidth(0.5);
+      pdf.line(20, 35, 190, 35);
+
+      pdf.setFontSize(16);
+      pdf.setTextColor(45, 80, 22);
+      pdf.text('REPORTE DE COTIZACIÓN', 105, 45, { align: 'center' });
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
+      let yPosition = 55;
+
+      pdf.text(`Cliente: ${usuario.nombre_usuario}`, 20, yPosition);
+      pdf.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 20, yPosition + 5);
+      pdf.text(`No. Reporte: AG-${Date.now().toString().slice(-6)}`, 20, yPosition + 10);
+
+      yPosition += 20;
+
+      pdf.setFillColor(45, 80, 22);
+      pdf.setTextColor(255, 255, 255);
+      pdf.rect(20, yPosition, 170, 8, 'F');
+      pdf.text('Producto', 25, yPosition + 6);
+      pdf.text('Cant', 130, yPosition + 6);
+      pdf.text('Precio', 150, yPosition + 6);
+      pdf.text('Subtotal', 170, yPosition + 6);
+
+      yPosition += 15;
+
+      pdf.setTextColor(0, 0, 0);
+      pdf.setFontSize(9);
+
+      carritoData.items.forEach((item, index) => {
+        if (yPosition > 250) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+
         let precio = item.precio_unitario_al_momento || 0;
         let subtotalItem = item.subtotal || 0;
 
         if (precio < 100) precio = precio * 1000;
         if (subtotalItem < 100) subtotalItem = subtotalItem * 1000;
 
-        return `
-                  <tr style="${index % 2 === 0 ? 'background-color: #f8f9fa;' : ''}">
-                    <td style="border: 1px solid #ddd; padding: 10px;">
-                      <strong>${item.nombre_producto}</strong><br>
-                      <small style="color: #666;">${item.descripcion_producto}</small>
-                    </td>
-                    <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item.cantidad}</td>
-                    <td style="border: 1px solid #ddd; padding: 10px; text-align: center;">${item.unidad_medida}</td>
-                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">${formatPrice(precio)}</td>
-                    <td style="border: 1px solid #ddd; padding: 10px; text-align: right;">${formatPrice(subtotalItem)}</td>
-                  </tr>
-                `;
-      }).join('')}
-            </tbody>
-          </table>
-          
-          <!-- Totales -->
-          <div style="margin-left: auto; width: 300px; margin-bottom: 30px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span>Subtotal:</span>
-              <span>${formatPrice(subtotal)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span>Envío:</span>
-              <span style="color: #28a745;">GRATIS</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; padding-top: 10px; border-top: 2px solid #ea8006;">
-              <span>TOTAL:</span>
-              <span style="color: #28a745;">${formatPrice(subtotal)}</span>
-            </div>
-          </div>
-          
-          <!-- Información Adicional -->
-          <div style="border-top: 2px solid #ea8006; padding-top: 20px; margin-bottom: 30px;">
-            <h3 style="color: #2d5016; margin-bottom: 10px; font-size: 16px;">Términos y Condiciones</h3>
-            <ul style="color: #666; font-size: 11px; line-height: 1.4; margin: 0; padding-left: 15px;">
-              <li>Este documento es una cotización y no constituye una factura oficial.</li>
-              <li>Los precios están expresados en Pesos Colombianos (COP).</li>
-              <li>Válido por 15 días a partir de la fecha de emisión.</li>
-              <li>El envío gratuito aplica para compras mayores a $50,000 COP en Bogotá.</li>
-              <li>Los productos están sujetos a disponibilidad de inventario.</li>
-            </ul>
-          </div>
-          
-          <!-- Pie de página -->
-          <div style="text-align: center; color: #666; font-size: 10px; border-top: 1px solid #ddd; padding-top: 15px;">
-            <p style="margin: 5px 0;">© ${new Date().getFullYear()} AgroSoft SAS - Todos los derechos reservados</p>
-            <p style="margin: 5px 0;">www.agrosoft.com • info@agrosoft.com • +57 1 234 5678</p>
-            <p style="margin: 5px 0; font-style: italic;">"Cultivando el futuro de la agricultura colombiana"</p>
-          </div>
-        </div>
-      `;
+        const productName = item.nombre_producto.length > 40 ?
+          item.nombre_producto.substring(0, 40) + '...' : item.nombre_producto;
 
-      document.body.appendChild(pdfElement);
+        pdf.text(productName, 25, yPosition);
+        pdf.text(item.cantidad.toString(), 130, yPosition);
+        pdf.text(formatPrice(precio), 150, yPosition);
+        pdf.text(formatPrice(subtotalItem), 170, yPosition);
 
+        yPosition += 8;
 
-      setTimeout(() => {
-        html2canvas(pdfElement, {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-          backgroundColor: '#ffffff'
-        }).then(canvas => {
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const imgWidth = 210;
-          const pageHeight = 295;
-          const imgHeight = canvas.height * imgWidth / canvas.width;
-          let heightLeft = imgHeight;
-          let position = 0;
+        if (item.descripcion_producto && yPosition < 250) {
+          const desc = item.descripcion_producto.length > 60 ?
+            item.descripcion_producto.substring(0, 60) + '...' : item.descripcion_producto;
+          pdf.setFontSize(8);
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(desc, 25, yPosition);
+          pdf.setFontSize(9);
+          pdf.setTextColor(0, 0, 0);
+          yPosition += 5;
+        }
 
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
+        yPosition += 5;
+      });
 
-          while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-          }
-
-
-          pdf.save(`cotizacion-agrosoft-${new Date().toISOString().split('T')[0]}.pdf`);
-
-
-          document.body.removeChild(pdfElement);
-          setProcessingAction(false);
-          addNotification('Reporte PDF generado exitosamente', 'success');
-        }).catch(error => {
-          console.error('Error generando PDF:', error);
-          document.body.removeChild(pdfElement);
-          setProcessingAction(false);
-          addNotification('Error al generar el PDF', 'error');
-        });
-      }, 500);
-
-    } catch (error) {
-      console.error('Error en generación de PDF:', error);
-      setProcessingAction(false);
-      addNotification('Error al generar el reporte PDF', 'error');
-    }
-  };
-
-
-  const generarReporteSimplePDF = () => {
-    if (!carritoData?.items) return;
-
-    const { subtotal, totalItems } = calcularTotales();
-
-    const pdf = new jsPDF();
-
-
-    pdf.setFont('helvetica');
-    pdf.setFontSize(20);
-    pdf.setTextColor(45, 80, 22);
-    pdf.text('AGROSOFT SAS', 105, 20, { align: 'center' });
-
-    pdf.setFontSize(12);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text('Sistema Integral de Gestión Agrícola', 105, 28, { align: 'center' });
-
-
-    pdf.setDrawColor(234, 128, 6);
-    pdf.setLineWidth(0.5);
-    pdf.line(20, 35, 190, 35);
-
-
-    pdf.setFontSize(16);
-    pdf.setTextColor(45, 80, 22);
-    pdf.text('REPORTE DE COTIZACIÓN', 105, 45, { align: 'center' });
-
-
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
-    let yPosition = 55;
-
-    pdf.text(`Cliente: ${usuario.nombre_usuario}`, 20, yPosition);
-    pdf.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 20, yPosition + 5);
-    pdf.text(`No. Reporte: AG-${Date.now().toString().slice(-6)}`, 20, yPosition + 10);
-
-    yPosition += 20;
-
-
-    pdf.setFillColor(45, 80, 22);
-    pdf.setTextColor(255, 255, 255);
-    pdf.rect(20, yPosition, 170, 8, 'F');
-    pdf.text('Producto', 25, yPosition + 6);
-    pdf.text('Cant', 130, yPosition + 6);
-    pdf.text('Precio', 150, yPosition + 6);
-    pdf.text('Subtotal', 170, yPosition + 6);
-
-    yPosition += 15;
-
-    pdf.setTextColor(0, 0, 0);
-    pdf.setFontSize(9);
-
-    carritoData.items.forEach((item, index) => {
-      if (yPosition > 250) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-
-      let precio = item.precio_unitario_al_momento || 0;
-      let subtotalItem = item.subtotal || 0;
-
-      if (precio < 100) precio = precio * 1000;
-      if (subtotalItem < 100) subtotalItem = subtotalItem * 1000;
-
-
-      const productName = item.nombre_producto.length > 40 ?
-        item.nombre_producto.substring(0, 40) + '...' : item.nombre_producto;
-
-      pdf.text(productName, 25, yPosition);
-      pdf.text(item.cantidad.toString(), 130, yPosition);
-      pdf.text(formatPrice(precio), 150, yPosition);
-      pdf.text(formatPrice(subtotalItem), 170, yPosition);
-
+      yPosition += 10;
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(120, yPosition, 190, yPosition);
       yPosition += 8;
 
+      pdf.text('Subtotal:', 130, yPosition);
+      pdf.text(formatPrice(subtotal), 170, yPosition);
+      yPosition += 6;
 
-      if (item.descripcion_producto && yPosition < 250) {
-        const desc = item.descripcion_producto.length > 60 ?
-          item.descripcion_producto.substring(0, 60) + '...' : item.descripcion_producto;
-        pdf.setFontSize(8);
-        pdf.setTextColor(100, 100, 100);
-        pdf.text(desc, 25, yPosition);
-        pdf.setFontSize(9);
-        pdf.setTextColor(0, 0, 0);
-        yPosition += 5;
-      }
+      pdf.text('Envío:', 130, yPosition);
+      pdf.setTextColor(40, 167, 69);
+      pdf.text('GRATIS', 170, yPosition);
+      pdf.setTextColor(0, 0, 0);
+      yPosition += 8;
 
-      yPosition += 5;
+      pdf.setFontSize(11);
+      pdf.setDrawColor(234, 128, 6);
+      pdf.line(120, yPosition, 190, yPosition);
+      yPosition += 10;
+
+      pdf.text('TOTAL:', 130, yPosition);
+      pdf.setTextColor(40, 167, 69);
+      pdf.text(formatPrice(subtotal), 170, yPosition);
+
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text('© ' + new Date().getFullYear() + ' AgroSoft SAS - www.agrosoft.com', 105, 280, { align: 'center' });
+
+      pdf.save(`cotizacion-agrosoft-${new Date().toISOString().split('T')[0]}.pdf`);
+      addNotification('Reporte PDF generado exitosamente', 'success');
+    }).catch(error => {
+      console.error('Error cargando jsPDF:', error);
+      addNotification('Error al generar el PDF', 'error');
     });
-
-    yPosition += 10;
-    pdf.setDrawColor(200, 200, 200);
-    pdf.line(120, yPosition, 190, yPosition);
-    yPosition += 8;
-
-    pdf.text('Subtotal:', 130, yPosition);
-    pdf.text(formatPrice(subtotal), 170, yPosition);
-    yPosition += 6;
-
-    pdf.text('Envío:', 130, yPosition);
-    pdf.setTextColor(40, 167, 69);
-    pdf.text('GRATIS', 170, yPosition);
-    pdf.setTextColor(0, 0, 0);
-    yPosition += 8;
-
-    pdf.setFontSize(11);
-    pdf.setDrawColor(234, 128, 6);
-    pdf.line(120, yPosition, 190, yPosition);
-    yPosition += 10;
-
-    pdf.text('TOTAL:', 130, yPosition);
-    pdf.setTextColor(40, 167, 69);
-    pdf.text(formatPrice(subtotal), 170, yPosition);
-
-    pdf.setFontSize(8);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text('© ' + new Date().getFullYear() + ' AgroSoft SAS - www.agrosoft.com', 105, 280, { align: 'center' });
-
-
-    pdf.save(`cotizacion-agrosoft-${new Date().toISOString().split('T')[0]}.pdf`);
-    addNotification('Reporte PDF generado exitosamente', 'success');
   };
 
   const cargarCarrito = async () => {
@@ -461,10 +318,8 @@ const Carrito = () => {
 
   const { subtotal, totalItems } = calcularTotales();
 
-
   const generarReporteCompra = () => {
     generarReportePDF();
-
   };
 
   const handleShippingSubmit = (data) => {
