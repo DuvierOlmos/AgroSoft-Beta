@@ -7,7 +7,7 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 
 
 router.post('/admin/create', pqrsController.createPqrs); 
-router.get('/admin',  pqrsController.getAllPqrsAdmin); 
+router.get('/pqrs/admin',  pqrsController.getAllPqrsAdmin); 
 router.get('/admin/:id_pqrs',  pqrsController.getPqrsById); 
 router.put('/admin/update/:id_pqrs', pqrsController.updatePqrsAdmin); 
 
