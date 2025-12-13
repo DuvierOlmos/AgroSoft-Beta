@@ -5,7 +5,7 @@ const Product = require("./product_model");
 const Pedido = require("./order_model");
 const DetallePedido = require("./order_detail_model");
 const Review = require("./review_model");
-const Pqrs = require("./pqrs_model");
+const Pqrs = require("./pqrs");
 
 const Producto = require("./productor");
 const Inventario = require("./inventario");

@@ -1,4 +1,4 @@
-const Pqrs = require("../models/pqrs_model");
+const Pqrs = require("../models/pqrs");
 
 exports.createPqrs = async (req, res) => {
     try {
