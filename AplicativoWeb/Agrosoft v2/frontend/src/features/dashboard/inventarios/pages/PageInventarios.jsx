@@ -13,7 +13,7 @@ export default function PageCategoria() {
       </header>
       <InventarioTable />
       <hr style={{ margin: '2rem 0' }} />
-      <CategoryTable />
+      
     </div>
   );
 }

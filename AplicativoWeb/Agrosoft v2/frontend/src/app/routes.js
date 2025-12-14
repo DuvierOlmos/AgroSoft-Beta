@@ -2,10 +2,11 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import PageUser from "../features/dashboard/user/pages/PageUser";
-import PageCategoria from "../features/dashboard/inventarios/pages/PageCategoria";
+import PageCategoria from "../features/dashboard/categorias/pages/PageCategoria";
 import PagePqrs from "../features/dashboard/pqrs/pages/pagePqrs";
 import PageTipoPqrs from "../features/dashboard/tipoPqrs/pages/pageTipoPqrs";
 import PageRoles from "../features/dashboard/roles/pages/PageRoles";
+import PageInventarios from "../features/dashboard/inventarios/pages/PageInventarios";
 
 export default function AppRoutes() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -23,7 +24,7 @@ export default function AppRoutes() {
           <Route path="categorias" element={<PageCategoria />} />
           <Route path="pqrs" element={<PagePqrs />} />
           <Route path="tipoPqrs" element={<PageTipoPqrs />} />
-          <Route path="inventarios" element={<PageCategoria />} />
+          <Route path="inventarios" element={<PageInventarios />} />
           <Route path="roles" element={<PageRoles />} />
 
           {/* Catch-all dentro del dashboard admin */}
