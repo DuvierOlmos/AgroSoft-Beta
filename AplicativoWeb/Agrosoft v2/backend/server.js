@@ -8,6 +8,7 @@ const db = require("./config/db");
 
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/products_routes");
+const adminProductRoutes = require("./routes/productRoutes");
 const reviewRoutes = require("./routes/review_routes");
 const pqrsRoutes = require("./routes/pqrs_routes");
 
@@ -120,6 +121,7 @@ app.use('/api/descuentos-alt', descuentoRoutes);
 app.use('/api/product-discounts', productoDescuentoRoutes);
 
 app.use("/api/users", userRoutes);
+app.use("/api/products", adminProductRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/reviews", reviewRoutes);
 

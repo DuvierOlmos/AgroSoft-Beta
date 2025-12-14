@@ -40,7 +40,7 @@ export default function CategoryForm({ show, onClose, onSave }) {
       
 
           <div className="form-actions">
-            <button type="submit" className="btn-primary" onClick={onClose}>Guardar</button>
+            <button type="submit" className="btn-primary">Guardar</button>
             <button type="button" className="btn-secondary" onClick={onClose}>
               Cancelar
             </button>

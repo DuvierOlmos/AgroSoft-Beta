@@ -19,7 +19,7 @@ export default function CategoryTable( {onSave}) {
 
     //  FUNCIÓN DE CARGA DE DATOS
     const loadCategories = async () => {
-        setLoading(true);
+        // setLoading(true); // Opcional: comentar si queremos refresco silencioso
         setError(null);
         try {
             const data = await getCategories();

@@ -88,11 +88,11 @@ export async function deleteUser(id) {
       const errorDetail = await response.json();
       errorMessage = errorDetail.message || errorMessage;
     } catch (e) {}
-    alert(` Falló la eliminación: ${errorMessage}`);
+    // alert(` Falló la eliminación: ${errorMessage}`);
     throw new Error(errorMessage);
   }
 
-  alert(" Usuario eliminado con éxito.");
+  // alert(" Usuario eliminado con éxito.");
 
   if (response.status === 204) {
     return { message: "Usuario eliminado con éxito." };

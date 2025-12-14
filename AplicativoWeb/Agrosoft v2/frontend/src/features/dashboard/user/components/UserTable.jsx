@@ -11,7 +11,7 @@ const ROLE_MAP = {
   3: "Productor",
 };
 
-export default function UserManagementTable() {
+export default function UserManagementTable({ refreshTrigger }) {
 
   const [users, setUsers] = useState([]); 
   const [loading, setLoading] = useState(true); 
@@ -26,29 +26,32 @@ export default function UserManagementTable() {
 
   const fetchUsers = async () => {
     try {
-      setLoading(true);
+      // Don't set loading to true here if you want seamless updates, or use a separate loading state
+      // setLoading(true); 
       setError(null);     
       const data = await userService.getUsers();
-      
       setUsers(data); 
     } catch (err) {
       console.error("Error al cargar usuarios:", err);
-      // Muestra un mensaje amigable al usuario
       setError(err.message || "Fallo la conexión con el servidor para obtener los usuarios.");
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchUsers();
-  }, []); 
+  }, [refreshTrigger]); // Fetch on mount and when refreshTrigger changes
+
+  // Expose fetchUsers to parent via ref if needed, or pass it down?
+  // Better yet, just trust internal state updates.
 
   const handleUpdate = async (updatedData) => {
     try {
       await userService.updateUser(updatedData.id_usuario, updatedData);
       setEditUser(null);
       alert('Usuario actualizado con éxito!');
-      await fetchUsers();
+      await fetchUsers(); // Refresh list immediately
     } catch (err) {
       alert(`Error al actualizar: ${err}`);
     }
@@ -57,12 +60,11 @@ export default function UserManagementTable() {
   const handleDeleteConfirm = async (id_usuario) => {
     try {
       await userService.deleteUser(id_usuario);
-      
       setDeleteId(null);
-      alert('Usuario eliminado con éxito!');
-      await fetchUsers();
+      // alert('Usuario eliminado con éxito!'); // Service might already alert
+      await fetchUsers(); // Refresh list immediately
     } catch (err) {
-      alert(`Error al eliminar: ${err}`);
+      // alert(`Error al eliminar: ${err}`); // Service might already alert
     }
   };
 

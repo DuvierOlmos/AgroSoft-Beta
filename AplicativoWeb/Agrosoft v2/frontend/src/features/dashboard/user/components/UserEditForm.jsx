@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-//import userService from "../services/userService"; 
 import { updateUser } from "../services/userService";
 import "../styles/UserEditForm.css";
 
@@ -44,14 +43,17 @@ export default function UserEditForm({ show, onClose, user, onSave}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updated = await updateUser(user.id_usuario, form);
-      console.log("Usuario actualizado:", updated);
-      alert("Usuario Actualizado");
+      setLoading(true);
       
-      onClose();
+      if (onSave) {
+       
+        await onSave({ ...form, id_usuario: user.id_usuario });
+      }
     } catch (err) {
-      console.error("Error al actualizar:", err);
-      alert("No se pudo actualizar el usuario");
+      console.error("Error al enviar formulario de edición:", err);
+      setApiError("Error al guardar los cambios.");
+    } finally {
+        setLoading(false);
     }
   };
 

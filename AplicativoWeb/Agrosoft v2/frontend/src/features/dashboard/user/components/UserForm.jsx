@@ -42,6 +42,7 @@ export default function UserCreateForm({ show, onClose, onSave }) {
         try {            
             const created = await createUser(dataToSend);            
             alert(`Usuario ${created.nombre_usuario || 'creado'} con éxito.`);
+            if (onSave) onSave();
             onClose();            
         } catch (err) {            
             console.error("Error al crear usuario:", err); 
@@ -133,7 +134,6 @@ export default function UserCreateForm({ show, onClose, onSave }) {
                     <div className="form-actions">
                         <button type="submit" 
                                 className="btn-primary" 
-                                onClick={onSave}
                                 disabled={loading}>
                             
                             {loading ? 'Creando...' : 'Crear Usuario'}

@@ -24,7 +24,8 @@ export default function CategoryEditForm({ show, onClose, category, onSave }) {
     try {
       const updated = await updateCategory(category.id_categoria, form);
       console.log("Categoría actualizada:", updated);
-      onClose();      
+      onClose();    
+      onSave();
     } catch (err) {
       console.error("Error al actualizar categoría:", err);
       alert("No se pudo actualizar la categoría");

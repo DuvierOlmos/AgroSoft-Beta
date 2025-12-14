@@ -29,6 +29,8 @@ export default function Sidebar({ onToggle }) {
           <ul>
             <li><NavLink to="/admin/user">Usuarios</NavLink></li>
             <li><NavLink to="/admin/categorias">Categorías</NavLink></li>
+            <li><NavLink to="/admin/productos">Productos</NavLink></li>
+            <li><NavLink to="/admin/pedidos">Pedidos</NavLink></li>
             <li><NavLink to="/admin/pqrs">PQRS</NavLink></li>
             <li><NavLink to="/admin/tipoPqrs">Tipos de PQRS</NavLink></li>
             <li><NavLink to="/admin/inventarios">Inventarios</NavLink></li>

@@ -17,5 +17,9 @@ Producto.hasMany(Inventario, { foreignKey: 'id_producto', as: 'inventarios' });
 Producto.belongsTo(User, { foreignKey: 'id_usuario', as: 'agricultor' });
 User.hasMany(Producto, { foreignKey: 'id_usuario', as: 'productos' });
 
+// Asociación Producto -> SubCategoria
+Producto.belongsTo(SubCategory, { foreignKey: 'id_SubCategoria', as: 'SubCategory' });
+SubCategory.hasMany(Producto, { foreignKey: 'id_SubCategoria', as: 'productos' });
+
 // Este archivo es cargado en server.js para registrar las asociaciones por efecto colateral
 module.exports = { Categoria, SubCategory, Inventario, Producto, User };

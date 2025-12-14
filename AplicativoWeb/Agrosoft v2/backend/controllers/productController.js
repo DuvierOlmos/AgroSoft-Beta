@@ -1,4 +1,4 @@
-const Product = require('../models/product');
+const Product = require('../models/producto_model');
 const SubCategoria = require('../models/subcategory_model');
 const User = require('../models/user');
 const Categoria = require('../models/categoria');
@@ -10,9 +10,12 @@ exports.getAllProductsAdmin = async (req, res) => {
     const products = await Product.findAll({
       // Incluir datos relacionados para la vista de administración
       include:[
-        { model: SubCategoria, attributes: ['id_subCategoria'] }
-      ]  
-      ,
+        { 
+            model: SubCategoria, 
+            as: 'SubCategory',
+            attributes: ['id_SubCategoria', 'nombre'] 
+        }
+      ],
       order: [['id_producto', 'DESC']] // Últimos productos primero
     });
     res.json(products);
@@ -73,9 +76,11 @@ exports.getProductById = async (req, res) => {
  
         {
           model: SubCategoria,
+          as: 'SubCategory',
           attributes: ['id_SubCategoria', 'nombre'],
           include: [{
             model: Categoria,
+            as: 'Categoria',
             attributes: ['id_categoria', 'nombre_categoria']
           }]
         },

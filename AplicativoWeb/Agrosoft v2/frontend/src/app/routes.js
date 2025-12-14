@@ -3,10 +3,12 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import PageUser from "../features/dashboard/user/pages/PageUser";
 import PageCategoria from "../features/dashboard/categorias/pages/PageCategoria";
+import PageProductos from "../features/dashboard/productos/pages/PageProductos";
 import PagePqrs from "../features/dashboard/pqrs/pages/pagePqrs";
 import PageTipoPqrs from "../features/dashboard/tipoPqrs/pages/pageTipoPqrs";
 import PageRoles from "../features/dashboard/roles/pages/PageRoles";
 import PageInventarios from "../features/dashboard/inventarios/pages/PageInventarios";
+import PagePedido from "../features/dashboard/pedidos/pages/PagePedido";
 
 export default function AppRoutes() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -22,9 +24,11 @@ export default function AppRoutes() {
           <Route index element={<Navigate to="user" replace />} />
           <Route path="user" element={<PageUser />} />
           <Route path="categorias" element={<PageCategoria />} />
+          <Route path="productos" element={<PageProductos />} />
           <Route path="pqrs" element={<PagePqrs />} />
           <Route path="tipoPqrs" element={<PageTipoPqrs />} />
           <Route path="inventarios" element={<PageInventarios />} />
+          <Route path="pedidos" element={<PagePedido />} />
           <Route path="roles" element={<PageRoles />} />
 
           {/* Catch-all dentro del dashboard admin */}
