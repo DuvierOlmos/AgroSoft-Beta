@@ -1,48 +1,60 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/pedidos/admin";
+// Ajusta la URL base según corresponda. 
+// Si antes era .../api/ordenes, ahora usaremos rutas específicas.
+const API_URL = "http://localhost:4000/api/ordenes";
 
 const getToken = () => localStorage.getItem("token");
 
-const authHeaders = () => {
-    const token = getToken();
-    return token
-        ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
-        : { "Content-Type": "application/json" };
+const authHeaders = () => ({
+  headers: {
+    Authorization: `Bearer ${getToken()}`,
+  },
+});
+
+export const obtenerOrdenes = async () => {
+  try {
+    // CAMBIO IMPORTANTE: Usamos la ruta de admin para traer TODAS las órdenes
+    const response = await axios.get(`${API_URL}/admin/todas`, authHeaders());
+    return response.data;
+  } catch (error) {
+    console.error(" Error al obtener las órdenes:", error);
+    if (error.response?.status === 401) {
+      throw new Error("Token inválido o expirado. Inicia sesión nuevamente.");
+    }
+    return [];
+  }
 };
 
-export const getPedidos = async () => {
-    try {
-        const response = await axios.get(API_URL, { headers: authHeaders() });
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching pedidos:", error);
-        throw error;
+export const actualizarEstadoOrden = async (id, estado) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/${id}/estado`, 
+      { estado },
+      authHeaders()
+    );
+    return response.data;
+  } catch (error) {
+    console.error(" Error al actualizar estado de la orden:", error);
+    if (error.response?.status === 401) {
+      throw new Error("Token inválido o expirado. Inicia sesión nuevamente.");
     }
+    throw error;
+  }
 };
 
-export const getPedidoById = async (id) => {
-    try {
-        const response = await axios.get(`${API_URL}/${id}`, { headers: authHeaders() });
-        return response.data;
-    } catch (error) {
-        console.error(`Error fetching pedido ${id}:`, error);
-        throw error;
-    }
-};
-
-export const updateEstadoPedido = async (id, id_estado_pedido) => {
-    try {
-        // La ruta en el backend es router.put('/admin/estadoPedido/:id', ...)
-        const response = await axios.put(`${API_URL}/estadoPedido/${id}`, { id_estado_pedido }, { headers: authHeaders() });
-        alert(`Estado del pedido actualizado con éxito.`);
-        return response.data;
-    } catch (error) {
-        let errorMessage = "Ocurrió un error inesperado al actualizar el estado.";
-        if (error.response) {
-            errorMessage = error.response.data.message || `Fallo del servidor (Status: ${error.response.status}).`;
-        }
-        alert(`Error al actualizar: ${errorMessage}`);
-        throw new Error(errorMessage);
-    }
+export const obtenerComprobante = async (id_pedido) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/${id_pedido}/comprobante`,
+      {
+        ...authHeaders(),
+        responseType: 'blob', 
+      }
+    );
+    return response.data; 
+  } catch (error) {
+    console.error(" Error al obtener el comprobante:", error);
+    throw error;
+  }
 };
