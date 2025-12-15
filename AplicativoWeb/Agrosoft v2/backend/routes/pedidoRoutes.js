@@ -2,17 +2,13 @@
 const express = require('express');
 const router = express.Router();
 const pedidoController = require('../controllers/pedidoController');
-const estadoPedidoController = require('../controllers/estadoPedidoController');
-const { authenticateToken, isAdmin } = require('../middleware/authMiddleware');
+const adminMiddleware = require('../middleware/adminMiddleware'); 
+const estadoPedidoController = require('../controllers/estadoPedidoController')
 
-// Rutas de ADMINISTRACIÓN de Pedidos
-// Se requiere token válido y rol de administrador (id_rol = 2)
-
-router.get('/admin', authenticateToken, isAdmin, pedidoController.getAllPedidosAdmin); 
-router.get('/admin/:id', authenticateToken, isAdmin, pedidoController.getPedidoByIdAdmin);
-
-// Rutas para actualizar estados
-router.put('/admin/orders/estado/:id', authenticateToken, isAdmin, estadoPedidoController.updateEstadoPedido);
-router.put('/admin/estadoPedido/:id', authenticateToken, isAdmin, estadoPedidoController.updateEstadoPedido); 
+// Rutas de ADMINISTRACIÓN de Pedidos 
+router.get('/admin', pedidoController.getAllPedidosAdmin); 
+router.get('/admin/:id',  pedidoController.getPedidoByIdAdmin);
+router.put('/admin/orders/estado/:id', estadoPedidoController.updateEstadoPedido);
+router.put('/admin/estadoPedido/:id', estadoPedidoController.updateEstadoPedido); 
 
 module.exports = router;

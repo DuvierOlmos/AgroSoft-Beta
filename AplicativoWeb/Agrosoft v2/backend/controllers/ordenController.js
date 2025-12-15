@@ -4,6 +4,7 @@ const PDFDocument = require('pdfkit');
 const obtenerOrdenes = async (req, res) => {
   try {
     const idProductor = req.user.id_usuario;
+
     const sql = `
       SELECT 
         ped.id_pedido,
@@ -19,8 +20,9 @@ const obtenerOrdenes = async (req, res) => {
       INNER JOIN usuarios u ON ped.id_usuario = u.id_usuario
       INNER JOIN detalle_pedido dp ON ped.id_pedido = dp.id_pedido
       INNER JOIN producto p ON dp.id_producto = p.id_producto
+      INNER JOIN inventario i ON p.id_producto = i.id_producto
       INNER JOIN estado_pedido ep ON ped.id_estado_pedido = ep.id_estado_pedido
-      WHERE p.id_usuario = :idProductor
+      WHERE i.id_agricultor = :idProductor
   GROUP BY ped.id_pedido, ped.fecha_pedido, ped.direccion_envio, ped.ciudad_envio, ped.numero_seguimiento, u.nombre_usuario, ep.nombre_estado
       ORDER BY ped.fecha_pedido DESC;
     `;

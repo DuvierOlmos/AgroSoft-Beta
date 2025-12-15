@@ -11,7 +11,6 @@ exports.getAllPedidosAdmin = async (req, res) => {
       include: [       
         { model: EstadoPedido, as: 'Estado' }, 
         { model: DetallePedido, as: 'Detalles' },
-        { model: User, as: 'Cliente', attributes: ['nombre_usuario'] }
       ],
          order: [['fecha_pedido', 'DESC']] 
      });

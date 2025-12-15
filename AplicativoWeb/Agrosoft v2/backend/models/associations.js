@@ -14,13 +14,8 @@ const ProductoDescuento = require('./producto_descuento');
 const EstadoPedido = require('./estadoPedido');
 const EstadoPqrs = require('./estadoPqrs');
 const TipoPqrs = require('./tipoPqrs');
-const Inventario = require('./inventario');
 
 
-
-// Asociación Inventario -> Producto
-Inventario.belongsTo(Product, { foreignKey: 'id_producto', as: 'producto' });
-Product.hasMany(Inventario, { foreignKey: 'id_producto', as: 'inventarios' });
 
 // Un Rol tiene muchos Usuarios
 Rol.hasMany(User, { foreignKey: 'id_rol', as: 'Usuarios' });
@@ -119,5 +114,4 @@ module.exports = {
     EstadoPqrs,
     TipoPqrs,
     Pqrs,
-    Inventario
 };

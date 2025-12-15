@@ -34,7 +34,7 @@ const isAdmin = (req, res, next) => {
 };
 
 const isAgricultor = (req, res, next) => {
-  if (req.user && req.user.id_rol === 3 && 2 ) return next();
+  if (req.user && req.user.id_rol === 3) return next();
   return res.status(403).json({ success: false, error: "Se requiere rol AGRICULTOR." });
 };
 
