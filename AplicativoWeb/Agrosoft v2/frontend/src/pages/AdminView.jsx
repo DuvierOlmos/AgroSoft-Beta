@@ -107,6 +107,11 @@ export default function AdminView() {
       return;
     }
 
+    if (!productoAEnviar.id_usuario) {
+      setMensaje("Error: No se ha identificado el usuario productor. Intenta recargar la página.");
+      return;
+    }
+
 
     try {
       await addProducto(productoAEnviar); 
@@ -265,7 +270,7 @@ export default function AdminView() {
             <label>Valor del Producto</label>
             <input
               type="number"
-              step="0.01"
+              step="1"
               id="ValorAnadir"
               value={nuevo.precio_unitario}
               onChange={handleChangeNuevo}
@@ -345,7 +350,7 @@ export default function AdminView() {
                     <label>Valor</label>
                     <input
                       type="number"
-                      step="0.01"
+                      step="1"
                       value={productoSeleccionado.precio_unitario || ""}
                       onChange={(e) =>
                         handleChangeSeleccionado("precio_unitario", e.target.value)
@@ -437,7 +442,7 @@ export default function AdminView() {
                 <p className="descripcion">
                   Descripción: {p.descripcion_producto}
                 </p>
-                <p className="precio">Precio: {formatoCOP(p.precio_unitario * 1000)}</p>
+                <p className="precio">Precio: {formatoCOP(p.precio_unitario)}</p>
                 <p className="existencia">
                   Existencia: {p.cantidad_disponible}
                 </p>

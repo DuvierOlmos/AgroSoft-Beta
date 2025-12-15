@@ -10,7 +10,7 @@ export default function UserCreateForm({ show, onClose, onSave }) {
         correo_electronico: "",
         id_rol: "",
         documento_identidad: "",
-        estado: "activo", 
+        estado: "Activo", 
     });
 
     const roles = [
@@ -127,8 +127,8 @@ export default function UserCreateForm({ show, onClose, onSave }) {
                         required
                         disabled={loading}
                     >
-                        <option value="activo">Activo</option>
-                        <option value="inactivo">Inactivo</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
                     </select>
 
                     <div className="form-actions">

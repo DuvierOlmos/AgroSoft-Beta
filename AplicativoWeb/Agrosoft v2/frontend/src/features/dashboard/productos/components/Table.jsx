@@ -11,6 +11,11 @@ export default function Table() {
   const [searchTerm, setSearchTerm] = useState("");
   const [editProduct, setEditProduct] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  
+  // Filtros nuevos
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const fetchProducts = useCallback(async (term = "") => {
     try {
@@ -41,42 +46,82 @@ export default function Table() {
     setEditProduct(null);
   };
 
+  const filteredProducts = products.filter((p) => {
+    if (statusFilter && p.estado_producto?.toLowerCase() !== statusFilter.toLowerCase()) return false;
+    if (minPrice && parseFloat(p.precio_unitario) < parseFloat(minPrice)) return false;
+    if (maxPrice && parseFloat(p.precio_unitario) > parseFloat(maxPrice)) return false;
+    return true;
+  });
+
   if (loading) return <div>Cargando productos...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="table-container">
-      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
         <input
           type="text"
           placeholder="Buscar por nombre..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ padding: "0.5rem", width: "300px" }}
+          style={{ padding: "0.5rem", width: "200px" }}
         />
         <button className="btn-success" onClick={() => fetchProducts(searchTerm)}>
           Buscar
         </button>
+
+        <select 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)}
+          style={{ padding: "0.5rem" }}
+        >
+          <option value="">Todos los estados</option>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+
+        <input 
+          type="number" 
+          placeholder="Min Precio" 
+          value={minPrice} 
+          onChange={(e) => setMinPrice(e.target.value)}
+          style={{ padding: "0.5rem", width: "100px" }}
+        />
+        <input 
+          type="number" 
+          placeholder="Max Precio" 
+          value={maxPrice} 
+          onChange={(e) => setMaxPrice(e.target.value)}
+          style={{ padding: "0.5rem", width: "100px" }}
+        />
       </div>
       <table className="user-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nombre</th>
+            <th>ID Productor</th>
+            <th>Nombre Producto</th>
             <th>Subcategoría</th>
             <th>Stock</th>
             <th>Precio</th>
+            <th>Estado</th>
+            <th>Creado</th>
+            <th>Actualizado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {products.map((p) => (
+          {filteredProducts.map((p) => (
             <tr key={p.id_producto}>
               <td>{p.id_producto}</td>
+              <td>{p.id_usuario || '-'}</td>
               <td>{p.nombre_producto}</td>
               <td>{p.SubCategory ? p.SubCategory.nombre : (p.SubCategorium ? p.SubCategorium.nombre : p.id_SubCategoria)}</td>
               <td>{p.cantidad}</td>
               <td>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(p.precio_unitario)}</td>
+              <td>{p.estado_producto}</td>
+              <td>{p.fecha_creacion ? new Date(p.fecha_creacion).toLocaleDateString() : '-'}</td>
+              <td>{p.fecha_ultima_modificacion ? new Date(p.fecha_ultima_modificacion).toLocaleDateString() : '-'}</td>
               <td>
                 <button className="btn-success" onClick={() => handleEdit(p)}>
                   Editar
@@ -87,9 +132,9 @@ export default function Table() {
               </td>
             </tr>
           ))}
-          {products.length === 0 && (
+          {filteredProducts.length === 0 && (
             <tr>
-              <td colSpan="7">No hay productos registrados.</td>
+              <td colSpan="10">No hay productos registrados.</td>
             </tr>
           )}
         </tbody>

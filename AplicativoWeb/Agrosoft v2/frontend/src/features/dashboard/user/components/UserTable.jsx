@@ -22,7 +22,8 @@ export default function UserManagementTable({ refreshTrigger }) {
   const [deleteId, setDeleteId] = useState(null);
   //filtros
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [filterRole, setFilterRole] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
 
   const fetchUsers = useCallback(async (term = "") => {
     try {
@@ -71,6 +72,24 @@ export default function UserManagementTable({ refreshTrigger }) {
 
 
 
+  const filteredUsers = users.filter((user) => {
+    const matchesRole = filterRole ? String(user.id_rol) === String(filterRole) : true;
+    const matchesStatus = filterStatus ? user.estado?.toLowerCase() === filterStatus.toLowerCase() : true;
+
+    let matchesSearch = true;
+    // Si el término de búsqueda es numérico y se realizó la búsqueda (fetchUsers actualizó users),
+    // refinamos en frontend para asegurar coincidencia exacta con ID o Documento.
+    if (searchTerm && !isNaN(searchTerm) && searchTerm.trim() !== '') {
+      const term = searchTerm.trim();
+      // Verificamos coincidencia EXACTA con ID o Documento
+      const exactId = String(user.id_usuario) === term;
+      const exactDoc = String(user.documento_identidad) === term;
+      matchesSearch = exactId || exactDoc;
+    }
+    
+    return matchesRole && matchesStatus && matchesSearch;
+  });
+
   if (loading) {
     return <div className="loading-message">Cargando usuarios desde la base de datos...</div>;
   }
@@ -81,15 +100,39 @@ export default function UserManagementTable({ refreshTrigger }) {
 
   return (
     <div className="table-container">
-      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+      <div className="search-container">
         <input
           type="text"
+          className="search-input"
           placeholder="Buscar por nombre, correo o documento..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ padding: "0.5rem", width: "300px" }}
         />
-        <button className="btn-success" onClick={() => fetchUsers(searchTerm)}>
+        
+        <select
+          className="search-select"
+          value={filterRole}
+          onChange={(e) => setFilterRole(e.target.value)}
+        >
+          <option value="">Todos los Roles</option>
+          {Object.entries(ROLE_MAP).map(([id, name]) => (
+            <option key={id} value={id}>
+              {name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className="search-select"
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+        >
+          <option value="">Todos los Estados</option>
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+        </select>
+
+        <button className="btn-search" onClick={() => fetchUsers(searchTerm)}>
           Buscar
         </button>
       </div>
@@ -106,8 +149,8 @@ export default function UserManagementTable({ refreshTrigger }) {
           </tr>
         </thead>
         <tbody>
-          {users.length > 0 ? (
-            users.map((u) => (
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((u) => (
               <tr key={u.id_usuario}>
                 <td>{u.id_usuario}</td>
                 <td>{u.nombre_usuario}</td>

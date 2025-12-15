@@ -16,6 +16,7 @@ const PedidoTable = ({ ordenes, onEstadoChange, onPreviewComprobante, onDownload
           <th>Cliente</th>
           <th>Fecha</th>
           <th>Estado</th>
+          <th>Productos</th>
           <th>Total</th>
           <th>Dirección</th>
           <th>Ciudad</th>
@@ -36,6 +37,7 @@ const PedidoTable = ({ ordenes, onEstadoChange, onPreviewComprobante, onDownload
                   {orden.estado}
                 </span>
               </td>
+              <td style={{ maxWidth: "200px", fontSize: "0.85em" }}>{orden.productos_resumen || "—"}</td>
               <td>{formatoCOP(orden.total)}</td>
          
               <td>{orden.direccion_envio || "N/A"}</td>
@@ -74,7 +76,7 @@ const PedidoTable = ({ ordenes, onEstadoChange, onPreviewComprobante, onDownload
           ))
         ) : (
           <tr>
-            <td colSpan="10">No hay órdenes para mostrar.</td>
+            <td colSpan="11">No hay órdenes para mostrar.</td>
           </tr>
         )}
       </tbody>

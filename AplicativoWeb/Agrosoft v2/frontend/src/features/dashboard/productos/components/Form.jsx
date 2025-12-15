@@ -9,7 +9,9 @@ export default function ProductForm({ show, onClose, product, onSave }) {
     precio_unitario: "",
     unidad_medida: "",
     id_SubCategoria: "",
-    cantidad: 0
+    cantidad: 0,
+    estado_producto: "activo",
+    id_usuario: ""
   });
 
   const [subcategories, setSubcategories] = useState([]);
@@ -24,7 +26,9 @@ export default function ProductForm({ show, onClose, product, onSave }) {
             precio_unitario: product.precio_unitario || "",
             unidad_medida: product.unidad_medida || "",
             id_SubCategoria: product.id_SubCategoria || "",
-            cantidad: product.cantidad || 0
+            cantidad: product.cantidad || 0,
+            estado_producto: product.estado_producto || "activo",
+            id_usuario: product.id_usuario || ""
          });
        } else {
          setFormData({
@@ -33,7 +37,9 @@ export default function ProductForm({ show, onClose, product, onSave }) {
             precio_unitario: "",
             unidad_medida: "",
             id_SubCategoria: "",
-            cantidad: 0
+            cantidad: 0,
+            estado_producto: "activo",
+            id_usuario: ""
          });
        }
     }
@@ -133,6 +139,25 @@ export default function ProductForm({ show, onClose, product, onSave }) {
             onChange={handleChange}
             min="0"
           />
+
+          <label>ID Agricultor (Rol 3):</label>
+          <input
+            type="number"
+            name="id_usuario"
+            value={formData.id_usuario}
+            onChange={handleChange}
+            placeholder="Ingrese ID del agricultor"
+          />
+
+          <label>Estado:</label>
+          <select
+            name="estado_producto"
+            value={formData.estado_producto}
+            onChange={handleChange}
+          >
+             <option value="Activo">Activo</option>
+             <option value="Inactivo">Inactivo</option>
+          </select>
 
           <div className="form-actions">
             <button type="submit" className="btn-primary">

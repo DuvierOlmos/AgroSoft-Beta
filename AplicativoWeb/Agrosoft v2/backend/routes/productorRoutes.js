@@ -9,5 +9,6 @@ router.post('/', productorController.createProducto);
 router.get('/usuario/:id_usuario', productorController.getProductosByUserId);
 router.put('/:id', productorController.updateProducto);
 router.put('/desactivar/:id', productorController.deactivateProducto);
+router.delete('/:id', productorController.deleteProducto);
 
 module.exports = router;

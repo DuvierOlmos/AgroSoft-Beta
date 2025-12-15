@@ -42,7 +42,41 @@ const obtenerOrdenes = async (req, res) => {
 
 const obtenerTodasLasOrdenes = async (req, res) => {
   try {
-    // Consulta sin filtro de agricultor para obtener TODAS las órdenes del sistema
+    const { search, fechaInicio, fechaFin, estado } = req.query;
+
+    let whereConditions = [];
+    const replacements = {};
+
+    // Filtros de fecha y estado (Directos en WHERE)
+    if (fechaInicio) {
+      whereConditions.push("DATE(ped.fecha_pedido) >= :fechaInicio");
+      replacements.fechaInicio = fechaInicio;
+    }
+    if (fechaFin) {
+      whereConditions.push("DATE(ped.fecha_pedido) <= :fechaFin");
+      replacements.fechaFin = fechaFin;
+    }
+    if (estado && estado !== 'Todos') {
+      whereConditions.push("ep.nombre_estado = :estado");
+      replacements.estado = estado;
+    }
+
+    const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(" AND ")}` : "";
+
+    // Filtro de búsqueda general (ID, Cliente, Ciudad, Productos, Seguimiento)
+    // Para buscar en productos sin filtrar las filas antes de agrupar, usamos HAVING
+    let havingClause = "";
+    if (search) {
+      havingClause = `HAVING (
+        CAST(id_pedido AS CHAR) LIKE :search OR 
+        cliente LIKE :search OR 
+        ciudad_envio LIKE :search OR 
+        productos_resumen LIKE :search OR
+        numero_seguimiento LIKE :search
+      )`;
+      replacements.search = `%${search}%`;
+    }
+
     const sql = `
       SELECT 
         ped.id_pedido,
@@ -53,18 +87,21 @@ const obtenerTodasLasOrdenes = async (req, res) => {
         ped.ciudad_envio AS ciudad_envio,
         ep.nombre_estado AS estado,
         ped.numero_seguimiento AS numero_seguimiento,
-        SUM(dp.subtotal - dp.descuento_aplicado_monto) AS total
+        SUM(dp.subtotal - dp.descuento_aplicado_monto) AS total,
+        GROUP_CONCAT(CONCAT(p.nombre_producto, ' (x', dp.cantidad, ')') SEPARATOR ', ') AS productos_resumen
       FROM pedidos ped
       INNER JOIN usuarios u ON ped.id_usuario = u.id_usuario
       INNER JOIN detalle_pedido dp ON ped.id_pedido = dp.id_pedido
       INNER JOIN producto p ON dp.id_producto = p.id_producto
-      INNER JOIN inventario i ON p.id_producto = i.id_producto
       INNER JOIN estado_pedido ep ON ped.id_estado_pedido = ep.id_estado_pedido
+      ${whereClause}
       GROUP BY ped.id_pedido, ped.fecha_pedido, ped.direccion_envio, ped.ciudad_envio, ped.numero_seguimiento, u.nombre_usuario, ep.nombre_estado
+      ${havingClause}
       ORDER BY ped.fecha_pedido DESC;
     `;
 
     const ordenes = await sequelize.query(sql, {
+      replacements,
       type: QueryTypes.SELECT,
     });
 

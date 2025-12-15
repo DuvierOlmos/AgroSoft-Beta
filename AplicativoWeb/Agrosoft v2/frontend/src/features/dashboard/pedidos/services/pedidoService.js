@@ -12,12 +12,25 @@ const authHeaders = () => ({
   },
 });
 
-export const obtenerOrdenes = async (search = "") => {
+export const obtenerOrdenes = async (filtros = {}) => {
   try {
     let url = `${API_URL}/admin/todas`;
-    if (search) {
-      url += `?search=${encodeURIComponent(search)}`;
+    
+    // Si se pasa un string (comportamiento anterior), lo convertimos a objeto
+    const params = typeof filtros === 'string' ? { search: filtros } : { ...filtros };
+    
+    // Construir query params
+    const queryParams = new URLSearchParams();
+    Object.keys(params).forEach(key => {
+      if (params[key]) {
+        queryParams.append(key, params[key]);
+      }
+    });
+
+    if (queryParams.toString()) {
+      url += `?${queryParams.toString()}`;
     }
+
     // CAMBIO IMPORTANTE: Usamos la ruta de admin para traer TODAS las órdenes
     const response = await axios.get(url, authHeaders());
     return response.data;

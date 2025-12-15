@@ -24,8 +24,8 @@ const createProducto = async (req, res) => {
     const result = await sequelize.transaction(async (t) => {
       const insertQuery = `
         INSERT INTO producto 
-        (nombre_producto, descripcion_producto, precio_unitario, unidad_medida, url_imagen, id_SubCategoria, estado_producto)
-        VALUES (?, ?, ?, ?, ?, ?, 'Activo');
+        (nombre_producto, descripcion_producto, precio_unitario, unidad_medida, url_imagen, id_SubCategoria, cantidad, estado_producto, id_usuario)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'Activo', ?);
       `;
 
       const insertResult = await sequelize.query(insertQuery, {
@@ -36,6 +36,8 @@ const createProducto = async (req, res) => {
           unidad_medida,
           url_imagen,
           id_SubCategoria,
+          cantidad,
+          id_usuario
         ],
         transaction: t,
       });
@@ -181,7 +183,8 @@ SET nombre_producto = ?,
     descripcion_producto = ?, 
     precio_unitario = ?, 
     unidad_medida = ?, 
-    url_imagen = ?
+    url_imagen = ?,
+    cantidad = ?
 WHERE id_producto = ?;
       `,
       {
@@ -191,6 +194,7 @@ WHERE id_producto = ?;
           precio_unitario,
           unidad_medida,
           url_imagen,
+          cantidad,
           id
         ],
         transaction: t,
@@ -292,6 +296,92 @@ const deactivateProducto = async (req, res) => {
 };
 
 
+const deleteProducto = async (req, res) => {
+  const { id } = req.params;
+  const id_usuario = getUserId(req);
+
+  if (!id_usuario)
+    return res.status(401).json({ error: "Usuario no autenticado." });
+
+  const t = await sequelize.transaction();
+
+  try {
+    console.log('[CONTROLLER] Deleting product:', id);
+
+    // Verify ownership
+    const [productExists] = await sequelize.query(
+      `SELECT 1 FROM inventario WHERE id_producto = ? AND id_agricultor = ?`,
+      {
+        replacements: [id, id_usuario],
+        transaction: t,
+        type: QueryTypes.SELECT
+      }
+    );
+
+    if (!productExists) {
+      await t.rollback();
+      return res.status(404).json({
+        error: "Producto no encontrado o no autorizado para eliminar.",
+        success: false
+      });
+    }
+
+    // Delete inventory
+    await sequelize.query(
+      `DELETE FROM inventario WHERE id_producto = ?;`,
+      {
+        replacements: [id],
+        transaction: t,
+      }
+    );
+
+    // Try to delete images if the table exists (handling via try/catch inside or just assume it exists based on other code)
+    // Based on product_controller.js, 'producto_imagenes' exists.
+    await sequelize.query(
+      `DELETE FROM producto_imagenes WHERE id_producto = ?;`,
+      {
+        replacements: [id],
+        transaction: t,
+      }
+    );
+
+    // Delete product
+    await sequelize.query(
+      `DELETE FROM producto WHERE id_producto = ?;`,
+      {
+        replacements: [id],
+        transaction: t,
+      }
+    );
+
+    await t.commit();
+    console.log(' [CONTROLLER] Product deleted successfully');
+
+    res.json({
+      mensaje: "Producto eliminado correctamente de la base de datos",
+      success: true
+    });
+
+  } catch (error) {
+    await t.rollback();
+    console.error(" [CONTROLLER] Error deleting product:", error);
+    
+    // Simple check for foreign key constraint errors
+    if (error.original && error.original.code === 'ER_ROW_IS_REFERENCED_2') {
+         return res.status(400).json({
+            error: "No se puede eliminar el producto porque tiene registros asociados (ej. pedidos).",
+            success: false
+        });
+    }
+
+    res.status(500).json({
+      error: "No se pudo eliminar el producto: " + error.message,
+      success: false
+    });
+  }
+};
+
+
 const getAllProductos = async (req, res) => {
   try {
     console.log(' [CONTROLLER] Getting all products');
@@ -334,4 +424,5 @@ module.exports = {
   getAllProductos,
   updateProducto,
   deactivateProducto,
+  deleteProducto,
 };

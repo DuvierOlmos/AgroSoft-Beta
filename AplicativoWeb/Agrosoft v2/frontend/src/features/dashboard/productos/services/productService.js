@@ -44,7 +44,8 @@ export async function createProduct(data) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al crear producto");
+    const errorMessage = errorData.message || errorData.error || errorData.details || "Error al crear producto";
+    throw new Error(errorMessage);
   }
   return await response.json();
 }
@@ -74,6 +75,21 @@ export async function deleteProduct(id) {
     throw new Error(errorData.message || "Error al eliminar producto");
   }
   if (response.status === 204) return { success: true };
+  return await response.json();
+}
+
+export async function deleteProductPermanent(id) {
+  const response = await fetch(`${API_URL}/admin/delete-permanent/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    // Preferimos el mensaje del backend si existe, sino uno genérico
+    const errorMessage = errorData.message || errorData.error || "Error al eliminar producto permanentemente";
+    throw new Error(errorMessage);
+  }
   return await response.json();
 }
 

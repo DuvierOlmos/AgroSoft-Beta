@@ -129,15 +129,17 @@ export default function DescuentoForm({ show, onClose, onSave }) {
           </select>
 
           <label>
-            <input
-              type="checkbox"
-              name="activo"
-              checked={form.activo}
-              onChange={handleChange}
-              disabled={loading}
-            />
-            {" "}Activo
+            Estado Activo
           </label>
+          <select
+            name="activo"
+            value={form.activo.toString()}
+            onChange={(e) => setForm({ ...form, activo: e.target.value === "true" })}
+            disabled={loading}
+          >
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+          </select>
 
           <div className="form-actions">
             <button type="submit" className="btn-primary" disabled={loading}>

@@ -1,7 +1,7 @@
 // features/dashboard/descuentos/services/descuentoService.js
 
 const API_URL = "http://localhost:4000/api/descuentos-alt";
-const API_READ_URL = "http://localhost:4000/api/descuentos"; // Ruta oficial de lectura
+
 
 const getToken = () => localStorage.getItem("token");
 
@@ -61,7 +61,9 @@ const descuentoService = {
 // === READ (Admin) ===
 export async function getDescuentos(search = "") {
   try {
-    let url = API_READ_URL;
+    // Usamos el endpoint de admin para traer TODOS los descuentos (activos e inactivos)
+    // Antes usaba API_READ_URL que filtra por defecto activos
+    let url = `${API_URL}/admin`;
     if (search) {
       url += `?search=${encodeURIComponent(search)}`;
     }
