@@ -17,8 +17,12 @@ const productService = {
   createProduct
 };
 
-export async function getProducts() {
-  const response = await fetch(`${API_URL}/admin`, { headers: authHeaders() });
+export async function getProducts(search = "") {
+  let url = `${API_URL}/admin`;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+  const response = await fetch(url, { headers: authHeaders() });
   if (!response.ok) {
      throw new Error("Error al obtener productos");
   }

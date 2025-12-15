@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { getProducts } from "../services/productService";
 import Form from "./Form";
 import ConfirmDelete from "./ConfirmDelete";
@@ -8,24 +8,25 @@ export default function Table() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [editProduct, setEditProduct] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async (term = "") => {
     try {
       setLoading(true);
-      const data = await getProducts();
+      const data = await getProducts(term);
       setProducts(data);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
   const handleEdit = (product) => {
     setEditProduct(product);
@@ -45,6 +46,18 @@ export default function Table() {
 
   return (
     <div className="table-container">
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => fetchProducts(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <table className="user-table">
         <thead>
           <tr>

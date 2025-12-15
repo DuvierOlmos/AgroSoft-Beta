@@ -20,8 +20,12 @@ const userService = {
 
 // === READ ===
 
-export async function getUsers() {
-  const response = await fetch(API_URL, { headers: authHeaders() });
+export async function getUsers(search = "") {
+  let url = API_URL;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+  const response = await fetch(url, { headers: authHeaders() });
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
       throw new Error("No autorizado. Inicia sesión como administrador.");

@@ -2,11 +2,39 @@ const registerController = require("./registerController");
 const loginController = require("./loginController");
 const User = require("../models/user_model");
 const bcrypt = require("bcryptjs");
+const { Op } = require("sequelize");
 
 // Listar todos los usuarios
 async function listUsers(req, res) {
   try {
-    const users = await User.findAll();
+    const { search } = req.query;
+    let whereClause = {};
+
+    if (search) {
+      // Si el término de búsqueda es un número, priorizamos la búsqueda exacta por ID
+      if (!isNaN(search) && search.trim() !== '') {
+        whereClause = {
+          [Op.or]: [
+            { id_usuario: search }, // Búsqueda exacta por ID
+            { documento_identidad: { [Op.like]: `%${search}%` } } // Documento suele buscarse parcial
+          ]
+        };
+      } else {
+        // Búsqueda parcial para texto
+        whereClause = {
+          [Op.or]: [
+            { nombre_usuario: { [Op.like]: `%${search}%` } },
+            { correo_electronico: { [Op.like]: `%${search}%` } },
+            { documento_identidad: { [Op.like]: `%${search}%` } },
+            { estado: { [Op.like]: `%${search}%` } }
+          ]
+        };
+      }
+    }
+
+    const users = await User.findAll({
+      where: whereClause
+    });
     return res.json(users);
   } catch (err) {
     console.error("Error al listar usuarios:", err);

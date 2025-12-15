@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import userService from "../services/userService"; 
 import UserEditForm from "./UserEditForm";
@@ -24,12 +24,12 @@ export default function UserManagementTable({ refreshTrigger }) {
   const [searchTerm, setSearchTerm] = useState("");
 
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async (term = "") => {
     try {
       // Don't set loading to true here if you want seamless updates, or use a separate loading state
       // setLoading(true); 
       setError(null);     
-      const data = await userService.getUsers();
+      const data = await userService.getUsers(term);
       setUsers(data); 
     } catch (err) {
       console.error("Error al cargar usuarios:", err);
@@ -37,11 +37,11 @@ export default function UserManagementTable({ refreshTrigger }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchUsers();
-  }, [refreshTrigger]); // Fetch on mount and when refreshTrigger changes
+  }, [refreshTrigger, fetchUsers]); // Fetch on mount and when refreshTrigger changes
 
   // Expose fetchUsers to parent via ref if needed, or pass it down?
   // Better yet, just trust internal state updates.
@@ -81,6 +81,18 @@ export default function UserManagementTable({ refreshTrigger }) {
 
   return (
     <div className="table-container">
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por nombre, correo o documento..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => fetchUsers(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <table className="user-table">
         <thead>
           <tr>

@@ -28,8 +28,9 @@ export const createCategory = async (categoria) => {
     }
 };
 
-export const getCategories = async () => {
-  const response = await axios.get(API_URL, { headers: authHeaders() });
+export const getCategories = async (search = "") => {
+  const url = search ? `${API_URL}?search=${encodeURIComponent(search)}` : API_URL;
+  const response = await axios.get(url, { headers: authHeaders() });
   return response.data;
 };
 

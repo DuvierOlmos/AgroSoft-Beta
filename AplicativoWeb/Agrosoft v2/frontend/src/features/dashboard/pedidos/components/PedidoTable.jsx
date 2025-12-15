@@ -29,7 +29,7 @@ const PedidoTable = ({ ordenes, onEstadoChange, onPreviewComprobante, onDownload
           ordenes.map((orden) => (
             <tr key={orden.id_pedido}>
               <td>{orden.id_pedido}</td> 
-              <td>{orden.cliente}</td>
+              <td>{orden.Cliente ? orden.Cliente.nombre_usuario : (orden.cliente || "N/A")}</td>
               <td>{new Date(orden.fecha_pedido).toLocaleDateString()}</td>
               <td>
                 <span className={`status-badge ${getStatusClass(orden.estado)}`}>

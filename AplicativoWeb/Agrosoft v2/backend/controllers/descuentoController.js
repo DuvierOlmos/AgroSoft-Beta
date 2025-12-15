@@ -1,7 +1,7 @@
 const Descuento = require('../models/descuento');
 const ProductoDescuento = require('../models/producto_descuento');
 const sequelize = require('../config/db');
-const { ValidationError, UniqueConstraintError } = require('sequelize');
+const { ValidationError, UniqueConstraintError, Op } = require('sequelize');
 
 // 1. Crear Nuevo Descuento
 exports.createDescuento = async (req, res) => {
@@ -29,7 +29,28 @@ exports.createDescuento = async (req, res) => {
 // 2. Obtener Todos los Descuentos
 exports.getAllDescuentos = async (req, res) => {
   try {
-    const descuentos = await Descuento.findAll();
+    const { search } = req.query;
+    let whereClause = {};
+
+    if (search) {
+      if (!isNaN(search) && search.trim() !== '') {
+        whereClause = { id_descuento: search };
+      } else {
+        whereClause = {
+          [Op.or]: [
+            { nombre_descuento: { [Op.like]: `%${search}%` } },
+            { codigo_descuento: search }, // Código exacto si es texto pero parece código
+            { codigo_descuento: { [Op.like]: `%${search}%` } }, // O parcial
+            { tipo_descuento: { [Op.like]: `%${search}%` } },
+            { estado: { [Op.like]: `%${search}%` } }
+          ]
+        };
+      }
+    }
+
+    const descuentos = await Descuento.findAll({
+      where: whereClause
+    });
     res.json(descuentos);
   } catch (error) {
     console.error("Error al obtener descuentos:", error);

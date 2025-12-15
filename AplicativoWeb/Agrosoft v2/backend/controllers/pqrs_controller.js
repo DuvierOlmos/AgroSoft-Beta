@@ -1,4 +1,5 @@
 const Pqrs = require("../models/pqrs");
+const { Op } = require("sequelize");
 
 exports.createPqrs = async (req, res) => {
     try {
@@ -70,7 +71,29 @@ exports.getMyPqrs = async (req, res) => {
 
 exports.getAllPqrs = async (req, res) => {
     try {
+        const { search } = req.query;
+        let whereClause = {};
+
+        if (search) {
+            if (!isNaN(search) && search.trim() !== '') {
+                whereClause = {
+                    [Op.or]: [
+                        { id_pqrs: search },
+                        { id_usuario: search }
+                    ]
+                };
+            } else {
+                whereClause = {
+                    [Op.or]: [
+                        { asunto: { [Op.like]: `%${search}%` } },
+                        { descripcion: { [Op.like]: `%${search}%` } }
+                    ]
+                };
+            }
+        }
+
         const pqrs = await Pqrs.findAll({
+            where: whereClause,
             order: [['fecha_creacion', 'DESC']]
         });
 

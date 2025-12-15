@@ -3,8 +3,12 @@ import axios from "axios";
 const API_URL = "http://localhost:4000/api/pqrs"; 
 
 //  ver 
-export async function getPqrs() {
-  const response = await fetch(API_URL);
+export async function getPqrs(search = "") {
+  let url = API_URL;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+  const response = await fetch(url);
   if (!response.ok) throw new Error("Error al obtener pqrs");
   const data = await response.json();
   return data.data; // Retornamos el array que está dentro de la propiedad data

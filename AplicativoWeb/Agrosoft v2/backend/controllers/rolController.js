@@ -1,5 +1,6 @@
 
 const Rol = require('../models/rol');
+const { Op } = require("sequelize");
 
 exports.createRol = async (req, res) => {
    
@@ -32,7 +33,25 @@ exports.createRol = async (req, res) => {
 
 exports.getAllRoles = async (req, res) => {
   try {
-    const roles = await Rol.findAll();
+    const { search } = req.query;
+    let whereClause = {};
+
+    if (search) {
+      if (!isNaN(search) && search.trim() !== '') {
+        whereClause = { id_rol: search };
+      } else {
+        whereClause = {
+          [Op.or]: [
+            { nombre_rol: { [Op.like]: `%${search}%` } },
+            { descripcion_rol: { [Op.like]: `%${search}%` } }
+          ]
+        };
+      }
+    }
+
+    const roles = await Rol.findAll({
+      where: whereClause
+    });
     res.json(roles);
   } catch (error) {
     res.status(500).json({ error: error.message });

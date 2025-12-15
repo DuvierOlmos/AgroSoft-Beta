@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import descuentoService from "../services/descuentoService";
 import DescuentoEditForm from "./DescuentoEditForm";
 import ConfirmDelete from "./ConfirmDelete";
@@ -8,15 +8,16 @@ export default function DescuentoTable({ refreshTrigger }) {
   const [descuentos, setDescuentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [editDescuento, setEditDescuento] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
-  const fetchDescuentos = async () => {
+  const fetchDescuentos = useCallback(async (term = "") => {
     try {
       setError(null);
       // setLoading(true); // Opcional si quieres loading cada vez
-      const data = await descuentoService.getDescuentos();
+      const data = await descuentoService.getDescuentos(term);
       // data podría ser { success: true, count: N, data: [] } o directamente []
       // El controlador admin retorna: res.json(descuentos); (array directo)
       // Pero el controlador descuentos_routes retorna { success: true, data: [] }
@@ -35,11 +36,11 @@ export default function DescuentoTable({ refreshTrigger }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchDescuentos();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, fetchDescuentos]);
 
   const handleUpdate = async () => {
     await fetchDescuentos();
@@ -61,6 +62,18 @@ export default function DescuentoTable({ refreshTrigger }) {
 
   return (
     <div className="table-container">
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por nombre o código..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => fetchDescuentos(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <table className="descuento-table">
         <thead>
           <tr>

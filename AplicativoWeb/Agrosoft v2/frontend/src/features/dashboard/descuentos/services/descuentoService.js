@@ -59,9 +59,13 @@ const descuentoService = {
 };
 
 // === READ (Admin) ===
-export async function getDescuentos() {
+export async function getDescuentos(search = "") {
   try {
-    const response = await fetch(API_READ_URL, { headers: authHeaders() });
+    let url = API_READ_URL;
+    if (search) {
+      url += `?search=${encodeURIComponent(search)}`;
+    }
+    const response = await fetch(url, { headers: authHeaders() });
     return await handleResponse(response);
   } catch (error) {
     console.error("Error en getDescuentos:", error);

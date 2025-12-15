@@ -12,10 +12,14 @@ const authHeaders = () => ({
   },
 });
 
-export const obtenerOrdenes = async () => {
+export const obtenerOrdenes = async (search = "") => {
   try {
+    let url = `${API_URL}/admin/todas`;
+    if (search) {
+      url += `?search=${encodeURIComponent(search)}`;
+    }
     // CAMBIO IMPORTANTE: Usamos la ruta de admin para traer TODAS las órdenes
-    const response = await axios.get(`${API_URL}/admin/todas`, authHeaders());
+    const response = await axios.get(url, authHeaders());
     return response.data;
   } catch (error) {
     console.error(" Error al obtener las órdenes:", error);

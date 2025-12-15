@@ -10,8 +10,12 @@ const authHeaders = () => {
         : { "Content-Type": "application/json" };
 };
 
-export async function getTipoPqrs() {
-    const response = await fetch(API_URL, { headers: authHeaders() });
+export async function getTipoPqrs(search = "") {
+    let url = API_URL;
+    if (search) {
+      url += `?search=${encodeURIComponent(search)}`;
+    }
+    const response = await fetch(url, { headers: authHeaders() });
     if (!response.ok) throw new Error("Error al obtener tipos de pqrs");
     return await response.json();
 }

@@ -60,6 +60,7 @@ export default function PageReportes() {
   const [viewMode, setViewMode] = useState(null); // 'table' | 'preview' | null
   const [activeReportId, setActiveReportId] = useState(null);
   const [reportContent, setReportContent] = useState(null); // Datos JSON o HTML
+  const [localSearch, setLocalSearch] = useState(""); // Filtro local para tabla
   const detailedViewRef = useRef(null);
 
   // Financial Data State
@@ -475,6 +476,19 @@ export default function PageReportes() {
               <div className="view-content">
                   {viewMode === 'table' && Array.isArray(reportContent) && (
                       <div className="table-wrapper">
+                          <input
+                            type="text"
+                            placeholder="Filtrar resultados en la tabla..."
+                            value={localSearch}
+                            onChange={(e) => setLocalSearch(e.target.value)}
+                            style={{ 
+                                padding: '8px', 
+                                marginBottom: '10px', 
+                                width: '300px', 
+                                border: '1px solid #ccc', 
+                                borderRadius: '4px' 
+                            }}
+                          />
                           <table>
                               <thead>
                                   <tr>
@@ -484,7 +498,15 @@ export default function PageReportes() {
                                   </tr>
                               </thead>
                               <tbody>
-                                  {reportContent.map((row, idx) => (
+                                  {reportContent
+                                    .filter(row => {
+                                        // eslint-disable-next-line no-unused-vars
+                                        if (!localSearch) return true;
+                                        return Object.values(row).some(val => 
+                                            String(val).toLowerCase().includes(localSearch.toLowerCase())
+                                        );
+                                    })
+                                    .map((row, idx) => (
                                       <tr key={idx}>
                                           {Object.entries(row).map(([key, val], i) => {
                                               let displayVal = val;

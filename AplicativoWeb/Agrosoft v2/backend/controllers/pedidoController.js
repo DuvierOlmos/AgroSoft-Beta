@@ -4,13 +4,39 @@ const DetallePedido = require('../models/detalle_pedido');
 const User = require('../models/user'); 
 const Product = require('../models/product'); 
 const EstadoPedido = require('../models/estadoPedido');
+const { Op } = require("sequelize");
+
 // 1. Obtener TODOS los Pedidos con detalles anidados
 exports.getAllPedidosAdmin = async (req, res) => {
   try {
-    const pedidos = await Pedido.findAll({    
+    const { search } = req.query;
+    let whereClause = {};
+
+    // Si es un número, buscamos por ID de pedido EXACTO
+    if (search) {
+        if (!isNaN(search) && search.trim() !== '') {
+             whereClause = { id_pedido: search };
+        } else {
+            whereClause = {
+                [Op.or]: [
+                    { direccion_envio: { [Op.like]: `%${search}%` } },
+                    { ciudad_envio: { [Op.like]: `%${search}%` } },
+                    { numero_seguimiento: { [Op.like]: `%${search}%` } },
+                    // Búsqueda en relaciones (requiere alias correcto en asociación)
+                    { '$Cliente.nombre_usuario$': { [Op.like]: `%${search}%` } },
+                    { '$Cliente.correo_electronico$': { [Op.like]: `%${search}%` } },
+                    { '$Estado.nombre_estado$': { [Op.like]: `%${search}%` } }
+                ]
+            };
+        }
+    }
+
+    const pedidos = await Pedido.findAll({
+      where: whereClause,
       include: [       
         { model: EstadoPedido, as: 'Estado' }, 
         { model: DetallePedido, as: 'Detalles' },
+        { model: User, as: 'Cliente', attributes: ['nombre_usuario', 'correo_electronico'] } // Añadido para mostrar cliente
       ],
          order: [['fecha_pedido', 'DESC']] 
      });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { obtenerOrdenes, actualizarEstadoOrden, obtenerComprobante } from "../services/pedidoService";
 import PedidoTable from "../components/PedidoTable";
 import "../styles/PagePedido.css";
@@ -16,19 +16,12 @@ export default function PagePedido() {
   const [ordenes, setOrdenes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const ID_USUARIO_ACTUAL = getLoggedUserId();
 
-  useEffect(() => {
-    if (ID_USUARIO_ACTUAL) fetchOrdenes();
-    else {
-      setError("No se encontró el usuario logueado. Inicia sesión nuevamente.");
-      setLoading(false);
-    }
-  }, [ID_USUARIO_ACTUAL]);
-
-  const fetchOrdenes = async () => {
+  const fetchOrdenes = useCallback(async (term = "") => {
     try {
-      const data = await obtenerOrdenes();
+      const data = await obtenerOrdenes(term);
       setOrdenes(data);
     } catch (error) {
       console.error(" No se pudieron obtener las órdenes.", error);
@@ -36,7 +29,15 @@ export default function PagePedido() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (ID_USUARIO_ACTUAL) fetchOrdenes();
+    else {
+      setError("No se encontró el usuario logueado. Inicia sesión nuevamente.");
+      setLoading(false);
+    }
+  }, [ID_USUARIO_ACTUAL, fetchOrdenes]);
 
   const handleDescargarComprobante = async (id_pedido) => {
     try {
@@ -87,6 +88,18 @@ export default function PagePedido() {
   return (
     <div className="orders-container">
       <h2>Gestión de Órdenes</h2>
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por ID de pedido..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => fetchOrdenes(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <PedidoTable 
         ordenes={ordenes}
         onEstadoChange={handleEstadoChange}

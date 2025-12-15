@@ -3,8 +3,12 @@ import axios from "axios";
 const API_URL = "http://localhost:4000/api/roles/admin"; // ⚡ cambia la URL a la de tu backend
 
 
-export async function getRoles() {
-  const response = await fetch(API_URL);
+export async function getRoles(search = "") {
+  let url = API_URL;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+  const response = await fetch(url);
   if (!response.ok) throw new Error("Error al obtener usuarios");
   return await response.json();
 }

@@ -1,11 +1,25 @@
 
 const Categoria = require('../models/categoria');
 const SubCategoria = require('../models/subcategory_model');
+const { Op } = require("sequelize");
 
 exports.getAllCategoriasWithSub = async (req, res) => {
   try {
+    const { search } = req.query;
+    let whereClause = {};
+
+    if (search) {
+      if (!isNaN(search) && search.trim() !== '') {
+        whereClause = { id_categoria: search };
+      } else {
+        whereClause = {
+          nombre_categoria: { [Op.like]: `%${search}%` }
+        };
+      }
+    }
+
     const categorias = await Categoria.findAll({
-     
+      where: whereClause,
       include: [{
         model: SubCategoria,
         as: 'SubCategorias',

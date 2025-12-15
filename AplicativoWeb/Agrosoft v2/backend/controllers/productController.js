@@ -3,11 +3,31 @@ const SubCategoria = require('../models/subcategory_model');
 const User = require('../models/user');
 const Categoria = require('../models/categoria');
 const Descuento = require('../models/descuento');
+const { Op } = require("sequelize");
 
 
 exports.getAllProductsAdmin = async (req, res) => {
   try {
+    const { search } = req.query;
+    let whereClause = {};
+
+    if (search) {
+      if (!isNaN(search) && search.trim() !== '') {
+         whereClause = { id_producto: search };
+      } else {
+        whereClause = {
+          [Op.or]: [
+            { nombre_producto: { [Op.like]: `%${search}%` } },
+            { descripcion_producto: { [Op.like]: `%${search}%` } },
+            { unidad_medida: { [Op.like]: `%${search}%` } },
+            { estado_producto: { [Op.like]: `%${search}%` } }
+          ]
+        };
+      }
+    }
+
     const products = await Product.findAll({
+      where: whereClause,
       // Incluir datos relacionados para la vista de administración
       include:[
         { 

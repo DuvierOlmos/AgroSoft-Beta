@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 //  IMPORTAR LA FUNCIÓN DEL SERVICIO
 import { getCategories } from "../services/categoryService"; 
 import {deleteCategory} from "../services/categoryService"; 
@@ -13,16 +13,17 @@ export default function CategoryTable( {onSave}) {
     //  NUEVOS ESTADOS para la carga y errores
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [editCategory, setEditCategory] = useState(null);
     const [deleteId, setDeleteId] = useState(null);
 
     //  FUNCIÓN DE CARGA DE DATOS
-    const loadCategories = async () => {
+    const loadCategories = useCallback(async (term = "") => {
         // setLoading(true); // Opcional: comentar si queremos refresco silencioso
         setError(null);
         try {
-            const data = await getCategories();
+            const data = await getCategories(term);
             setCategories(data);
             
         } catch (err) {
@@ -31,12 +32,12 @@ export default function CategoryTable( {onSave}) {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     
     useEffect(() => {
         loadCategories();
-    }, []); 
+    }, [loadCategories]); 
 
 
     const handleDeleteConfirm = async (id_categoria) => {
@@ -61,6 +62,18 @@ export default function CategoryTable( {onSave}) {
 
   return (
     <div className="table-container">
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => loadCategories(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <table className="user-table">
         <thead>
           <tr>
