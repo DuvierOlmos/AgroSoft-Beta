@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 require("./models/associations_model");
 
+
 const db = require("./config/db");
 
 const userRoutes = require("./routes/userRoutes");
@@ -12,7 +13,7 @@ const adminProductRoutes = require("./routes/productRoutes");
 const reviewRoutes = require("./routes/review_routes");
 const pqrsRoutes = require("./routes/pqrs_routes");
 
-const ofertasRoutes = require("./routes/ofertas_routes"); // ← TU RUTA CORRECTA (codigos, validar, productos)
+const ofertasRoutes = require("./routes/ofertas_routes"); 
 const ofertasProductor = require("./routes/ofertasRoutes");
 const descuentosRoutes = require("./routes/descuentos_routes");
 const ordenRoutes = require("./routes/ordenRoutes");
@@ -22,6 +23,7 @@ const comentarioResenaRoutes = require("./routes/comentarioResenaRoutes");
 const subcategoriaRoutes = require("./routes/subcategoriaRoutes");
 const carritoRoutes = require("./routes/carrito_routes");
 const pedidoRoutes = require("./routes/pedido_routes");
+const adminPedidoRoutes = require("./routes/pedidoRoutes");
 
 const rolRoutes = require('./routes/rolRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
@@ -134,6 +136,7 @@ app.use("/api/descuentos", descuentosRoutes);
 app.use("/api/product-discounts", productoDescuentoRoutes);
 
 app.use("/api/ordenes", ordenRoutes);
+app.use("/api/pedidos", adminPedidoRoutes);
 app.use("/api/pedidos", pedidoRoutes);
 app.use("/api/estadoPedido", estadoPedidoRoutes);
 

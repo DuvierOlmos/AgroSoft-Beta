@@ -26,16 +26,27 @@ const PagePedido = () => {
     }, []);
 
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Gestión de Pedidos</h2>
-                <button className="btn btn-primary" onClick={fetchPedidos}>
-                    <i className="bi bi-arrow-clockwise"></i> Refrescar
+        <div>
+            <div style={{ padding: '24px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2 style={{ margin: 0, color: '#111827' }}>Gestión de Pedidos</h2>
+                <button 
+                    onClick={fetchPedidos}
+                    style={{
+                        padding: '8px 16px',
+                        background: '#28a745',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '500'
+                    }}
+                >
+                    Refrescar
                 </button>
             </div>
 
             {loading ? (
-                <div className="text-center">Cargando pedidos...</div>
+                <div style={{ textAlign: 'center', padding: '20px' }}>Cargando pedidos...</div>
             ) : error ? (
                 <div className="alert alert-danger">{error}</div>
             ) : (
