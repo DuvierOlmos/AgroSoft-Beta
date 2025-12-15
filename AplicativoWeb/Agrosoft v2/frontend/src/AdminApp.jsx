@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/protectedRoute';
 import AppRoutes from './app/routes';
 
-function AdminApp() {
+function AdminApp({ onLogout }) {
   return (
     <Routes>
       
@@ -12,7 +12,7 @@ function AdminApp() {
         path="/*"
         element={
           <ProtectedRoute requiredRole={2}> 
-          <AppRoutes />
+          <AppRoutes onLogout={onLogout} />
             
           </ProtectedRoute>
         }
