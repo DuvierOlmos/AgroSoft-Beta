@@ -9,6 +9,8 @@ import PageTipoPqrs from "../features/dashboard/tipoPqrs/pages/pageTipoPqrs";
 import PageRoles from "../features/dashboard/roles/pages/PageRoles";
 import PageInventarios from "../features/dashboard/inventarios/pages/PageInventarios";
 import PagePedido from "../features/dashboard/pedidos/pages/PagePedido";
+import PageReportes from "../features/dashboard/reportes/pages/PageReportes";
+import PageDescuentos from "../features/dashboard/descuentos/pages/PageDescuentos";
 
 export default function AppRoutes() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -29,7 +31,9 @@ export default function AppRoutes() {
           <Route path="tipoPqrs" element={<PageTipoPqrs />} />
           <Route path="inventarios" element={<PageInventarios />} />
           <Route path="pedidos" element={<PagePedido />} />
+          <Route path="reportes" element={<PageReportes />} />
           <Route path="roles" element={<PageRoles />} />
+          <Route path="descuentos" element={<PageDescuentos />} />
 
           {/* Catch-all dentro del dashboard admin */}
           <Route path="*" element={<Navigate to="user" replace />} />

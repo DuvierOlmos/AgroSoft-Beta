@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { formatoCOP } from "../../../../utils/format";
+
 const getStatusClass = (s) => {
   if (!s) return "status-Pendiente";
   return `status-${String(s).replace(/\s+/g, "")}`;
@@ -34,7 +36,7 @@ const PedidoTable = ({ ordenes, onEstadoChange, onPreviewComprobante, onDownload
                   {orden.estado}
                 </span>
               </td>
-              <td>${Number(orden.total).toFixed(2)}</td>
+              <td>{formatoCOP(orden.total)}</td>
          
               <td>{orden.direccion_envio || "N/A"}</td>
               <td>{orden.ciudad_envio || "N/A"}</td>

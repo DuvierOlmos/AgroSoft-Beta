@@ -142,7 +142,8 @@ exports.createProductAdmin = async (req, res) => {
       precio_unitario,      
       unidad_medida,
       id_SubCategoria,
-      cantidad
+      cantidad,
+      estado_producto: 'activo'
     });
 
     res.status(201).json({ 

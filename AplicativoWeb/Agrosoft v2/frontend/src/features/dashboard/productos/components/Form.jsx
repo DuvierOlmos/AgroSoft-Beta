@@ -94,7 +94,7 @@ export default function ProductForm({ show, onClose, product, onSave }) {
           <label>Precio Unitario:</label>
           <input
             type="number"
-            step="0.01"
+            step="1"
             name="precio_unitario"
             value={formData.precio_unitario}
             onChange={handleChange}

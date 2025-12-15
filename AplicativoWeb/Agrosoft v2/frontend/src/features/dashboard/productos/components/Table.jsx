@@ -50,10 +50,9 @@ export default function Table() {
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Precio</th>
-            <th>Unidad</th>
             <th>Subcategoría</th>
             <th>Stock</th>
+            <th>Precio</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -62,10 +61,9 @@ export default function Table() {
             <tr key={p.id_producto}>
               <td>{p.id_producto}</td>
               <td>{p.nombre_producto}</td>
-              <td>{p.precio_unitario}</td>
-              <td>{p.unidad_medida}</td>
               <td>{p.SubCategory ? p.SubCategory.nombre : (p.SubCategorium ? p.SubCategorium.nombre : p.id_SubCategoria)}</td>
               <td>{p.cantidad}</td>
+              <td>{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(p.precio_unitario)}</td>
               <td>
                 <button className="btn-success" onClick={() => handleEdit(p)}>
                   Editar

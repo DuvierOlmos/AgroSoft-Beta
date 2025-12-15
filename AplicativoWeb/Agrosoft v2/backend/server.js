@@ -25,7 +25,7 @@ const pedidoRoutes = require("./routes/pedido_routes");
 
 const rolRoutes = require('./routes/rolRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
-const descuentoRoutes = require('./routes/descuentos_routes');
+const descuentoRoutes = require('./routes/descuentoRoutes');
 const productoDescuentoRoutes = require('./routes/productoDescuentoRoutes');
 const estadoPqrsRoutes = require('./routes/estadoPqrsRoutes');
 const tipoPqrsRoutes = require('./routes/tipoPqrsRoutes');

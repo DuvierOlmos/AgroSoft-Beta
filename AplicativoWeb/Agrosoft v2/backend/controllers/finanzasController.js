@@ -299,34 +299,113 @@ const buildPdfReport = (title, rows, columns) => {
       doc.on('data', chunk => chunks.push(chunk));
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
-      
-      doc.fontSize(24).font('Helvetica-Bold').fillColor('#4CAF50').text('AGROSOFT', { align: 'center' });
-      doc.fontSize(10).font('Helvetica').fillColor('#666').text('Sistema de Gestión Agrícola', { align: 'center' });
-      doc.moveDown(0.5);
-      doc.strokeColor('#4CAF50').lineWidth(2).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-      doc.moveDown();
-      
-      doc.fontSize(14).font('Helvetica-Bold').fillColor('black').text(title, { align: 'center' });
-      doc.fontSize(9).font('Helvetica').fillColor('#666');
-      doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')} | Hora: ${new Date().toLocaleTimeString('es-CO')}`, { align: 'center' });
-      doc.fillColor('black').moveDown();
 
-      rows.forEach((row, idx) => {
-        doc.fontSize(11).font('Helvetica-Bold').text(`${idx + 1}. ${row[columns[0].key]}`);
-        doc.fontSize(10).font('Helvetica').fillColor('#555');
-        columns.slice(1).forEach(col => {
-          const value = row[col.key] !== undefined && row[col.key] !== null ? row[col.key] : 'N/A';
-          doc.text(`   ${col.header}: ${value}`, { width: 470 });
-        });
-        doc.fillColor('black').moveDown(0.5);
+      // --- Helper Functions ---
+      const drawHeader = () => {
+          // Logo/Brand area
+          doc.fontSize(20).font('Helvetica-Bold').fillColor('#2E7D32').text('AGROSOFT', 40, 40, { align: 'left' });
+          doc.fontSize(10).font('Helvetica').fillColor('#666').text('Sistema de Gestión Agrícola', 40, 65, { align: 'left' });
+          
+          // Metadata (Date/Time)
+          doc.fontSize(9).font('Helvetica').fillColor('#555').text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 400, 40, { align: 'right', width: 155 });
+          doc.text(`Hora: ${new Date().toLocaleTimeString('es-CO')}`, 400, 53, { align: 'right', width: 155 });
+
+          // Separator
+          doc.moveDown();
+          doc.strokeColor('#4CAF50').lineWidth(2).moveTo(40, 85).lineTo(555, 85).stroke();
+      };
+
+      const drawFooter = (pageNumber) => {
+          const bottom = doc.page.height - 40;
+          doc.fontSize(8).fillColor('#999').text(`Generado por AgroSoft © 2025 | Página ${pageNumber}`, 40, bottom, { align: 'center', width: 515 });
+      };
+
+      // --- Init ---
+      let pageNumber = 1;
+      drawHeader();
+      
+      doc.y = 100;
+      doc.fontSize(14).font('Helvetica-Bold').fillColor('#333').text(title.toUpperCase(), { align: 'center' });
+      doc.moveDown(2);
+
+      // --- Table Layout Configuration ---
+      const startX = 40;
+      const tableWidth = 515;
+      const colWidth = tableWidth / columns.length; 
+      const rowHeight = 25; 
+      const fontSize = 9;
+
+      const drawTableHeader = (y) => {
+          // Header Background
+          doc.rect(startX, y, tableWidth, rowHeight).fill('#2E7D32');
+          doc.fillColor('#fff').font('Helvetica-Bold').fontSize(fontSize);
+          
+          // Header Text
+          columns.forEach((col, i) => {
+              doc.text(col.header, startX + (i * colWidth) + 5, y + 8, {
+                  width: colWidth - 10,
+                  align: 'left',
+                  lineBreak: false,
+                  ellipsis: true
+              });
+          });
+      };
+
+      let currentY = doc.y;
+      drawTableHeader(currentY);
+      currentY += rowHeight;
+
+      doc.font('Helvetica').fontSize(fontSize).fillColor('#333');
+
+      // --- Data Rows ---
+      rows.forEach((row, rowIndex) => {
+          // Check for page break
+          if (currentY + rowHeight > doc.page.height - 50) {
+              drawFooter(pageNumber);
+              doc.addPage();
+              pageNumber++;
+              drawHeader();
+              currentY = 100; // Reset Y position on new page
+              drawTableHeader(currentY);
+              currentY += rowHeight;
+              doc.font('Helvetica').fontSize(fontSize).fillColor('#333');
+          }
+
+          // Striped rows (alternating background)
+          if (rowIndex % 2 === 0) {
+              doc.rect(startX, currentY, tableWidth, rowHeight).fill('#f9f9f9');
+              doc.fillColor('#333'); // Reset text color
+          }
+
+          // Cell Text
+          columns.forEach((col, i) => {
+             let value = row[col.key];
+             if (value === null || value === undefined) value = '-';
+             
+             // Format numeric values if needed
+             if (typeof value === 'number') {
+                 // Simple formatting check, ideally reuse a formatter
+                 if (col.key.includes('precio') || col.key.includes('total') || col.key.includes('valor')) {
+                     value = '$ ' + value.toLocaleString('es-CO');
+                 }
+             }
+             value = String(value);
+
+              doc.text(value, startX + (i * colWidth) + 5, currentY + 8, {
+                  width: colWidth - 10,
+                  align: 'left',
+                  lineBreak: false,
+                  ellipsis: true
+              });
+          });
+
+          currentY += rowHeight;
       });
 
-  doc.moveDown(1.5);
-  doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-    doc.moveDown(1);
-    doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
-
+      // Final Footer
+      drawFooter(pageNumber);
       doc.end();
+
     } catch (error) {
       reject(error);
     }
@@ -926,6 +1005,421 @@ const reportDescuentos = async (req, res) => {
 
 
 
+// =======================================================
+// 👑 FUNCIONES DE ADMIN GLOBAL (Sin filtro por ID de usuario)
+// =======================================================
+
+const getDatosFinancierosAdmin = async (req, res) => {
+  try {
+    const estadoEntregado = await sequelize.query(
+      "SELECT id_estado_pedido FROM estado_pedido WHERE nombre_estado = 'Entregado' LIMIT 1",
+      { type: QueryTypes.SELECT }
+    );
+
+    if (!estadoEntregado.length) {
+      return res.status(500).json({ error: "Estado 'Entregado' no encontrado." });
+    }
+
+    const idEstadoEntregado = estadoEntregado[0].id_estado_pedido;
+
+    // Ingresos globales
+    const ingresos = await sequelize.query(
+      `
+      SELECT 
+        COALESCE(SUM(CASE 
+          WHEN ped.id_estado_pedido = :idEstadoEntregado THEN dp.cantidad * dp.precio_unitario_al_momento 
+          ELSE 0 
+        END), 0) as ingresos_totales,
+        COALESCE(SUM(CASE 
+          WHEN ped.id_estado_pedido != :idEstadoEntregado THEN dp.cantidad * dp.precio_unitario_al_momento 
+          ELSE 0 
+        END), 0) as ventas_pendientes
+      FROM detalle_pedido dp
+      INNER JOIN pedidos ped ON dp.id_pedido = ped.id_pedido
+      `,
+      {
+        replacements: { idEstadoEntregado },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    // Costos globales
+    const costos = await sequelize.query(
+      `
+      SELECT 
+        COALESCE(SUM(CASE 
+          WHEN ped.id_estado_pedido = :idEstadoEntregado THEN (dp.subtotal - COALESCE(dp.descuento_aplicado_monto, 0))
+          ELSE 0 
+        END), 0) as costos_totales,
+        COALESCE(SUM(CASE 
+          WHEN ped.id_estado_pedido != :idEstadoEntregado THEN (dp.subtotal - COALESCE(dp.descuento_aplicado_monto, 0))
+          ELSE 0 
+        END), 0) as costos_pendientes
+      FROM detalle_pedido dp
+      INNER JOIN pedidos ped ON dp.id_pedido = ped.id_pedido
+      `,
+      {
+        replacements: { idEstadoEntregado },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    const ingresos_totales = Number(ingresos[0].ingresos_totales);
+    const ventas_pendientes = Number(ingresos[0].ventas_pendientes);
+    const costos_totales = Number(costos[0].costos_totales);
+    const costos_pendientes = Number(costos[0].costos_pendientes);
+    
+    const ganancia = ingresos_totales - costos_totales;
+    const ganancia_potencial = ventas_pendientes - costos_pendientes;
+
+    res.json({
+      ingresos: {
+        completados: ingresos_totales,
+        pendientes: ventas_pendientes,
+        total: ingresos_totales + ventas_pendientes
+      },
+      costos: {
+        completados: costos_totales,
+        pendientes: costos_pendientes,
+        total: costos_totales + costos_pendientes
+      },
+      ganancia: {
+        actual: ganancia,
+        potencial: ganancia_potencial,
+        total: ganancia + ganancia_potencial
+      }
+    });
+  } catch (error) {
+    console.error("Error al obtener datos financieros admin:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const getVentasPorMesAdmin = async (req, res) => {
+  try {
+    const estadoEntregado = await sequelize.query(
+      "SELECT id_estado_pedido FROM estado_pedido WHERE nombre_estado = 'Entregado' LIMIT 1",
+      { type: QueryTypes.SELECT }
+    );
+
+    if (!estadoEntregado.length) return res.status(500).json({ error: "Estado 'Entregado' no encontrado." });
+    const idEstadoEntregado = estadoEntregado[0].id_estado_pedido;
+
+    const resultados = await sequelize.query(
+      `
+      WITH RECURSIVE meses AS (
+        SELECT 1 as mes
+        UNION ALL
+        SELECT mes + 1 FROM meses WHERE mes < 12
+      )
+      SELECT 
+        m.mes,
+        COALESCE(SUM(CASE 
+          WHEN ped.id_estado_pedido = :idEstadoEntregado THEN dp.cantidad * dp.precio_unitario_al_momento 
+          ELSE 0 
+        END), 0) as totalVentas,
+        COALESCE(SUM(CASE 
+          WHEN ped.id_estado_pedido != :idEstadoEntregado THEN dp.cantidad * dp.precio_unitario_al_momento 
+          ELSE 0 
+        END), 0) as ventasPendientes
+      FROM meses m
+      LEFT JOIN pedidos ped ON MONTH(ped.fecha_pedido) = m.mes AND YEAR(ped.fecha_pedido) = YEAR(CURDATE())
+      LEFT JOIN detalle_pedido dp ON ped.id_pedido = dp.id_pedido
+      GROUP BY m.mes
+      ORDER BY m.mes;
+      `,
+      {
+        replacements: { idEstadoEntregado },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    res.json(resultados.map(r => ({
+      mes: Number(r.mes),
+      totalVentas: Number(r.totalVentas) || 0,
+      ventasPendientes: Number(r.ventasPendientes) || 0
+    })));
+  } catch (error) {
+    console.error("Error al obtener ventas por mes admin:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const getProductosMasVendidosAdmin = async (req, res) => {
+  try {
+    const estadoEntregado = await sequelize.query(
+      "SELECT id_estado_pedido FROM estado_pedido WHERE nombre_estado = 'Entregado' LIMIT 1",
+      { type: QueryTypes.SELECT }
+    );
+
+    if (!estadoEntregado.length) return res.status(500).json({ error: "Estado 'Entregado' no encontrado." });
+    const idEstadoEntregado = estadoEntregado[0].id_estado_pedido;
+
+    const resultados = await sequelize.query(
+      `
+      SELECT
+        p.id_producto,
+        p.nombre_producto,
+        COALESCE(SUM(inv.vendido), 0) AS vendidoInventario,
+        COALESCE(SUM(CASE WHEN ped.id_estado_pedido = :idEstadoEntregado THEN dp.cantidad ELSE 0 END), 0) AS vendidoDetalle,
+        COALESCE(SUM(CASE WHEN ped.id_estado_pedido != :idEstadoEntregado THEN dp.cantidad ELSE 0 END), 0) AS cantidadPendiente,
+        CASE WHEN COALESCE(SUM(inv.vendido), 0) > 0 THEN COALESCE(SUM(inv.vendido), 0)
+             ELSE COALESCE(SUM(CASE WHEN ped.id_estado_pedido = :idEstadoEntregado THEN dp.cantidad ELSE 0 END), 0)
+        END AS cantidadVendida
+      FROM producto p
+      LEFT JOIN inventario inv ON p.id_producto = inv.id_producto
+      LEFT JOIN detalle_pedido dp ON p.id_producto = dp.id_producto
+      LEFT JOIN pedidos ped ON dp.id_pedido = ped.id_pedido
+      GROUP BY p.id_producto, p.nombre_producto
+      HAVING (COALESCE(SUM(inv.vendido),0) + COALESCE(SUM(CASE WHEN ped.id_estado_pedido = :idEstadoEntregado THEN dp.cantidad ELSE 0 END),0) + COALESCE(SUM(CASE WHEN ped.id_estado_pedido != :idEstadoEntregado THEN dp.cantidad ELSE 0 END),0)) > 0
+      ORDER BY cantidadVendida DESC, cantidadPendiente DESC
+      LIMIT 10;
+      `,
+      {
+        replacements: { idEstadoEntregado },
+        type: QueryTypes.SELECT,
+      }
+    );
+    res.json(resultados);
+  } catch (error) {
+    console.error("Error al obtener productos más vendidos admin:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const getOrdenesEstadoAdmin = async (req, res) => {
+  try {
+    const resultados = await sequelize.query(
+      `
+      SELECT 
+        CASE 
+          WHEN ep.nombre_estado = 'Entregado' THEN 'Completadas'
+          ELSE 'Activas'
+        END as estado,
+        COUNT(DISTINCT ped.id_pedido) as total
+      FROM pedidos ped
+      INNER JOIN estado_pedido ep ON ped.id_estado_pedido = ep.id_estado_pedido
+      GROUP BY CASE 
+        WHEN ep.nombre_estado = 'Entregado' THEN 'Completadas'
+        ELSE 'Activas'
+      END;
+      `,
+      { type: QueryTypes.SELECT }
+    );
+
+    const ordenes = {
+      activas: resultados.find(r => r.estado === 'Activas')?.total || 0,
+      completadas: resultados.find(r => r.estado === 'Completadas')?.total || 0
+    };
+
+    res.json(ordenes);
+  } catch (error) {
+    console.error("Error al obtener estado de órdenes admin:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const reportProductosAdmin = async (req, res) => {
+  try {
+    const sql = `
+      SELECT p.id_producto, p.nombre_producto, p.descripcion_producto, p.precio_unitario, p.unidad_medida, p.estado_producto, 
+             COALESCE(inv.cantidad_disponible,0) as cantidad_disponible,
+             u.nombre_usuario as productor
+      FROM producto p
+      LEFT JOIN inventario inv ON p.id_producto = inv.id_producto
+      LEFT JOIN usuarios u ON p.id_usuario = u.id_usuario
+      ORDER BY p.nombre_producto;
+    `;
+    const productos = await sequelize.query(sql, { type: QueryTypes.SELECT });
+
+    const columns = [
+      { header: 'ID', key: 'id_producto' },
+      { header: 'Nombre', key: 'nombre_producto' },
+      { header: 'Productor', key: 'productor' },
+      { header: 'Precio', key: 'precio_unitario' },
+      { header: 'Unidad', key: 'unidad_medida' },
+      { header: 'Estado', key: 'estado_producto' },
+      { header: 'Stock', key: 'cantidad_disponible' }
+    ];
+
+    if (req.query.format === 'html' || req.query.preview === '1') {
+      return res.send(buildHtmlTable('Reporte Global de Productos', columns, productos));
+    }
+
+    if (req.query.format === 'pdf') {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="reporte_productos_admin.pdf"');
+      const buffer = await buildPdfReport('Reporte Global de Productos', productos, columns);
+      res.send(buffer);
+      return;
+    }
+
+    if (req.query.format === 'excel') {
+      const buffer = await buildExcelReport('Reporte Global de Productos', productos, columns);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename="reporte_productos_admin.xlsx"');
+      return res.send(buffer);
+    }
+
+    // Retornamos JSON por defecto o para vista de tabla
+    res.json(productos);
+  } catch (error) {
+    console.error('Error reportProductosAdmin:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+const reportInventarioAdmin = async (req, res) => {
+  try {
+     const sql = `
+      SELECT p.id_producto, p.nombre_producto, COALESCE(inv.cantidad_disponible,0) as cantidad_disponible,
+        COALESCE(SUM(dp.cantidad),0) as vendidos,
+        (p.precio_unitario * COALESCE(inv.cantidad_disponible,0)) as valor_inventario,
+        NOW() as fecha_ultima_actualizacion, p.unidad_medida,
+        u.nombre_usuario as productor
+      FROM producto p
+      LEFT JOIN inventario inv ON p.id_producto = inv.id_producto
+      LEFT JOIN detalle_pedido dp ON p.id_producto = dp.id_producto
+      LEFT JOIN usuarios u ON p.id_usuario = u.id_usuario
+      GROUP BY p.id_producto, p.nombre_producto, inv.cantidad_disponible, p.precio_unitario, p.unidad_medida, u.nombre_usuario
+      ORDER BY p.nombre_producto;
+    `;
+    const rows = await sequelize.query(sql, { type: QueryTypes.SELECT });
+    
+    const columns = [
+        { header: 'ID', key: 'id_producto' },
+        { header: 'Producto', key: 'nombre_producto' },
+        { header: 'Productor', key: 'productor' },
+        { header: 'Stock', key: 'cantidad_disponible' },
+        { header: 'Vendidos', key: 'vendidos' },
+        { header: 'Valor Inventario', key: 'valor_inventario' },
+        { header: 'Unidad', key: 'unidad_medida' }
+    ];
+
+    if (req.query.format === 'html' || req.query.preview === '1') {
+        return res.send(buildHtmlTable('Reporte Global de Inventario', columns, rows));
+    }
+
+    if (req.query.format === 'pdf') {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="reporte_inventario_admin.pdf"');
+      const buffer = await buildPdfReport('Reporte Global de Inventario', rows, columns);
+      res.send(buffer);
+      return;
+    }
+
+    if (req.query.format === 'excel') {
+      const buffer = await buildExcelReport('Reporte Global de Inventario', rows, columns);
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename="reporte_inventario_admin.xlsx"');
+      return res.send(buffer);
+    }
+
+    res.json(rows);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({error: 'Error server'});
+  }
+};
+
+const reportPedidosAdmin = async (req, res) => {
+    try {
+        const sql = `
+          SELECT ped.id_pedido, u.nombre_usuario as cliente, ped.fecha_pedido, p.nombre_producto, dp.cantidad, dp.subtotal, ep.nombre_estado,
+                 prod.nombre_usuario as productor
+          FROM detalle_pedido dp
+          INNER JOIN pedidos ped ON dp.id_pedido = ped.id_pedido
+          INNER JOIN producto p ON dp.id_producto = p.id_producto
+          LEFT JOIN usuarios prod ON p.id_usuario = prod.id_usuario
+          LEFT JOIN usuarios u ON ped.id_usuario = u.id_usuario
+          LEFT JOIN estado_pedido ep ON ped.id_estado_pedido = ep.id_estado_pedido
+          ORDER BY ped.fecha_pedido DESC
+        `;
+        const rows = await sequelize.query(sql, { type: QueryTypes.SELECT });
+        const columns = [
+            { header: 'Pedido', key: 'id_pedido' },
+            { header: 'Cliente', key: 'cliente' },
+            { header: 'Productor', key: 'productor' },
+            { header: 'Fecha', key: 'fecha_pedido' },
+            { header: 'Producto', key: 'nombre_producto' },
+            { header: 'Cantidad', key: 'cantidad' },
+            { header: 'Total', key: 'subtotal' },
+            { header: 'Estado', key: 'nombre_estado' }
+        ];
+
+        if (req.query.format === 'html' || req.query.preview === '1') {
+            return res.send(buildHtmlTable('Reporte Global de Pedidos', columns, rows));
+        }
+
+        if (req.query.format === 'pdf') {
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', 'attachment; filename="reporte_pedidos_admin.pdf"');
+          const buffer = await buildPdfReport('Reporte Global de Pedidos', rows, columns);
+          res.send(buffer);
+          return;
+        }
+
+        if (req.query.format === 'excel') {
+          const buffer = await buildExcelReport('Reporte Global de Pedidos', rows, columns);
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          res.setHeader('Content-Disposition', 'attachment; filename="reporte_pedidos_admin.xlsx"');
+          return res.send(buffer);
+        }
+
+        res.json(rows);
+    } catch(e) {
+        console.error(e);
+        res.status(500).json({error: 'Error'});
+    }
+};
+
+const reportDescuentosAdmin = async (req, res) => {
+    try {
+        const sql = `
+          SELECT d.id_descuento, d.valor_descuento, d.fecha_inicio, d.fecha_fin, d.estado, p.nombre_producto, u.nombre_usuario as productor
+          FROM descuentos d
+          LEFT JOIN producto_descuento pd ON d.id_descuento = pd.id_descuento
+          LEFT JOIN producto p ON pd.id_producto = p.id_producto
+          LEFT JOIN usuarios u ON p.id_usuario = u.id_usuario
+          ORDER BY d.fecha_inicio DESC
+        `;
+        const rows = await sequelize.query(sql, { type: QueryTypes.SELECT });
+        const columns = [
+            { header: 'ID', key: 'id_descuento' },
+            { header: 'Valor', key: 'valor_descuento' },
+            { header: 'Producto', key: 'nombre_producto' },
+            { header: 'Productor', key: 'productor' },
+            { header: 'Inicio', key: 'fecha_inicio' },
+            { header: 'Fin', key: 'fecha_fin' },
+            { header: 'Estado', key: 'estado' }
+        ];
+        if (req.query.format === 'html' || req.query.preview === '1') {
+            return res.send(buildHtmlTable('Reporte Global de Descuentos', columns, rows));
+        }
+
+        if (req.query.format === 'pdf') {
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', 'attachment; filename="reporte_descuentos_admin.pdf"');
+          const buffer = await buildPdfReport('Reporte Global de Descuentos', rows, columns);
+          res.send(buffer);
+          return;
+        }
+
+        if (req.query.format === 'excel') {
+          const buffer = await buildExcelReport('Reporte Global de Descuentos', rows, columns);
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          res.setHeader('Content-Disposition', 'attachment; filename="reporte_descuentos_admin.xlsx"');
+          return res.send(buffer);
+        }
+
+        res.json(rows);
+    } catch(e) {
+        console.error(e);
+        res.status(500).json({error: 'Error'});
+    }
+};
+
+
 module.exports = {
   getDatosFinancieros,
   getVentasPorMes,
@@ -935,6 +1429,15 @@ module.exports = {
   reportInventario,
   reportPedidos,
   reportDescuentos,
+  // Admin exports
+  getDatosFinancierosAdmin,
+  getVentasPorMesAdmin,
+  getProductosMasVendidosAdmin,
+  getOrdenesEstadoAdmin,
+  reportProductosAdmin,
+  reportInventarioAdmin,
+  reportPedidosAdmin,
+  reportDescuentosAdmin
 };
 
 
