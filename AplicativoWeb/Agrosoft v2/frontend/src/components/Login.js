@@ -74,20 +74,17 @@ function Login({ switchToRegister, onLogin }) {
 
         localStorage.setItem('user', JSON.stringify(userData));
         console.log(' [LOGIN] User data saved:', userData);
-        const verifyToken = localStorage.getItem('token');
-        const verifyUser = localStorage.getItem('user');
-        console.log('🔍 [LOGIN] Verification - Token exists:', !!verifyToken);
-        console.log('🔍 [LOGIN] Verification - User exists:', !!verifyUser);
-
+        
+        // Call parent handler to update global state
         if (typeof onLogin === 'function') {
           onLogin(userData);
         } else {
-          
           localStorage.setItem('user', JSON.stringify(userData));
         }
 
         console.log(` [LOGIN] User role: ${data.user.id_rol}, redirecting...`);
-
+        // Navigation is handled by App.js state change or redundant navigate here
+        // We keep navigate just in case, but App.js might unmount this component first
         if (data.user.id_rol === 3) {
           navigate('/AdminView', { replace: true });
         } else {
@@ -104,13 +101,26 @@ function Login({ switchToRegister, onLogin }) {
     }
   };
 
+  const pageVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1, transition: { duration: 0.5 } },
+    exit: { opacity: 0, transition: { duration: 0.5 } }
+  };
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 }
   };
 
   return (
-    <div className="video-background-container" style={{ position: 'relative' }}>
+    <motion.div 
+      className="video-background-container" 
+      style={{ position: 'relative' }}
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <img
         src="/img/1.png"
         alt="Logo"
@@ -197,7 +207,7 @@ function Login({ switchToRegister, onLogin }) {
           </div>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 
