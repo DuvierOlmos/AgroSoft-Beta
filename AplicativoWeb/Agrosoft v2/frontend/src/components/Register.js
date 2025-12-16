@@ -140,123 +140,136 @@ function Register({ onLogin }) {
     }
   };
 
+  const pageVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1, transition: { duration: 0.5 } },
+    exit: { opacity: 0, transition: { duration: 0.5 } }
+  };
+
   return (
-    <Container fluid className="vh-100 d-flex justify-content-center align-items-center" style={{ position: 'relative' }}>
-      <img
-        src="/img/1.png"
-        alt="Logo"
-        style={{
-          position: "absolute",
-          top: "30px",
-          left: "30px",
-          width: "70px",
-          height: "auto",
-          zIndex: 2,
-          filter: "brightness(0) invert(0)"
-        }}
-        onError={(e) => e.target.src = "https://placehold.co/70x70/006400/FFFFFF?text=Logo"}
-      />
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={fadeInUp}
-        transition={{ duration: 0.8 }}
-        className="d-flex shadow-lg rounded-4 overflow-hidden"
-        style={{ width: "800px", maxHeight: "90vh", minHeight: "500px" }}
-      >
-        <div className="d-none d-md-block" style={{ width: "50%", minHeight: "100%", maxHeight: "90vh" }}>
-          <Carousel fade className="h-100">
-            <Carousel.Item className="h-100">
-              <img src="/img/food-3250439.jpg" alt="visual1" className="d-block w-100 h-100" style={{objectFit: "cover"}} onError={(e) => e.target.src = "https://placehold.co/400x500/A0E8AF/006400?text=Comida"} />
-            </Carousel.Item>
-            <Carousel.Item className="h-100">
-              <img src="/img/grapevine-7368800.jpg" alt="visual2" className="d-block w-100 h-100" style={{objectFit: "cover"}} onError={(e) => e.target.src = "https://placehold.co/400x500/A0E8AF/006400?text=Viñedo"} />
-            </Carousel.Item>
-            <Carousel.Item className="h-100">
-              <img src="/img/corn-5151505.jpg" alt="visual3" className="d-block w-100 h-100" style={{objectFit: "cover"}} onError={(e) => e.target.src = "https://placehold.co/400x500/A0E8AF/006400?text=Maíz"} />
-            </Carousel.Item>
-          </Carousel>
-        </div>
-
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+        <Container fluid className="vh-100 d-flex justify-content-center align-items-center" style={{ position: 'relative' }}>
+        <img
+            src="/img/1.png"
+            alt="Logo"
+            style={{
+            position: "absolute",
+            top: "30px",
+            left: "30px",
+            width: "70px",
+            height: "auto",
+            zIndex: 2,
+            filter: "brightness(0) invert(0)"
+            }}
+            onError={(e) => e.target.src = "https://placehold.co/70x70/006400/FFFFFF?text=Logo"}
+        />
         <motion.div
-          className="bg-light p-5"
-          style={{ width: "50%", overflowY: "auto" }}
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ duration: 0.8 }}
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            transition={{ duration: 0.8 }}
+            className="d-flex shadow-lg rounded-4 overflow-hidden"
+            style={{ width: "800px", maxHeight: "90vh", minHeight: "500px" }}
         >
-          <motion.h3 className="mb-4" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
-            Registro de usuario 
-          </motion.h3>
-
-          <form onSubmit={handleSubmit}>
-            {["nombre_usuario", "correo_electronico", "password", "documento_identidad"].map((field, index) => (
-              <motion.div key={field} className="mb-3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 * index }}>
-                <label className="form-label">
-                  {field === "nombre_usuario" ? "Nombre de usuario"
-                    : field === "correo_electronico" ? "Correo electrónico"
-                    : field === "password" ? "Contraseña"
-                    : "Documento de identidad"}
-                </label>
-                <input
-                  type={field === "password" ? "password" : "text"}
-                  className="form-control"
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  style={errors[field] ? styles.inputError : {}}
-                  placeholder={errors[field] ? errors[field] :
-                    field === "nombre_usuario" ? "Escribe tu nombre" :
-                    field === "correo_electronico" ? "ejemplo@correo.com" :
-                    field === "password" ? "********" :
-                    "123456789"
-                  }
-                />
-              </motion.div>
-            ))}
-
-            <motion.div className="mb-3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
-              <label className="form-label px-3">Elige tu rol</label>
-              <DropdownButton
-                as={ButtonGroup}
-                style={styles.dropdownNaranja}
-                variant="warning" 
-                title={
-                  formData.id_rol
-                    ? formData.id_rol === "1" ? "Cliente"
-                    : formData.id_rol === "2" ? "Administrador"
-                    : "Agricultor"
-                    : errors.id_rol ? errors.id_rol : "Selecciona un rol"
-                }
-                onSelect={(eventKey) => setFormData({ ...formData, id_rol: eventKey })}
-              >
-                <Dropdown.Item eventKey="1">Cliente</Dropdown.Item>
-                <Dropdown.Item eventKey="2">Administrador</Dropdown.Item>
-                <Dropdown.Item eventKey="3">Agricultor</Dropdown.Item>
-              </DropdownButton>
-              {errors.id_rol && <div className="text-danger mt-1">{errors.id_rol}</div>}
-            </motion.div>
-
-            <motion.button type="submit" className="btn mt-3" style={styles.btnNaranja} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              Unirse a la familia
-            </motion.button>
-          </form>
-
-          {message && (
-            <div style={status === "success" ? styles.toastSuccess : styles.toastError}>
-              {message}
+            <div className="d-none d-md-block" style={{ width: "50%", minHeight: "100%", maxHeight: "90vh" }}>
+            <Carousel fade className="h-100">
+                <Carousel.Item className="h-100">
+                <img src="/img/food-3250439.jpg" alt="visual1" className="d-block w-100 h-100" style={{objectFit: "cover"}} onError={(e) => e.target.src = "https://placehold.co/400x500/A0E8AF/006400?text=Comida"} />
+                </Carousel.Item>
+                <Carousel.Item className="h-100">
+                <img src="/img/grapevine-7368800.jpg" alt="visual2" className="d-block w-100 h-100" style={{objectFit: "cover"}} onError={(e) => e.target.src = "https://placehold.co/400x500/A0E8AF/006400?text=Viñedo"} />
+                </Carousel.Item>
+                <Carousel.Item className="h-100">
+                <img src="/img/corn-5151505.jpg" alt="visual3" className="d-block w-100 h-100" style={{objectFit: "cover"}} onError={(e) => e.target.src = "https://placehold.co/400x500/A0E8AF/006400?text=Maíz"} />
+                </Carousel.Item>
+            </Carousel>
             </div>
-          )}
 
-          <div className="text-center mt-3">
-            <Link to="/login" className="btn btn-link mt-3" style={{ color: '#006400' }}>
-              ¿Tienes cuenta? Inicia sesión aquí
-            </Link>
-          </div>
+            <motion.div
+            className="bg-light p-5"
+            style={{ width: "50%", overflowY: "auto" }}
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            transition={{ duration: 0.8 }}
+            >
+            <motion.h3 className="mb-4" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}>
+                Registro de usuario 
+            </motion.h3>
+
+            <form onSubmit={handleSubmit}>
+                {["nombre_usuario", "correo_electronico", "password", "documento_identidad"].map((field, index) => (
+                <motion.div key={field} className="mb-3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 * index }}>
+                    <label className="form-label">
+                    {field === "nombre_usuario" ? "Nombre de usuario"
+                        : field === "correo_electronico" ? "Correo electrónico"
+                        : field === "password" ? "Contraseña"
+                        : "Documento de identidad"}
+                    </label>
+                    <input
+                    type={field === "password" ? "password" : "text"}
+                    className="form-control"
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    style={errors[field] ? styles.inputError : {}}
+                    placeholder={errors[field] ? errors[field] :
+                        field === "nombre_usuario" ? "Escribe tu nombre" :
+                        field === "correo_electronico" ? "ejemplo@correo.com" :
+                        field === "password" ? "********" :
+                        "123456789"
+                    }
+                    />
+                </motion.div>
+                ))}
+
+                <motion.div className="mb-3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.8 }}>
+                <label className="form-label px-3">Elige tu rol</label>
+                <DropdownButton
+                    as={ButtonGroup}
+                    style={styles.dropdownNaranja}
+                    variant="warning" 
+                    title={
+                    formData.id_rol
+                        ? formData.id_rol === "1" ? "Cliente"
+                        : formData.id_rol === "2" ? "Administrador"
+                        : "Agricultor"
+                        : errors.id_rol ? errors.id_rol : "Selecciona un rol"
+                    }
+                    onSelect={(eventKey) => setFormData({ ...formData, id_rol: eventKey })}
+                >
+                    <Dropdown.Item eventKey="1">Cliente</Dropdown.Item>
+                    <Dropdown.Item eventKey="2">Administrador</Dropdown.Item>
+                    <Dropdown.Item eventKey="3">Agricultor</Dropdown.Item>
+                </DropdownButton>
+                {errors.id_rol && <div className="text-danger mt-1">{errors.id_rol}</div>}
+                </motion.div>
+
+                <motion.button type="submit" className="btn mt-3" style={styles.btnNaranja} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                Unirse a la familia
+                </motion.button>
+            </form>
+
+            {message && (
+                <div style={status === "success" ? styles.toastSuccess : styles.toastError}>
+                {message}
+                </div>
+            )}
+
+            <div className="text-center mt-3">
+                <Link to="/login" className="btn btn-link mt-3" style={{ color: '#006400' }}>
+                ¿Tienes cuenta? Inicia sesión aquí
+                </Link>
+            </div>
+            </motion.div>
         </motion.div>
-      </motion.div>
-    </Container>
+        </Container>
+    </motion.div>
   );
 }
 
