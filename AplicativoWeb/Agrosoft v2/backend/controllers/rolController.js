@@ -1,9 +1,7 @@
-
 const Rol = require('../models/rol');
 const { Op } = require("sequelize");
 
 exports.createRol = async (req, res) => {
-   
     const newRolData = req.body; 
     try {  
         const rol = await Rol.create(newRolData);   
@@ -72,8 +70,6 @@ exports.updateRol = async (req, res) => {
     return res.status(404).json({ message: 'Rol no encontrado para actualizar' });
 
   } catch (error) {
-    
-    
     res.status(500).json({ error: 'Error al actualizar el rol', details: error.message });
   }
 };
@@ -89,12 +85,10 @@ exports.deleteRol = async (req, res) => {
         }
         return res.status(404).json({ message: 'Rol no encontrado para eliminar' });
     } catch (error) {
-        // El error puede ser debido a restricción de clave foránea
         res.status(500).json({ error: 'Error al eliminar el rol', details: error.message });
     }
 };
 
-// 5. Obtener Rol por ID (Admin)
 exports.getRolById = async (req, res) => {
   try {
     const { id_rol } = req.params;

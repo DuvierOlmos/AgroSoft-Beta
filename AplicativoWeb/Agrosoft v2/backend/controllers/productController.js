@@ -5,7 +5,6 @@ const Categoria = require('../models/categoria');
 const Descuento = require('../models/descuento');
 const { Op } = require("sequelize");
 
-
 exports.getAllProductsAdmin = async (req, res) => {
   try {
     const { search } = req.query;
@@ -28,7 +27,6 @@ exports.getAllProductsAdmin = async (req, res) => {
 
     const products = await Product.findAll({
       where: whereClause,
-      // Incluir datos relacionados para la vista de administración
       include:[
         { 
             model: SubCategoria, 
@@ -36,7 +34,7 @@ exports.getAllProductsAdmin = async (req, res) => {
             attributes: ['id_SubCategoria', 'nombre'] 
         }
       ],
-      order: [['id_producto', 'DESC']] // Últimos productos primero
+      order: [['id_producto', 'DESC']]
     });
     res.json(products);
   } catch (error) {
@@ -44,12 +42,10 @@ exports.getAllProductsAdmin = async (req, res) => {
   }
 };
 
-//Actualizar Producto
 exports.updateProductAdmin = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Verificar si el producto existe antes de actualizar
     const productExists = await Product.findByPk(id);
     if (!productExists) {
       return res.status(404).json({ message: 'Producto no encontrado' });
@@ -58,10 +54,6 @@ exports.updateProductAdmin = async (req, res) => {
     const [updated] = await Product.update(req.body, {
       where: { id_producto: id }
     });
-    
-    // Si updated es 0, significa que no hubo cambios o los datos son iguales, 
-    // pero el producto existe (verificado arriba).
-    // Devolvemos el producto actualizado.
     
     const updatedProduct = await Product.findByPk(id);
     res.status(200).json(updatedProduct);
@@ -101,7 +93,6 @@ exports.getProductById = async (req, res) => {
 
     const product = await Product.findByPk(id, {
       include: [
- 
         {
           model: SubCategoria,
           as: 'SubCategory',
@@ -131,7 +122,6 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-// 4. Eliminar Producto (o desactivar si tiene dependencias)
 exports.deleteProductAdmin = async (req, res) => {
   try {
     const { id } = req.params;
@@ -142,13 +132,11 @@ exports.deleteProductAdmin = async (req, res) => {
     }
 
     try {
-      // Intentar eliminación física
       await Product.destroy({
         where: { id_producto: id }
       });
       return res.status(204).json({ message: 'Producto eliminado' });
     } catch (destroyError) {
-      // Si falla (probablemente por FK), realizar eliminación lógica (soft delete)
       console.warn(`No se pudo eliminar físicamente el producto ${id}, cambiando a estado Inactivo. Error: ${destroyError.message}`);
       
       await Product.update(
@@ -165,7 +153,6 @@ exports.deleteProductAdmin = async (req, res) => {
   }
 };
 
-// 5. Eliminar Producto Permanentemente (Sin Soft Delete Fallback)
 exports.deleteProductPermanent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -175,7 +162,6 @@ exports.deleteProductPermanent = async (req, res) => {
       return res.status(404).json({ message: 'Producto no encontrado' });
     }
 
-    // Eliminación física directa
     await Product.destroy({
       where: { id_producto: id }
     });
@@ -183,7 +169,6 @@ exports.deleteProductPermanent = async (req, res) => {
     return res.status(200).json({ message: 'Producto eliminado permanentemente de la base de datos.' });
 
   } catch (error) {
-    // Manejo específico de errores de llave foránea (SequelizeForeignKeyConstraintError)
     if (error.name === 'SequelizeForeignKeyConstraintError') {
       return res.status(400).json({ 
         message: 'No se puede eliminar el producto porque tiene registros asociados (ventas, pedidos, etc.). Debes eliminar esos registros primero o archivar el producto.',
@@ -191,7 +176,6 @@ exports.deleteProductPermanent = async (req, res) => {
       });
     }
 
-    // Error general
     res.status(500).json({ 
       message: 'Error al eliminar el producto permanentemente.',
       error: error.message,
@@ -202,7 +186,6 @@ exports.deleteProductPermanent = async (req, res) => {
 
 exports.createProductAdmin = async (req, res) => {
   try {
-    // 1. Capturamos los datos del cuerpo de la solicitud
     const { 
       nombre_producto, 
       descripcion_producto, 
@@ -215,12 +198,10 @@ exports.createProductAdmin = async (req, res) => {
       url_imagen
     } = req.body;
 
-    // 2. Validación básica de campos requeridos (Ajustar según tu modelo)
     if (!nombre_producto || !precio_unitario || !id_SubCategoria) {
       return res.status(400).json({ message: 'Faltan campos obligatorios: nombre, precio, subcategoría o productor.' });
     }
 
-    // Validar id_usuario si se proporciona (Debe ser Rol 3 - Agricultor)
     if (id_usuario) {
       const user = await User.findByPk(id_usuario);
       if (!user) {
@@ -231,7 +212,6 @@ exports.createProductAdmin = async (req, res) => {
       }
     }
 
-    // 3. Crear el nuevo producto en la base de datos
     const newProduct = await Product.create({
       nombre_producto, 
       descripcion_producto, 

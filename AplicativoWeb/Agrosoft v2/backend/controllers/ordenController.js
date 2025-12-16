@@ -47,7 +47,6 @@ const obtenerTodasLasOrdenes = async (req, res) => {
     let whereConditions = [];
     const replacements = {};
 
-    // Filtros de fecha y estado (Directos en WHERE)
     if (fechaInicio) {
       whereConditions.push("DATE(ped.fecha_pedido) >= :fechaInicio");
       replacements.fechaInicio = fechaInicio;
@@ -63,8 +62,6 @@ const obtenerTodasLasOrdenes = async (req, res) => {
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(" AND ")}` : "";
 
-    // Filtro de búsqueda general (ID, Cliente, Ciudad, Productos, Seguimiento)
-    // Para buscar en productos sin filtrar las filas antes de agrupar, usamos HAVING
     let havingClause = "";
     if (search) {
       havingClause = `HAVING (
@@ -150,15 +147,11 @@ const generarComprobante = async (req, res) => {
     const { id } = req.params; 
 
     try {
-        // En un caso real, aquí deberías hacer una consulta SQL para obtener los datos reales del pedido
-        // Por ahora mantenemos los datos de ejemplo si así estaba el código original, 
-        // o idealmente deberíamos implementar la consulta real.
-        // Dado que el usuario pidió corregir el error de visualización, mantendré la lógica existente de generación.
-        
-        // TODO: Reemplazar datos de prueba con consulta real a DB
+        // TODO: Implementar consulta real a la base de datos para obtener datos del pedido
+        // Por ahora se usa data mockeada como estaba en la versión anterior para no romper la funcionalidad
         const datosOrden = {
             fecha_pedido: new Date(),
-            cliente: "Cliente (ID: " + id + ")", // Placeholder
+            cliente: "Cliente (ID: " + id + ")",
             direccion_envio: "Dirección registrada",
             ciudad_envio: "Ciudad",
             productos: [
@@ -167,9 +160,6 @@ const generarComprobante = async (req, res) => {
             total: 0
         };
         
-        // Intentar obtener datos reales básicos si es posible, si no, dejar el placeholder para no romper funcionalidad
-        // (Nota: El código original tenía datos hardcodeados, así que asumo que es funcionalidad en desarrollo)
-
         if (!datosOrden) {
             return res.status(404).json({ error: "Orden no encontrada." });
         }
@@ -203,7 +193,6 @@ const generarComprobante = async (req, res) => {
             doc.moveDown(0.5);
         });
 
-        // Total
         doc.moveDown();
         doc.fontSize(14).text(`TOTAL: $${datosOrden.total.toFixed(2)}`, { align: 'right' });
         

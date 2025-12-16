@@ -1,4 +1,3 @@
-// ofertas_controller.js - VERSIÓN COMPLETA
 const db = require("../config/db");
 
 function COP(valor) {
@@ -10,13 +9,8 @@ function COP(valor) {
 }
 
 module.exports = {
-    /* ============================================
-       1. LISTAR TODOS LOS CÓDIGOS (DESCUENTOS + OFERTAS)
-    ============================================= */
     async listarCodigos(req, res) {
         try {
-            console.log("🔍 Buscando TODOS los códigos y ofertas...");
-
             const sql = `
                 -- DESCUENTOS CON CÓDIGO
                 SELECT 
@@ -76,9 +70,7 @@ module.exports = {
             `;
 
             const [rows] = await db.query(sql);
-            console.log(`✅ ${rows.length} códigos/ofertas encontrados`);
 
-            // Formatear respuesta
             const codigosFormateados = rows.map(item => {
                 let valorDescuento = "";
                 let esSinCodigo = item.es_sin_codigo === 1;
@@ -125,15 +117,10 @@ module.exports = {
         }
     },
 
-    /* ============================================
-       2. VALIDAR UN CÓDIGO O DESCUENTO
-    ============================================= */
     async validarCodigo(req, res) {
         try {
             const { codigo } = req.params;
             const codigoFormateado = codigo.trim().toUpperCase();
-
-            console.log(`🔍 Validando: ${codigoFormateado}`);
 
             if (!codigoFormateado) {
                 return res.json({
@@ -148,7 +135,6 @@ module.exports = {
             let tipoPromocion = '';
             let esPorID = false;
 
-            // Verificar si es una oferta (OFERTA1, OFERTA2, etc.)
             if (codigoFormateado.startsWith('OFERTA')) {
                 const idOferta = codigoFormateado.replace('OFERTA', '');
                 const [ofertas] = await db.query(`
@@ -163,9 +149,7 @@ module.exports = {
                     promocion = ofertas[0];
                     tipoPromocion = 'oferta';
                 }
-            }
-            // Verificar si es un descuento con código o sin código
-            else {
+            } else {
                 const [descuentos] = await db.query(`
                     SELECT d.*, 'descuento' as tipo
                     FROM descuentos d
@@ -181,7 +165,6 @@ module.exports = {
                     esPorID = promocion.codigo_descuento === null &&
                         codigoFormateado === `DESC${promocion.id_descuento}`;
                 } else {
-                    // Intentar como ID numérico de descuento
                     const idDescuento = parseInt(codigoFormateado.replace('DESC', ''));
                     if (!isNaN(idDescuento)) {
                         const [descuentosPorID] = await db.query(`
@@ -211,13 +194,9 @@ module.exports = {
                 });
             }
 
-            console.log(`✅ ${tipoPromocion.toUpperCase()} encontrado: ${promocion.nombre_descuento || promocion.nombre_oferta}`);
-
-            // Buscar productos relacionados
             let productosDB = [];
 
             if (tipoPromocion === 'oferta') {
-                // Productos con oferta
                 const [productosOferta] = await db.query(`
                     SELECT 
                         p.id_producto,
@@ -241,7 +220,6 @@ module.exports = {
 
                 productosDB = productosOferta;
             } else {
-                // Productos con descuento
                 const [productosDescuento] = await db.query(`
                     SELECT 
                         p.id_producto,
@@ -266,9 +244,6 @@ module.exports = {
                 productosDB = productosDescuento;
             }
 
-            console.log(`📦 ${productosDB.length} productos encontrados`);
-
-            // Procesar productos
             const productosProcesados = productosDB.map(producto => {
                 let precioOriginal = Number(producto.precio_unitario) || 0;
                 let precioFinal = precioOriginal;
@@ -338,13 +313,8 @@ module.exports = {
         }
     },
 
-    /* ============================================
-       3. TODOS LOS PRODUCTOS CON DESCUENTOS U OFERTAS
-    ============================================= */
     async productosEnOferta(req, res) {
         try {
-            console.log("🛒 Buscando TODOS los productos con descuentos u ofertas...");
-
             const sql = `
                 -- Productos con DESCUENTOS
                 SELECT 
@@ -428,9 +398,7 @@ module.exports = {
             `;
 
             const [rows] = await db.query(sql);
-            console.log(`✅ ${rows.length} productos encontrados`);
 
-            // Procesar productos
             const productosProcesados = rows.map(producto => {
                 let precioOriginal = Number(producto.precio_unitario) || 0;
                 let precioFinal = precioOriginal;

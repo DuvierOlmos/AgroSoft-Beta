@@ -2,7 +2,6 @@ const sequelize = require("../config/db");
 const { QueryTypes } = require("sequelize");
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
-const fs = require('fs');
 
 const getUserId = (req) => {
   return req.user?.id_usuario || req.usuario?.id_usuario || req.query.id_usuario;
@@ -12,11 +11,8 @@ const getDatosFinancieros = async (req, res) => {
   try {
     const id_usuario = getUserId(req);
     if (!id_usuario) {
-      console.log("Usuario no autenticado - ID faltante");
       return res.status(401).json({ error: "Usuario no autenticado." });
     }
-
-    console.log("Obteniendo datos financieros para usuario:", id_usuario);
 
     const estadoEntregado = await sequelize.query(
       "SELECT id_estado_pedido FROM estado_pedido WHERE nombre_estado = 'Entregado' LIMIT 1",
@@ -24,12 +20,10 @@ const getDatosFinancieros = async (req, res) => {
     );
 
     if (!estadoEntregado.length) {
-      console.log("Estado 'Entregado' no encontrado en la BD");
       return res.status(500).json({ error: "Estado 'Entregado' no encontrado." });
     }
 
     const idEstadoEntregado = estadoEntregado[0].id_estado_pedido;
-    console.log("ID estado entregado:", idEstadoEntregado);
 
     const ingresos = await sequelize.query(
       `
@@ -82,15 +76,6 @@ const getDatosFinancieros = async (req, res) => {
     
     const ganancia = ingresos_totales - costos_totales;
     const ganancia_potencial = ventas_pendientes - costos_pendientes;
-
-    console.log("Resumen financiero calculado:", {
-      ingresos: ingresos_totales,
-      ingresos_pendientes: ventas_pendientes,
-      costos: costos_totales,
-      costos_pendientes: costos_pendientes,
-      ganancia_actual: ganancia,
-      ganancia_potencial: ganancia_potencial
-    });
 
     res.json({
       ingresos: {
@@ -171,8 +156,6 @@ const getVentasPorMes = async (req, res) => {
       totalVentas: Number(r.totalVentas) || 0
     }));
 
-    console.log("Ventas por mes:", ventasPorMes);
-
     res.json(ventasPorMes);
   } catch (error) {
     console.error("Error al obtener ventas por mes:", error);
@@ -182,7 +165,6 @@ const getVentasPorMes = async (req, res) => {
     });
   }
 };
-
 
 const getProductosMasVendidos = async (req, res) => {
   try {
@@ -210,7 +192,6 @@ const getProductosMasVendidos = async (req, res) => {
         COALESCE(SUM(inv.vendido), 0) AS vendidoInventario,
         COALESCE(SUM(CASE WHEN ped.id_estado_pedido = :idEstadoEntregado THEN dp.cantidad ELSE 0 END), 0) AS vendidoDetalle,
         COALESCE(SUM(CASE WHEN ped.id_estado_pedido != :idEstadoEntregado THEN dp.cantidad ELSE 0 END), 0) AS cantidadPendiente,
-        -- Usar inventario.vendido si existe (>0), en caso contrario usar lo registrado en detalle_pedido
         CASE WHEN COALESCE(SUM(inv.vendido), 0) > 0 THEN COALESCE(SUM(inv.vendido), 0)
              ELSE COALESCE(SUM(CASE WHEN ped.id_estado_pedido = :idEstadoEntregado THEN dp.cantidad ELSE 0 END), 0)
         END AS cantidadVendida
@@ -228,8 +209,6 @@ const getProductosMasVendidos = async (req, res) => {
         type: QueryTypes.SELECT,
       }
     );
-
-    console.log("Productos más vendidos:", resultados);
 
     res.json(resultados);
   } catch (error) {
@@ -277,8 +256,6 @@ const getOrdenesEstado = async (req, res) => {
       completadas: resultados.find(r => r.estado === 'Completadas')?.total || 0
     };
 
-    console.log("Estado de órdenes:", ordenes);
-
     res.json(ordenes);
   } catch (error) {
     console.error("Error al obtener estado de órdenes:", error);
@@ -288,7 +265,6 @@ const getOrdenesEstado = async (req, res) => {
     });
   }
 };
-
 
 const buildPdfReport = (title, rows, columns) => {
   return new Promise((resolve, reject) => {
@@ -300,17 +276,13 @@ const buildPdfReport = (title, rows, columns) => {
       doc.on('end', () => resolve(Buffer.concat(chunks)));
       doc.on('error', reject);
 
-      // --- Helper Functions ---
       const drawHeader = () => {
-          // Logo/Brand area
           doc.fontSize(20).font('Helvetica-Bold').fillColor('#2E7D32').text('AGROSOFT', 40, 40, { align: 'left' });
           doc.fontSize(10).font('Helvetica').fillColor('#666').text('Sistema de Gestión Agrícola', 40, 65, { align: 'left' });
           
-          // Metadata (Date/Time)
           doc.fontSize(9).font('Helvetica').fillColor('#555').text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 400, 40, { align: 'right', width: 155 });
           doc.text(`Hora: ${new Date().toLocaleTimeString('es-CO')}`, 400, 53, { align: 'right', width: 155 });
 
-          // Separator
           doc.moveDown();
           doc.strokeColor('#4CAF50').lineWidth(2).moveTo(40, 85).lineTo(555, 85).stroke();
       };
@@ -320,7 +292,6 @@ const buildPdfReport = (title, rows, columns) => {
           doc.fontSize(8).fillColor('#999').text(`Generado por AgroSoft © 2025 | Página ${pageNumber}`, 40, bottom, { align: 'center', width: 515 });
       };
 
-      // --- Init ---
       let pageNumber = 1;
       drawHeader();
       
@@ -328,7 +299,6 @@ const buildPdfReport = (title, rows, columns) => {
       doc.fontSize(14).font('Helvetica-Bold').fillColor('#333').text(title.toUpperCase(), { align: 'center' });
       doc.moveDown(2);
 
-      // --- Table Layout Configuration ---
       const startX = 40;
       const tableWidth = 515;
       const colWidth = tableWidth / columns.length; 
@@ -336,11 +306,9 @@ const buildPdfReport = (title, rows, columns) => {
       const fontSize = 9;
 
       const drawTableHeader = (y) => {
-          // Header Background
           doc.rect(startX, y, tableWidth, rowHeight).fill('#2E7D32');
           doc.fillColor('#fff').font('Helvetica-Bold').fontSize(fontSize);
           
-          // Header Text
           columns.forEach((col, i) => {
               doc.text(col.header, startX + (i * colWidth) + 5, y + 8, {
                   width: colWidth - 10,
@@ -357,34 +325,28 @@ const buildPdfReport = (title, rows, columns) => {
 
       doc.font('Helvetica').fontSize(fontSize).fillColor('#333');
 
-      // --- Data Rows ---
       rows.forEach((row, rowIndex) => {
-          // Check for page break
           if (currentY + rowHeight > doc.page.height - 50) {
               drawFooter(pageNumber);
               doc.addPage();
               pageNumber++;
               drawHeader();
-              currentY = 100; // Reset Y position on new page
+              currentY = 100;
               drawTableHeader(currentY);
               currentY += rowHeight;
               doc.font('Helvetica').fontSize(fontSize).fillColor('#333');
           }
 
-          // Striped rows (alternating background)
           if (rowIndex % 2 === 0) {
               doc.rect(startX, currentY, tableWidth, rowHeight).fill('#f9f9f9');
-              doc.fillColor('#333'); // Reset text color
+              doc.fillColor('#333');
           }
 
-          // Cell Text
           columns.forEach((col, i) => {
              let value = row[col.key];
              if (value === null || value === undefined) value = '-';
              
-             // Format numeric values if needed
              if (typeof value === 'number') {
-                 // Simple formatting check, ideally reuse a formatter
                  if (col.key.includes('precio') || col.key.includes('total') || col.key.includes('valor')) {
                      value = '$ ' + value.toLocaleString('es-CO');
                  }
@@ -402,7 +364,6 @@ const buildPdfReport = (title, rows, columns) => {
           currentY += rowHeight;
       });
 
-      // Final Footer
       drawFooter(pageNumber);
       doc.end();
 
@@ -418,7 +379,7 @@ const buildExcelReport = async (title, rows, columns) => {
   
   sheet.mergeCells('A1:G1');
   const headerCell = sheet.getCell('A1');
-     headerCell.value = 'AGROSOFT - Sistema de Gestión Agrícola';
+  headerCell.value = 'AGROSOFT - Sistema de Gestión Agrícola';
   headerCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
   headerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4CAF50' } };
   headerCell.alignment = { horizontal: 'center', vertical: 'center' };
@@ -454,15 +415,14 @@ const buildExcelReport = async (title, rows, columns) => {
   });
   
   const spacer = sheet.addRow([]);
-  // Aprox. 20px de espacio (height en puntos ~15)
   spacer.height = 15;
   sheet.mergeCells(`A${sheet.lastRow.number}:G${sheet.lastRow.number}`);
-   const footerCell = sheet.getCell(`A${sheet.lastRow.number}`);
-   footerCell.value = 'Generado por AGROSOFT © 2025 - Todos los derechos reservados';
-   footerCell.font = { size: 9, color: { argb: 'FF666666' }, italic: true };
-   footerCell.alignment = { horizontal: 'center', vertical: 'center' };
+  const footerCell = sheet.getCell(`A${sheet.lastRow.number}`);
+  footerCell.value = 'Generado por AGROSOFT © 2025 - Todos los derechos reservados';
+  footerCell.font = { size: 9, color: { argb: 'FF666666' }, italic: true };
+  footerCell.alignment = { horizontal: 'center', vertical: 'center' };
  
-   return await workbook.xlsx.writeBuffer();
+  return await workbook.xlsx.writeBuffer();
 };
 
 const buildHtmlTable = (title, columns, rows) => {
@@ -568,66 +528,17 @@ const reportProductos = async (req, res) => {
         doc.fillColor('black').moveDown(0.5);
       });
 
-  doc.moveDown(1.5);
-  doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-  doc.moveDown(1);
-  doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
+      doc.moveDown(1.5);
+      doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
+      doc.moveDown(1);
+      doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
 
       doc.end();
       return;
     }
 
     if (req.query.format === 'excel') {
-      const workbook = new ExcelJS.Workbook();
-      const sheet = workbook.addWorksheet('Productos');
-      
-      sheet.mergeCells('A1:G1');
-      const headerCell = sheet.getCell('A1');
-       headerCell.value = 'AGROSOFT - Sistema de Gestión Agrícola';
-      headerCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
-      headerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4CAF50' } };
-      headerCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(1).height = 25;
-      
-      sheet.mergeCells('A2:G2');
-      const titleCell = sheet.getCell('A2');
-      titleCell.value = 'Reporte de Productos';
-      titleCell.font = { bold: true, size: 12 };
-      titleCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(2).height = 20;
-      
-      sheet.mergeCells('A3:G3');
-      const metaCell = sheet.getCell('A3');
-      metaCell.value = `Fecha: ${new Date().toLocaleDateString('es-CO')} | Hora: ${new Date().toLocaleTimeString('es-CO')}`;
-      metaCell.font = { size: 10, color: { argb: 'FF666666' } };
-      metaCell.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      sheet.addRow([]);
-      
-      const headerRow = sheet.addRow(columns.map(c => c.header));
-      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } };
-      headerRow.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      productos.forEach(p => {
-        const row = sheet.addRow(columns.map(c => p[c.key]));
-        row.alignment = { horizontal: 'left', vertical: 'center' };
-      });
-      
-      columns.forEach((col, idx) => {
-        sheet.getColumn(idx + 1).width = col.key === 'descripcion_producto' ? 30 : 15;
-      });
-      
-  const spacer = sheet.addRow([]);
-  // Aprox. 20px de espacio antes del footer
-  spacer.height = 15;
-  sheet.mergeCells(`A${sheet.lastRow.number}:G${sheet.lastRow.number}`);
-       const footerCell = sheet.getCell(`A${sheet.lastRow.number}`);
-       footerCell.value = 'Generado por AGROSOFT © 2025 - Todos los derechos reservados';
-       footerCell.font = { size: 9, color: { argb: 'FF666666' }, italic: true };
-       footerCell.alignment = { horizontal: 'center', vertical: 'center' };
-     
-      const buffer = await workbook.xlsx.writeBuffer();
+      const buffer = await buildExcelReport('Reporte de Productos', productos, columns);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename="reporte_productos.xlsx"');
       return res.send(buffer);
@@ -696,66 +607,17 @@ const reportInventario = async (req, res) => {
         doc.fillColor('black').moveDown(0.5);
       });
 
-  doc.moveDown(1.5);
-  doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-    doc.moveDown(1);
-    doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
+      doc.moveDown(1.5);
+      doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
+      doc.moveDown(1);
+      doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
 
       doc.end();
       return;
     }
 
     if (req.query.format === 'excel') {
-      const workbook = new ExcelJS.Workbook();
-      const sheet = workbook.addWorksheet('Inventario');
-      
-      sheet.mergeCells('A1:F1');
-      const headerCell = sheet.getCell('A1');
-       headerCell.value = 'AGROSOFT - Sistema de Gestión Agrícola';
-      headerCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
-      headerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4CAF50' } };
-      headerCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(1).height = 25;
-      
-      sheet.mergeCells('A2:F2');
-      const titleCell = sheet.getCell('A2');
-      titleCell.value = 'Reporte de Inventario';
-      titleCell.font = { bold: true, size: 12 };
-      titleCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(2).height = 20;
-      
-      sheet.mergeCells('A3:F3');
-      const metaCell = sheet.getCell('A3');
-      metaCell.value = `Fecha: ${new Date().toLocaleDateString('es-CO')} | Hora: ${new Date().toLocaleTimeString('es-CO')}`;
-      metaCell.font = { size: 10, color: { argb: 'FF666666' } };
-      metaCell.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      sheet.addRow([]);
-      
-      const headerRow = sheet.addRow(columns.map(c => c.header));
-      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } };
-      headerRow.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      rows.forEach(r => {
-        const row = sheet.addRow(columns.map(c => r[c.key]));
-        row.alignment = { horizontal: 'left', vertical: 'center' };
-      });
-      
-      columns.forEach((col, idx) => {
-        sheet.getColumn(idx + 1).width = 18;
-      });
-      
-  const spacer = sheet.addRow([]);
-  // Aprox. 20px de espacio antes del footer
-  spacer.height = 15;
-  sheet.mergeCells(`A${sheet.lastRow.number}:F${sheet.lastRow.number}`);
-       const footerCell = sheet.getCell(`A${sheet.lastRow.number}`);
-       footerCell.value = 'Generado por AGROSOFT © 2025 - Todos los derechos reservados';
-       footerCell.font = { size: 9, color: { argb: 'FF666666' }, italic: true };
-       footerCell.alignment = { horizontal: 'center', vertical: 'center' };
-     
-      const buffer = await workbook.xlsx.writeBuffer();
+      const buffer = await buildExcelReport('Reporte de Inventario', rows, columns);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename="reporte_inventario.xlsx"');
       return res.send(buffer);
@@ -825,57 +687,17 @@ const reportPedidos = async (req, res) => {
         doc.fillColor('black').moveDown(0.5);
       });
 
-  doc.moveDown(1.5);
-  doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-  doc.moveDown(1);
-  doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
+      doc.moveDown(1.5);
+      doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
+      doc.moveDown(1);
+      doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
 
       doc.end();
       return;
     }
 
     if (req.query.format === 'excel') {
-      const workbook = new ExcelJS.Workbook();
-      const sheet = workbook.addWorksheet('Pedidos');
-      
-      sheet.mergeCells('A1:G1');
-      const headerCell = sheet.getCell('A1');
-      headerCell.value = 'AGROSOFT - Sistema de Gestión Agrícola';
-      headerCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
-      headerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4CAF50' } };
-      headerCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(1).height = 25;
-      
-      sheet.mergeCells('A2:G2');
-      const titleCell = sheet.getCell('A2');
-      titleCell.value = 'Reporte de Pedidos / Ventas';
-      titleCell.font = { bold: true, size: 12 };
-      titleCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(2).height = 20;
-      
-      sheet.mergeCells('A3:G3');
-      const metaCell = sheet.getCell('A3');
-      metaCell.value = `Fecha: ${new Date().toLocaleDateString('es-CO')} | Hora: ${new Date().toLocaleTimeString('es-CO')}`;
-      metaCell.font = { size: 10, color: { argb: 'FF666666' } };
-      metaCell.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      sheet.addRow([]);
-      
-      const headerRow = sheet.addRow(columns.map(c => c.header));
-      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } };
-      headerRow.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      rows.forEach(r => {
-        const row = sheet.addRow(columns.map(c => r[c.key]));
-        row.alignment = { horizontal: 'left', vertical: 'center' };
-      });
-      
-      columns.forEach((col, idx) => {
-        sheet.getColumn(idx + 1).width = col.key === 'nombre_producto' ? 25 : 15;
-      });
-      
-      const buffer = await workbook.xlsx.writeBuffer();
+      const buffer = await buildExcelReport('Reporte de Pedidos / Ventas', rows, columns);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename="reporte_pedidos.xlsx"');
       return res.send(buffer);
@@ -939,57 +761,17 @@ const reportDescuentos = async (req, res) => {
         doc.fillColor('black').moveDown(0.5);
       });
 
-  doc.moveDown(1.5);
-  doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
-    doc.moveDown(1);
-    doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
+      doc.moveDown(1.5);
+      doc.strokeColor('#e0e0e0').lineWidth(1).moveTo(40, doc.y).lineTo(555, doc.y).stroke();
+      doc.moveDown(1);
+      doc.fontSize(8).fillColor('#999').text('Generado por AgroSoft © 2025 | Todos los derechos reservados', { align: 'center' });
 
       doc.end();
       return;
     }
 
     if (req.query.format === 'excel') {
-      const workbook = new ExcelJS.Workbook();
-      const sheet = workbook.addWorksheet('Descuentos');
-      
-      sheet.mergeCells('A1:F1');
-      const headerCell = sheet.getCell('A1');
-      headerCell.value = 'AGROSOFT';
-      headerCell.font = { bold: true, size: 14, color: { argb: 'FFFFFFFF' } };
-      headerCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4CAF50' } };
-      headerCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(1).height = 25;
-      
-      sheet.mergeCells('A2:F2');
-      const titleCell = sheet.getCell('A2');
-      titleCell.value = 'Reporte de Descuentos y Ofertas';
-      titleCell.font = { bold: true, size: 12 };
-      titleCell.alignment = { horizontal: 'center', vertical: 'center' };
-      sheet.getRow(2).height = 20;
-      
-      sheet.mergeCells('A3:F3');
-      const metaCell = sheet.getCell('A3');
-      metaCell.value = `Fecha: ${new Date().toLocaleDateString('es-CO')} | Hora: ${new Date().toLocaleTimeString('es-CO')}`;
-      metaCell.font = { size: 10, color: { argb: 'FF666666' } };
-      metaCell.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      sheet.addRow([]);
-      
-      const headerRow = sheet.addRow(columns.map(c => c.header));
-      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2E7D32' } };
-      headerRow.alignment = { horizontal: 'center', vertical: 'center' };
-      
-      rows.forEach(r => {
-        const row = sheet.addRow(columns.map(c => r[c.key]));
-        row.alignment = { horizontal: 'left', vertical: 'center' };
-      });
-      
-      columns.forEach((col, idx) => {
-        sheet.getColumn(idx + 1).width = 15;
-      });
-      
-      const buffer = await workbook.xlsx.writeBuffer();
+      const buffer = await buildExcelReport('Reporte de Descuentos y Ofertas', rows, columns);
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename="reporte_descuentos.xlsx"');
       return res.send(buffer);
@@ -1001,13 +783,6 @@ const reportDescuentos = async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor', details: error.message });
   }
 };
-
-
-
-
-// =======================================================
-// 👑 FUNCIONES DE ADMIN GLOBAL (Sin filtro por ID de usuario)
-// =======================================================
 
 const getDatosFinancierosAdmin = async (req, res) => {
   try {
@@ -1022,7 +797,6 @@ const getDatosFinancierosAdmin = async (req, res) => {
 
     const idEstadoEntregado = estadoEntregado[0].id_estado_pedido;
 
-    // Ingresos globales
     const ingresos = await sequelize.query(
       `
       SELECT 
@@ -1043,7 +817,6 @@ const getDatosFinancierosAdmin = async (req, res) => {
       }
     );
 
-    // Costos globales
     const costos = await sequelize.query(
       `
       SELECT 
@@ -1261,7 +1034,6 @@ const reportProductosAdmin = async (req, res) => {
       return res.send(buffer);
     }
 
-    // Retornamos JSON por defecto o para vista de tabla
     res.json(productos);
   } catch (error) {
     console.error('Error reportProductosAdmin:', error);
@@ -1419,7 +1191,6 @@ const reportDescuentosAdmin = async (req, res) => {
     }
 };
 
-
 module.exports = {
   getDatosFinancieros,
   getVentasPorMes,
@@ -1439,5 +1210,3 @@ module.exports = {
   reportPedidosAdmin,
   reportDescuentosAdmin
 };
-
-

@@ -1,4 +1,3 @@
-
 const TipoPqrs = require('../models/tipo_pqrs_model');
 const { Op } = require("sequelize");
 

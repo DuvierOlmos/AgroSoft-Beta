@@ -4,23 +4,20 @@ const User = require("../models/user_model");
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 
-// Listar todos los usuarios
 async function listUsers(req, res) {
   try {
     const { search } = req.query;
     let whereClause = {};
 
     if (search) {
-      // Si el término de búsqueda es un número, priorizamos la búsqueda exacta por ID
       if (!isNaN(search) && search.trim() !== '') {
         whereClause = {
           [Op.or]: [
-            { id_usuario: search }, // Búsqueda exacta por ID
-            { documento_identidad: { [Op.like]: `%${search}%` } } // Documento suele buscarse parcial
+            { id_usuario: search },
+            { documento_identidad: { [Op.like]: `%${search}%` } }
           ]
         };
       } else {
-        // Búsqueda parcial para texto
         whereClause = {
           [Op.or]: [
             { nombre_usuario: { [Op.like]: `%${search}%` } },
@@ -42,7 +39,6 @@ async function listUsers(req, res) {
   }
 }
 
-// Crear usuario
 async function createUser(req, res) {
   try {
     const { nombre_usuario, correo_electronico, password_hash, id_rol, documento_identidad, estado } = req.body;
@@ -69,7 +65,6 @@ async function createUser(req, res) {
   }
 }
 
-// Actualizar usuario
 async function updateUser(req, res) {
   try {
     const { id } = req.params;
@@ -99,7 +94,6 @@ async function updateUser(req, res) {
   }
 }
 
-// Eliminar usuario
 async function deleteUser(req, res) {
   try {
     const { id } = req.params;

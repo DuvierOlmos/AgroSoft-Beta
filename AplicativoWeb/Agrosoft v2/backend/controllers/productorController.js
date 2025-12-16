@@ -19,8 +19,6 @@ const createProducto = async (req, res) => {
     return res.status(401).json({ error: "Usuario no autenticado." });
 
   try {
-    console.log('[CONTROLLER] Creating product for user:', id_usuario);
-
     const result = await sequelize.transaction(async (t) => {
       const insertQuery = `
         INSERT INTO producto 
@@ -42,8 +40,6 @@ const createProducto = async (req, res) => {
         transaction: t,
       });
 
-      console.log(' [CONTROLLER] Insert result:', insertResult);
-
       let id_producto_insertado;
 
       if (insertResult && insertResult[0] && insertResult[0].insertId) {
@@ -60,8 +56,6 @@ const createProducto = async (req, res) => {
         );
         id_producto_insertado = lastIdResult.id_producto;
       }
-
-      console.log('📦 [CONTROLLER] Extracted product ID:', id_producto_insertado);
 
       if (!id_producto_insertado) {
         throw new Error("No se pudo obtener el ID del producto insertado.");
@@ -80,8 +74,6 @@ const createProducto = async (req, res) => {
       return id_producto_insertado;
     });
 
-    console.log(' [CONTROLLER] Product created successfully, ID:', result);
-
     res.status(201).json({
       mensaje: "Producto creado correctamente",
       id_producto: result,
@@ -89,7 +81,7 @@ const createProducto = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(" [CONTROLLER] Error creating product:", error);
+    console.error("Error creating product:", error);
     res.status(500).json({
       error: "No se pudo registrar el producto: " + error.message,
       success: false
@@ -105,8 +97,6 @@ const getProductosByUserId = async (req, res) => {
   }
 
   try {
-    console.log(' [CONTROLLER] Getting products for user:', id_usuario);
-
     const productos = await sequelize.query(
       `
 SELECT 
@@ -130,11 +120,10 @@ WHERE i.id_agricultor = ? AND p.estado_producto = 'Activo';
       }
     );
 
-    console.log(' [CONTROLLER] Products found:', productos.length);
     res.json(productos);
 
   } catch (error) {
-    console.error(" [CONTROLLER] Error getting products:", error);
+    console.error("Error getting products:", error);
     res.status(500).json({ error: "Error al cargar los productos." });
   }
 };
@@ -157,8 +146,6 @@ const updateProducto = async (req, res) => {
   const t = await sequelize.transaction();
 
   try {
-    console.log(' [CONTROLLER] Updating product:', id);
-
     const [productExists] = await sequelize.query(
       `SELECT 1 FROM inventario WHERE id_producto = ? AND id_agricultor = ?`,
       {
@@ -201,10 +188,7 @@ WHERE id_producto = ?;
       }
     );
 
-    console.log(' [CONTROLLER] Product update result:', updateProductResult);
-
     if (cantidad !== undefined && cantidad !== null) {
-      console.log(' [CONTROLLER] Updating inventory quantity:', cantidad);
       await sequelize.query(
         `
 UPDATE inventario
@@ -220,7 +204,6 @@ WHERE id_producto = ?;
     }
 
     await t.commit();
-    console.log(' [CONTROLLER] Product updated successfully');
 
     res.json({
       mensaje: "Producto actualizado correctamente",
@@ -229,7 +212,7 @@ WHERE id_producto = ?;
 
   } catch (error) {
     await t.rollback();
-    console.error(" [CONTROLLER] Error updating product:", error);
+    console.error("Error updating product:", error);
     res.status(500).json({
       error: "No se pudo actualizar el producto: " + error.message,
       success: false
@@ -248,8 +231,6 @@ const deactivateProducto = async (req, res) => {
   const t = await sequelize.transaction();
 
   try {
-    console.log('[CONTROLLER] Deactivating product:', id);
-
     const [productExists] = await sequelize.query(
       `SELECT 1 FROM inventario WHERE id_producto = ? AND id_agricultor = ?`,
       {
@@ -275,10 +256,7 @@ const deactivateProducto = async (req, res) => {
       }
     );
 
-    console.log(' [CONTROLLER] Deactivation result:', updateResult);
-
     await t.commit();
-    console.log(' [CONTROLLER] Product deactivated successfully');
 
     res.json({
       mensaje: "Producto desactivado correctamente",
@@ -287,7 +265,7 @@ const deactivateProducto = async (req, res) => {
 
   } catch (error) {
     await t.rollback();
-    console.error(" [CONTROLLER] Error deactivating product:", error);
+    console.error("Error deactivating product:", error);
     res.status(500).json({
       error: "No se pudo desactivar el producto: " + error.message,
       success: false
@@ -306,9 +284,6 @@ const deleteProducto = async (req, res) => {
   const t = await sequelize.transaction();
 
   try {
-    console.log('[CONTROLLER] Deleting product:', id);
-
-    // Verify ownership
     const [productExists] = await sequelize.query(
       `SELECT 1 FROM inventario WHERE id_producto = ? AND id_agricultor = ?`,
       {
@@ -326,7 +301,6 @@ const deleteProducto = async (req, res) => {
       });
     }
 
-    // Delete inventory
     await sequelize.query(
       `DELETE FROM inventario WHERE id_producto = ?;`,
       {
@@ -335,8 +309,6 @@ const deleteProducto = async (req, res) => {
       }
     );
 
-    // Try to delete images if the table exists (handling via try/catch inside or just assume it exists based on other code)
-    // Based on product_controller.js, 'producto_imagenes' exists.
     await sequelize.query(
       `DELETE FROM producto_imagenes WHERE id_producto = ?;`,
       {
@@ -345,7 +317,6 @@ const deleteProducto = async (req, res) => {
       }
     );
 
-    // Delete product
     await sequelize.query(
       `DELETE FROM producto WHERE id_producto = ?;`,
       {
@@ -355,7 +326,6 @@ const deleteProducto = async (req, res) => {
     );
 
     await t.commit();
-    console.log(' [CONTROLLER] Product deleted successfully');
 
     res.json({
       mensaje: "Producto eliminado correctamente de la base de datos",
@@ -364,9 +334,8 @@ const deleteProducto = async (req, res) => {
 
   } catch (error) {
     await t.rollback();
-    console.error(" [CONTROLLER] Error deleting product:", error);
+    console.error("Error deleting product:", error);
     
-    // Simple check for foreign key constraint errors
     if (error.original && error.original.code === 'ER_ROW_IS_REFERENCED_2') {
          return res.status(400).json({
             error: "No se puede eliminar el producto porque tiene registros asociados (ej. pedidos).",
@@ -384,8 +353,6 @@ const deleteProducto = async (req, res) => {
 
 const getAllProductos = async (req, res) => {
   try {
-    console.log(' [CONTROLLER] Getting all products');
-
     const productos = await sequelize.query(
       `
 SELECT 
@@ -408,11 +375,10 @@ WHERE p.estado_producto = 'Activo';
       }
     );
 
-    console.log(' [CONTROLLER] All products found:', productos.length);
     res.json(productos);
 
   } catch (error) {
-    console.error(" [CONTROLLER] Error getting all products:", error);
+    console.error("Error getting all products:", error);
     res.status(500).json({ error: "Error al cargar todos los productos." });
   }
 };

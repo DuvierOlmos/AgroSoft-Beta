@@ -1,4 +1,3 @@
-// controllers/pedidoController.js
 const Pedido = require('../models/pedido');
 const DetallePedido = require('../models/detalle_pedido');
 const User = require('../models/user'); 
@@ -6,13 +5,11 @@ const Product = require('../models/product');
 const EstadoPedido = require('../models/estadoPedido');
 const { Op } = require("sequelize");
 
-// 1. Obtener TODOS los Pedidos con detalles anidados
 exports.getAllPedidosAdmin = async (req, res) => {
   try {
     const { search } = req.query;
     let whereClause = {};
 
-    // Si es un número, buscamos por ID de pedido EXACTO
     if (search) {
         if (!isNaN(search) && search.trim() !== '') {
              whereClause = { id_pedido: search };
@@ -22,7 +19,6 @@ exports.getAllPedidosAdmin = async (req, res) => {
                     { direccion_envio: { [Op.like]: `%${search}%` } },
                     { ciudad_envio: { [Op.like]: `%${search}%` } },
                     { numero_seguimiento: { [Op.like]: `%${search}%` } },
-                    // Búsqueda en relaciones (requiere alias correcto en asociación)
                     { '$Cliente.nombre_usuario$': { [Op.like]: `%${search}%` } },
                     { '$Cliente.correo_electronico$': { [Op.like]: `%${search}%` } },
                     { '$Estado.nombre_estado$': { [Op.like]: `%${search}%` } }
@@ -36,7 +32,7 @@ exports.getAllPedidosAdmin = async (req, res) => {
       include: [       
         { model: EstadoPedido, as: 'Estado' }, 
         { model: DetallePedido, as: 'Detalles' },
-        { model: User, as: 'Cliente', attributes: ['nombre_usuario', 'correo_electronico'] } // Añadido para mostrar cliente
+        { model: User, as: 'Cliente', attributes: ['nombre_usuario', 'correo_electronico'] }
       ],
          order: [['fecha_pedido', 'DESC']] 
      });
@@ -67,15 +63,11 @@ exports.getPedidoByIdAdmin = async (req, res) => {
   }
 };
 
-
-// 3. Actualizar el Estado del Pedido
 exports.updateEstadoPedido = async (req, res) => {
   try {
-    // 1. Obtener el ID del estado 
     const { id_estado_pedido } = req.body;
     const id_pedido = req.params;
     
-    // 2. Validación de Estado
     const estadoObj = await EstadoPedido.findByPk(id_estado_pedido);
     
     if (!estadoObj) {
@@ -83,7 +75,7 @@ exports.updateEstadoPedido = async (req, res) => {
         message: 'ID de estado de pedido inválido o no encontrado en el catálogo.' 
       });
     }
-    // 3. Actualizar el pedido 
+
     const [updatedCount] = await Pedido.update(
       { 
         id_estado_pedido: id_estado_pedido,
@@ -92,10 +84,10 @@ exports.updateEstadoPedido = async (req, res) => {
       {
         where: { id_pedido: id_pedido }
       }
-    );   
+    );
+
     if (updatedCount) {
       const updatedPedido = await Pedido.findByPk(id_pedido, {
-         // estado para mostrar el nombre en la respuesta
          include: [{ 
             model: EstadoPedido, 
             as: 'EstadoPedido', 

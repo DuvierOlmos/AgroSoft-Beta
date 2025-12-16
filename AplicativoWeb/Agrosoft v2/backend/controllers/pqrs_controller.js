@@ -119,7 +119,7 @@ exports.updatePqrsStatus = async (req, res) => {
         if (!id_estado_pqrs || !id_administrador_respuesta) { 
             return res.status(400).json({
                 success: false,
-                error: "Los campos id_estado_pqrs y id_administrador_respuesta (simulado) son requeridos"
+                error: "Los campos id_estado_pqrs y id_administrador_respuesta son requeridos"
             });
         }
 
@@ -164,7 +164,7 @@ exports.getPqrsById = async (req, res) => {
         if (!id_usuario_simulado || !id_rol_simulado) {
             return res.status(400).json({
                 success: false,
-                error: "Los IDs de usuario y rol (simulados) son requeridos para esta consulta"
+                error: "Los IDs de usuario y rol son requeridos para esta consulta"
             });
         }
 
