@@ -1,4 +1,4 @@
-﻿import { Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/protectedRoute';
 import AppRoutes from './app/routes';
 import Footer from './components/Footer';

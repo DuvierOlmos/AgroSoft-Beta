@@ -182,14 +182,25 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
+  .product-card {
+      padding: 0.5rem;
+  }
+}
+
+@media (max-width: 767.98px) {
   .product-card-image {
-    height: 110px;
+    height: 120px;
   }
 
   .product-card-title {
     font-size: 0.9rem;
-    min-height: 1.8rem;
+    min-height: 2.2rem; /* Aumentar ligeramente para acomodar 2 líneas en móvil */
+  }
+
+  .product-card-description {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 2;
   }
 
   .btn-add-to-cart,
@@ -198,4 +209,14 @@
     font-size: 0.8rem;
     padding: 6px;
   }
+  
+  .product-card-price {
+      font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+    .product-card-image {
+        height: 140px; /* En móviles muy pequeños (1 col), la imagen puede ser más alta */
+    }
 }

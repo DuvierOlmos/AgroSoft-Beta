@@ -168,15 +168,15 @@ function Register({ onLogin }) {
             }}
             onError={(e) => e.target.src = "https://placehold.co/70x70/006400/FFFFFF?text=Logo"}
         />
-        <motion.div
+            <motion.div
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
             transition={{ duration: 0.8 }}
-            className="d-flex shadow-lg rounded-4 overflow-hidden"
-            style={{ width: "800px", maxHeight: "90vh", minHeight: "500px" }}
+            className="d-flex shadow-lg rounded-4 overflow-hidden flex-column flex-md-row"
+            style={{ width: "100%", maxWidth: "800px", maxHeight: "90vh", minHeight: "500px" }}
         >
-            <div className="d-none d-md-block" style={{ width: "50%", minHeight: "100%", maxHeight: "90vh" }}>
+            <div className="d-none d-md-block col-md-6" style={{ minHeight: "100%", maxHeight: "90vh" }}>
             <Carousel fade className="h-100">
                 <Carousel.Item className="h-100">
                 <img src="/img/food-3250439.jpg" alt="visual1" className="d-block w-100 h-100" style={{objectFit: "cover"}} onError={(e) => e.target.src = "https://placehold.co/400x500/A0E8AF/006400?text=Comida"} />
@@ -191,8 +191,8 @@ function Register({ onLogin }) {
             </div>
 
             <motion.div
-            className="bg-light p-5"
-            style={{ width: "50%", overflowY: "auto" }}
+            className="bg-light p-4 p-md-5 col-12 col-md-6"
+            style={{ overflowY: "auto" }}
             initial="hidden"
             animate="visible"
             variants={fadeInUp}

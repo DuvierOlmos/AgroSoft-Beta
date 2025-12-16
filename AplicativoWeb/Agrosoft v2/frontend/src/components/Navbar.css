@@ -235,7 +235,7 @@
   color: white;
 }
 /* Responsive para iconos */
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
   .nav-icon {
     margin-right: 8px;
   }
@@ -243,4 +243,63 @@
   .auth-buttons .nav-link {
     padding: 8px 12px;
   }
+
+  .navbar-collapse {
+    background-color: #1a1a1a; /* Fondo oscuro para el menú móvil */
+    padding: 1rem;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    margin-top: 10px;
+  }
+
+  .nav-links .nav-link {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .nav-links .nav-link:last-child {
+    border-bottom: none;
+  }
+
+  .user-dropdown {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: center;
+  }
+
+  .dropdown-menu-custom {
+    position: static;
+    width: 100%;
+    margin-top: 0.5rem;
+    box-shadow: none;
+    background-color: #2a2a2a;
+    color: white;
+  }
+  
+  .dropdown-username, .dropdown-email {
+    color: white !important;
+  }
+
+  .dropdown-item {
+     color: #e0e0e0;
+  }
+
+  .dropdown-item:hover {
+    background-color: #333;
+  }
+  
+  .cart-link {
+      display: inline-block;
+      margin: 10px 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+    .brand-text {
+        font-size: 1.2rem;
+    }
 }

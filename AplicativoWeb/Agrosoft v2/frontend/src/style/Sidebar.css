@@ -92,6 +92,25 @@
   margin-left: 220px;
 }
 
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%); /* Oculto por defecto en móvil */
+  }
+  
+  .sidebar.open { 
+     transform: translateX(0); /* Visible cuando tiene clase open */
+  }
+  
+  .main-content.shifted {
+    margin-left: 0; /* Contenido no se desplaza */
+  }
+  
+  .hamburger-btn {
+      top: 10px;
+      left: 10px;
+  }
+}
+
 .logo {
   border-radius: 50%;
   width: 100px; 

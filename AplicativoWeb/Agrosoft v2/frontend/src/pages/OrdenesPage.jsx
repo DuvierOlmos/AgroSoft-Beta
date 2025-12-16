@@ -156,6 +156,7 @@ export default function OrdenesPage() {
             </div>
          </div>
       ) : (
+      <div className="table-container">
       <table className="orders-table">
         <thead>
           <tr>
@@ -220,6 +221,7 @@ export default function OrdenesPage() {
             ))}
         </tbody>
       </table>
+      </div>
       )}
     </div>
   );

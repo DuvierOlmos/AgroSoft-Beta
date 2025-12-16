@@ -929,7 +929,7 @@
 }
 
 /* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
     .carrito-content {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -940,7 +940,15 @@
         gap: 15px;
         text-align: center;
     }
+    
+    .carrito-resumen-section {
+        position: static; /* Ya no sticky si está abajo */
+        margin-top: 20px;
+    }
+}
 
+@media (max-width: 767.98px) {
+    /* Mantener estilos existentes para móvil */
     .carrito-item-card {
         grid-template-columns: 1fr;
         text-align: center;
@@ -957,10 +965,6 @@
         flex-direction: row;
         justify-content: space-between;
         width: 100%;
-    }
-
-    .carrito-resumen-section {
-        position: static;
     }
 
     .error-actions {

@@ -12,7 +12,7 @@
   background: linear-gradient(180deg, #ffffff, #fbfdff);
   box-shadow: 0 8px 20px rgba(2,6,23,0.06);
   border-radius: 12px;
-  overflow: hidden;
+  min-width: 800px; /* Asegura scroll horizontal */
 }
 
 .orders-table th, .orders-table td {
@@ -20,6 +20,7 @@
   border-bottom: 1px solid rgba(15,23,42,0.04);
   text-align: left;
   vertical-align: middle;
+  white-space: nowrap; /* Evita rotura de texto */
 }
 
 .orders-table th {
@@ -98,21 +99,13 @@ select {
 .status-Enviado { background: linear-gradient(90deg,#3b82f6,#2563eb); }
 .status-Entregado { background: linear-gradient(90deg,#10b981,#059669); }
 
-/* Responsive: allow horizontal scroll on small screens */
+/* Responsive: handled by .table-container wrapper */
 .orders-table {
   display: table;
   width: 100%;
 }
 
-/* Compact view on very small screens */
 @media (max-width: 900px) {
-  /* En pantallas pequeñas permitimos scroll horizontal para no romper la tabla */
-  .orders-table {
-    display: block;
-    width: 100%;
-    overflow: auto;
-  }
-
   .orders-table th, .orders-table td { padding: 10px 12px; font-size: 0.9rem; }
   .orders-container h2 { font-size: 1.1rem; }
   .comprobante-buttons { justify-content: flex-start; }

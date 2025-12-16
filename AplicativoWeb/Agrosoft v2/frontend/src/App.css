@@ -71,13 +71,48 @@ html,
 /* === RESPONSIVE DESIGN === */
 /* ========================================= */
 
-@media (max-width: 768px) {
+/* Variables para breakpoints (referencia) */
+/* 
+   Small (sm): 576px
+   Medium (md): 768px
+   Large (lg): 992px
+   Extra Large (xl): 1200px
+*/
+
+/* Mobile devices (phones, less than 768px) */
+@media (max-width: 767.98px) {
     .main-content {
         padding-bottom: 40px;
     }
 
     .page-content {
         min-height: calc(100vh - 100px);
+        padding-top: 10px;
+    }
+    
+    .container {
+        padding: 0 10px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .container {
+        padding: 0 20px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
     }
 }
 
@@ -198,6 +233,7 @@ select:focus {
 
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px; /* Altura para scroll horizontal */
 }
 
 ::-webkit-scrollbar-track {
@@ -211,4 +247,45 @@ select:focus {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
+}
+
+/* ========================================= */
+/* === TABLAS RESPONSIVAS GLOBALES === */
+/* ========================================= */
+
+.table-container,
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    background: white;
+}
+
+/* Fallback para tablas genéricas dentro del container */
+.table-container table,
+.table-wrapper table {
+    width: 100%;
+    min-width: 600px; /* Asegura scroll en móviles */
+    border-collapse: collapse;
+}
+
+.table-container th, 
+.table-container td,
+.table-wrapper th,
+.table-wrapper td {
+    padding: 12px 15px;
+    white-space: nowrap; /* Evita que el texto se rompa feo */
+}
+
+@media (max-width: 768px) {
+    .table-container th, 
+    .table-container td,
+    .table-wrapper th,
+    .table-wrapper td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
 }

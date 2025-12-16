@@ -3,9 +3,12 @@
   padding: 0;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  overflow-x: auto;
   border: 1px solid #e0e0e0;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
+
 
 .search-container {
   display: flex;
@@ -72,10 +75,15 @@
   background-color: #3da30e;
 }
 
+/* ========================================= */
+/* === ESTILOS DE TABLA RESPONSIVA === */
+/* ========================================= */
+
 .user-table {
   width: 100%;
   border-collapse: collapse;
   font-family: 'Arial', sans-serif;
+  min-width: 600px; /* Asegura scroll en móviles */
 }
 
 .user-table th,
@@ -83,6 +91,7 @@
   padding: 15px;
   text-align: left;
   border-bottom: 1px solid #f0f0f0;
+  white-space: nowrap; /* Evita rotura fea de texto */
 }
 
 .user-table th {
@@ -137,4 +146,23 @@
 .btn-danger:hover {
   background: #dc3545;
   color: white;
+}
+
+@media (max-width: 768px) {
+  .user-table th,
+  .user-table td {
+    padding: 10px 8px;
+    font-size: 0.9em;
+  }
+  
+  /* Ajuste responsivo para los filtros en móvil */
+  .search-container {
+    flex-wrap: wrap; /* Permitir que los filtros bajen de línea si no caben */
+    gap: 0.5rem;
+  }
+  
+  .search-input, .search-select {
+    width: 100%; /* Ocupar todo el ancho en móviles */
+    min-width: unset;
+  }
 }
