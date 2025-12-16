@@ -11,14 +11,25 @@ import "../style/ofertasPro.css";
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 const DEFAULT_IMAGE = "https://via.placeholder.com/150/f0f0f0?text=Producto";
 
-const getStatusStyle = (s) =>
-  s === "Aprobado"
-    ? "status-Aprobado"
-    : s === "Pendiente"
-      ? "status-Pendiente"
-      : s === "Rechazado"
-        ? "status-Rechazado"
-        : "status-Rechazado";
+// Normalizador de estados robusto: Elimina espacios, normaliza mayúsculas/minúsculas
+const normalizeStatus = (status) => {
+  if (!status) return "Pendiente";
+  const s = String(status).trim();
+  if (s.length === 0) return "Pendiente";
+  // Capitalizar la primera letra y el resto minúscula (Ej: "APROBADO" -> "Aprobado")
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+};
+
+const getStatusStyle = (s) => {
+  const status = normalizeStatus(s);
+  switch (status) {
+    case "Aprobado": return "status-Aprobado";
+    case "Pendiente": return "status-Pendiente";
+    case "Rechazado": return "status-Rechazado";
+    case "Eliminada": return "status-Eliminada";
+    default: return "status-Pendiente";
+  }
+};
 
 const getLoggedUserId = () => {
   try {
@@ -56,7 +67,7 @@ function OfferEditModal({ deal, products, onClose, onUpdated }) {
         fechaFin: deal.fecha_fin || getTodayDate(),
         estado: deal.estado || "Pendiente",
       });
-    }, [deal]);
+    }, [deal, products, isDiscount]);
   
     const handleChange = (e) =>
       setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -320,7 +331,7 @@ export default function DealsView() {
 
       // Calcular conteos por estado (usar 'Pendiente' por defecto cuando sea null)
       const counts = allData.reduce((acc, d) => {
-        const st = (d.estado || 'Pendiente').toString().toLowerCase();
+        const st = normalizeStatus(d.estado).toLowerCase();
         acc[st] = (acc[st] || 0) + 1;
         return acc;
       }, {});
@@ -340,7 +351,7 @@ export default function DealsView() {
       // Filtrar en cliente: ocultar 'eliminada' a menos que showDeleted sea true
       const visible = showDeleted
         ? allData
-        : allData.filter((d) => (d.estado || 'Pendiente').toString().toLowerCase() !== 'eliminada');
+        : allData.filter((d) => normalizeStatus(d.estado).toLowerCase() !== 'eliminada');
 
       setDeals(visible);
       // setMensaje(visible.length === 0 ? "No tienes promociones registradas." : null); // Este mensaje se manejará mejor en el render
@@ -366,7 +377,7 @@ export default function DealsView() {
 
   const filteredDeals = deals.filter((deal) => {
     // Normalizar estado nulo a 'Pendiente'
-    const dealStatus = (deal.estado || 'Pendiente').toString().toLowerCase();
+    const dealStatus = normalizeStatus(deal.estado).toLowerCase();
     
     // Si 'showDeleted' es true, deals ya contiene las eliminadas.
     // Si 'filterStatus' es 'todos', muestra todos los visibles (incluyendo eliminadas si showDeleted es true).
@@ -385,7 +396,7 @@ export default function DealsView() {
       // Asumiendo que deletePromocion establece el estado a 'Eliminada'
       await deletePromocion(idPromocion, tipo.toLowerCase()); 
       setMensaje("Promoción marcada como eliminada correctamente.");
-      cargarDeals();
+      cargarDeals(); // Recargar datos para actualizar la vista
     } catch (err) {
       alert(`Error: ${err.message}`);
     }
@@ -448,46 +459,29 @@ export default function DealsView() {
       }
   };
 
+  // Configuración de pestañas
+  const tabs = [
+    { key: "todos", label: "Todas", count: deals.length },
+    { key: "aprobado", label: "Aprobadas", count: statusCounts.aprobado || 0 },
+    { key: "pendiente", label: "Pendientes", count: statusCounts.pendiente || 0 },
+    { key: "rechazado", label: "Rechazadas", count: statusCounts.rechazado || 0 },
+    { key: "eliminada", label: "Eliminadas", count: statusCounts.eliminada || 0 },
+  ];
+
   return (
     <div className="deals-container">
       <div className="deals-header">
         <h2>Promociones del Productor</h2>
         <div className="filter-buttons">
-          <button
-            className={`filter-btn ${filterStatus === "todos" ? "active-all" : ""}`}
-            onClick={() => setFilterStatus("todos")}
-          >
-            Todas ({deals.length})
-          </button>
-
-          <button
-            className={`filter-btn ${filterStatus === "aprobado" ? "active-aprobado" : ""} ${(statusCounts.aprobado || 0) === 0 ? 'disabled' : ''}`}
-            onClick={() => setFilterStatus("aprobado")}
-            disabled={(statusCounts.aprobado || 0) === 0}
-          >
-            Aprobadas ({statusCounts.aprobado || 0})
-          </button>
-          <button
-            className={`filter-btn ${filterStatus === "pendiente" ? "active-pendiente" : ""} ${(statusCounts.pendiente || 0) === 0 ? 'disabled' : ''}`}
-            onClick={() => setFilterStatus("pendiente")}
-            disabled={(statusCounts.pendiente || 0) === 0}
-          >
-            Pendientes ({statusCounts.pendiente || 0})
-          </button>
-          <button
-            className={`filter-btn ${filterStatus === "rechazado" ? "active-rechazado" : ""}`}
-            onClick={() => setFilterStatus("rechazado")}
-          >
-            Rechazadas ({statusCounts.rechazado || 0})
-          </button>
-          
-          <button
-            className={`filter-btn ${filterStatus === "eliminada" ? "active-eliminada" : ""}`}
-            onClick={() => setFilterStatus("eliminada")}
-          >
-            Eliminadas ({statusCounts.eliminada || 0})
-          </button>
-
+            {tabs.map(tab => (
+                <button 
+                    key={tab.key}
+                    className={`filter-btn ${filterStatus === tab.key ? `active-${tab.key === 'todos' ? 'all' : (tab.key === 'pendiente' ? 'pendiente' : (tab.key === 'rechazado' ? 'rechazado' : (tab.key === 'eliminada' ? 'eliminada' : 'aprobado')))}` : ''}`}
+                    onClick={() => setFilterStatus(tab.key)}
+                >
+                    {tab.label} ({tab.count})
+                </button>
+            ))}
 
           {/* El botón de 'Ver/Ocultar Eliminadas' ahora controla solo la lista base (deals) */}
           {/* El filtro 'eliminada' controla qué se muestra en la lista filtrada (filteredDeals) */}
@@ -528,7 +522,7 @@ export default function DealsView() {
                   const precioFinal = (deal.precio_original * (1 - descuento)).toFixed(2);
                   const isDiscount = deal.tipo_deal === "Descuento";
                   const statusStyle = getStatusStyle(deal.estado);
-                  const isDeleted = (deal.estado || '').toLowerCase() === "eliminada"; // Cambio a minúsculas para seguridad
+                  const isDeleted = normalizeStatus(deal.estado).toLowerCase() === "eliminada"; // Cambio a minúsculas para seguridad
                   return (
                       <div
                           key={deal.id_promocion + deal.tipo_deal}
@@ -540,7 +534,7 @@ export default function DealsView() {
                                   alt={deal.producto}
                               />
                               <span className={`image-status-tag ${statusStyle}`}>
-                                  {deal.estado || 'Pendiente'} {/* Mostrar 'Pendiente' si es null */}
+                                  {normalizeStatus(deal.estado)}
                               </span>
                           </div>
                           <div className="deal-content">
@@ -589,7 +583,8 @@ export default function DealsView() {
                                           onClick={() =>
                                               handleDeletePromocion(deal.id_promocion, deal.tipo_deal)
                                           }
-                                          disabled={isDeleted}
+                                          // Permitir eliminar si está pendiente o si no está eliminada
+                                          disabled={isDeleted} 
                                       >
                                           Eliminar
                                       </button>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-//import userService from "../services/userService"; 
-import { updateUser } from "../services/userService";
+// import { updateUser } from "../services/userService"; // Se comenta o elimina si no se usa directamente aquí
 import "../styles/UserEditForm.css";
 
 export default function UserEditForm({ show, onClose, user, onSave}) {
@@ -32,7 +31,8 @@ export default function UserEditForm({ show, onClose, user, onSave}) {
         correo_electronico: user.correo_electronico || "",
         id_rol: user.id_rol || "",
         documento_identidad: user.documento_identidad || "",
-        estado: user.estado || "activo",
+        // Normalizamos a Title Case para coincidir con las opciones
+        estado: (user.estado && user.estado.toLowerCase() === 'inactivo') ? 'Inactivo' : 'Activo',
       });
     }
   }, [user]);
@@ -44,14 +44,17 @@ export default function UserEditForm({ show, onClose, user, onSave}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updated = await updateUser(user.id_usuario, form);
-      console.log("Usuario actualizado:", updated);
-      alert("Usuario Actualizado");
+      setLoading(true);
       
-      onClose();
+      if (onSave) {
+       
+        await onSave({ ...form, id_usuario: user.id_usuario });
+      }
     } catch (err) {
-      console.error("Error al actualizar:", err);
-      alert("No se pudo actualizar el usuario");
+      console.error("Error al enviar formulario de edición:", err);
+      setApiError("Error al guardar los cambios.");
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -59,6 +62,7 @@ export default function UserEditForm({ show, onClose, user, onSave}) {
     <div className={`modal_user-overlay ${show ? "show" : ""}`}>
       <div className="modal_user">
         <h2>Editar Usuario</h2>
+        {apiError && <div className="error-message" style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{apiError}</div>}
         <form onSubmit={handleSubmit}>
           <label>Nombre Usuario</label>
           <input
@@ -118,8 +122,8 @@ export default function UserEditForm({ show, onClose, user, onSave}) {
             onChange={handleChange}
             required
           >
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
           </select>
 
           <div className="form-actions">

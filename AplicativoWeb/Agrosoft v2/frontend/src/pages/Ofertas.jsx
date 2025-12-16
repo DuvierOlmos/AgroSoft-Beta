@@ -121,15 +121,6 @@ export default function Ofertas() {
     mostrarToast("Mostrando todos los productos", "info");
   };
 
-  const formatearDescuento = (tipo, valor) => {
-    if (tipo === "Porcentaje") {
-      return `${Number(valor) * 100}% OFF`;
-    } else if (tipo === "Monto Fijo") {
-      return `$${COP(valor)} OFF`;
-    }
-    return "Descuento";
-  };
-
   const formatearFecha = (fecha) => {
     return new Date(fecha).toLocaleDateString("es-CO");
   };

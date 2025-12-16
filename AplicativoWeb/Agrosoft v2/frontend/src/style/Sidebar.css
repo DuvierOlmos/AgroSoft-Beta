@@ -2,7 +2,8 @@
 .sidebar {
   width: 220px;
   height: 100vh;
-  background: #162b14;
+  /* Fondo oscuro elegante tipo Productor */
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -11,6 +12,8 @@
   top: 0;
   left: 0;
   transition: transform 0.3s ease;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+  z-index: 100;
 }
 
 .sidebar.collapsed {
@@ -18,11 +21,14 @@
 }
 
 .sidebar-title {
-  font-size: 1.7em;
+  font-size: 1.5em;
   margin-bottom: 20px;
   text-align: center;
-  color: #f1f4f6;
+  color: #45b810; /* Verde Agrosoft */
   font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .sidebar nav ul {
@@ -32,42 +38,44 @@
 }
 
 .sidebar nav ul li {
-  margin: 15px 0;
-  font-weight: bold;
+  margin: 10px 0;
 }
 
 .sidebar nav ul li a {
   text-decoration: none;
-  color: #f9fafb;
-  font-size: 20px;
-  padding: 8px 12px;
+  color: #e0e0e0;
+  font-size: 16px;
+  padding: 10px 15px;
   display: block;
   border-radius: 6px;
-  transition: background 0.3s;
+  transition: all 0.3s;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
-.sidebar nav ul li a:hover {
-  background: #e97232;
-  color: #fff;
+.sidebar nav ul li a:hover, .sidebar nav ul li a.active {
+  background: rgba(255, 102, 0, 0.1); /* Naranja suave */
+  color: #ff6600; /* Naranja acento */
+  border-left: 4px solid #ff6600;
 }
 
 /* Botón hamburguesa */
 .hamburger-btn {
   position: fixed;
-  top: 5px;
-  left: 5px;
-  background: #e97232;
+  top: 15px;
+  left: 15px;
+  background: #ff6600;
   border: none;
   color: #fff;
   font-size: 20px;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 1001;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .hamburger-btn:hover {
-  background: #e43838;
+  background: #e65c00;
 }
 
 /* Contenido principal */
@@ -75,6 +83,8 @@
   flex-grow: 1;
   padding: 20px;
   transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  background-color: #f4f4f7; /* Fondo claro consistente con cliente */
 }
 
 /* Cuando el sidebar está abierto */
@@ -83,20 +93,25 @@
 }
 
 .logo {
-  size: 20px;
-    border-radius: 10%;
-    width: 90px; 
-    height: 95px; 
-    object-fit: cover;
-    box-shadow: 
-        0 4px 8px rgba(0, 0, 0, 0.2),
-        0 0 0 5px rgba(183, 235, 62, 0.8); 
-    transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
-    display: block;
-    margin: 20px auto;
+  border-radius: 50%;
+  width: 100px; 
+  height: 100px; 
+  overflow: hidden; /* Ensures the image stays inside the circle */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 0 3px #45b810; 
+  transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+  display: block;
+  margin: 20px auto;
+  background-color: #fff;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the area without distortion */
+  display: block;
 }
 
 .logo:hover {
-    transform: scale(1.04); 
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); 
+  transform: scale(1.05); 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 0 3px #ff6600; 
 }

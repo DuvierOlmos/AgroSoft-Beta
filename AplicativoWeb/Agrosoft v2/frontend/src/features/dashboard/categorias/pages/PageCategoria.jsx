@@ -1,11 +1,16 @@
-import React, { useState } from "react";
-import Table from "../components/Table";
-import UserForm from "../components/Form";
-import "../../../../style/PageUser.css";
-//import "../styles/PageCategoria.css";
+import React, { useState } from 'react';
+import Table from '../components/Table';
+import UserForm from '../components/Form';
+import '../../../../style/PageUser.css';
 
 export default function PageCategoria() {
   const [showForm, setShowForm] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleCategoryCreated = () => {
+    setShowForm(false);
+    setRefreshKey((prev) => prev + 1);
+  };
 
   return (
     <div className="page-container">
@@ -15,9 +20,14 @@ export default function PageCategoria() {
           + Nueva Categoría
         </button>
       </header>
-      <Table />
-      {/* modal_user siempre montado, pero visible según showForm */}
-      <UserForm show={showForm} onClose={() => setShowForm(false)} />
+      <Table key={refreshKey} />
+      {showForm && (
+        <UserForm
+          show={showForm}
+          onClose={() => setShowForm(false)}
+          onSave={handleCategoryCreated}
+        />
+      )}
     </div>
   );
 }

@@ -2,9 +2,25 @@ import { useState, useEffect } from "react";
 import { obtenerOrdenes, actualizarEstadoOrden, obtenerComprobante } from "../services/ordenService";
 import "../style/ordenes.css";
 
+// Normalizador de estados robusto
+const normalizeStatus = (status) => {
+  if (!status) return "Pendiente";
+  const s = String(status).trim();
+  if (s.length === 0) return "Pendiente";
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+};
+
 const getStatusClass = (s) => {
-  if (!s) return "status-Pendiente";
-  return `status-${String(s).replace(/\s+/g, "")}`;
+  const status = normalizeStatus(s);
+  // Mapeo de clases CSS según estado normalizado
+  const map = {
+    "Pendiente": "status-Pendiente",
+    "Procesando": "status-Procesando", // Asegurar que exista en CSS o usar fallback
+    "Enviado": "status-Enviado",
+    "Entregado": "status-Entregado",
+    "Cancelado": "status-Rechazado" // Ejemplo si existiera
+  };
+  return map[status] || `status-${status.replace(/\s+/g, "")}`;
 };
 
 const getLoggedProductorId = () => {
@@ -20,6 +36,7 @@ export default function OrdenesPage() {
   const [ordenes, setOrdenes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filterStatus, setFilterStatus] = useState("todos");
   const ID_PRODUCTOR_ACTUAL = getLoggedProductorId();
 
   useEffect(() => {
@@ -43,39 +60,34 @@ export default function OrdenesPage() {
   };
 
   const handleDescargarComprobante = async (id_pedido) => {
-  try {
-    const pdfBlob = await obtenerComprobante(id_pedido);
-    
-    const url = window.URL.createObjectURL(pdfBlob);
-    
-    // Crea un enlace temporal <a> para iniciar la descarga
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `comprobante_orden_${id_pedido}.pdf`; 
-    document.body.appendChild(a);
-    a.click();
-    
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-    
-  } catch (error) {
-    alert("Error al descargar el comprobante.");
-  }
-};
+    try {
+      const pdfBlob = await obtenerComprobante(id_pedido);
+      
+      const url = window.URL.createObjectURL(pdfBlob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `comprobante_orden_${id_pedido}.pdf`; 
+      document.body.appendChild(a);
+      a.click();
+      
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      alert("Error al descargar el comprobante.");
+    }
+  };
 
-// 💡 IMPLEMENTACIÓN: Lógica para previsualizar el PDF en una nueva pestaña
-const handlePrevisualizarComprobante = async (id_pedido) => {
-  try {
-    const pdfBlob = await obtenerComprobante(id_pedido);
-    const url = window.URL.createObjectURL(pdfBlob);
-    
-    // Abre el PDF en una nueva pestaña
-    window.open(url, '_blank'); 
-    
-  } catch (error) {
-    alert("Error al previsualizar el comprobante.");
-  }
-};
+  const handlePrevisualizarComprobante = async (id_pedido) => {
+    try {
+      const pdfBlob = await obtenerComprobante(id_pedido);
+      const url = window.URL.createObjectURL(pdfBlob);
+      window.open(url, '_blank'); 
+    } catch (error) {
+      alert("Error al previsualizar el comprobante.");
+    }
+  };
 
   const handleEstadoChange = async (id_pedido, estado) => { 
     try {
@@ -90,12 +102,60 @@ const handlePrevisualizarComprobante = async (id_pedido) => {
     }
   };
 
+  // Filtrado
+  const filteredOrdenes = ordenes.filter(orden => {
+    if (filterStatus === "todos") return true;
+    return normalizeStatus(orden.estado).toLowerCase() === filterStatus.toLowerCase();
+  });
+
+  // Conteo
+  const counts = ordenes.reduce((acc, orden) => {
+    const status = normalizeStatus(orden.estado).toLowerCase();
+    acc[status] = (acc[status] || 0) + 1;
+    acc.total = (acc.total || 0) + 1;
+    return acc;
+  }, { total: 0 });
+
+  // Configuración de pestañas
+  const tabs = [
+    { key: "todos", label: "Todas", count: counts.total || 0 },
+    { key: "pendiente", label: "Pendientes", count: counts.pendiente || 0 },
+    { key: "procesando", label: "Procesando", count: counts.procesando || 0 },
+    { key: "enviado", label: "Enviados", count: counts.enviado || 0 },
+    { key: "entregado", label: "Entregados", count: counts.entregado || 0 },
+  ];
+
   if (loading) return <div>Cargando órdenes...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="orders-container">
-      <h2>Gestión de Órdenes (Productor ID: {ID_PRODUCTOR_ACTUAL})</h2>
+      <div className="orders-header">
+        <h2>Gestión de Órdenes (Productor ID: {ID_PRODUCTOR_ACTUAL})</h2>
+        
+        {/* FILTROS MEJORADOS */}
+        <div className="filter-buttons">
+            {tabs.map(tab => (
+                <button 
+                    key={tab.key}
+                    className={`filter-btn ${filterStatus === tab.key ? `active-${tab.key === 'todos' ? 'all' : 'aprobado'}` : ''} ${filterStatus === tab.key && tab.key === 'pendiente' ? 'active-pendiente' : ''}`}
+                    onClick={() => setFilterStatus(tab.key)}
+                    style={filterStatus === tab.key ? {} : {}} // Limpiar estilos inline
+                >
+                    {tab.label} ({tab.count})
+                </button>
+            ))}
+        </div>
+      </div>
+
+      {filteredOrdenes.length === 0 ? (
+         <div className="no-results">
+            <div className="no-results-card">
+                <h3>No hay órdenes {filterStatus !== 'todos' ? filterStatus : ''}</h3>
+                <p>No se encontraron pedidos con este estado.</p>
+            </div>
+         </div>
+      ) : (
       <table className="orders-table">
         <thead>
           <tr>
@@ -112,15 +172,14 @@ const handlePrevisualizarComprobante = async (id_pedido) => {
           </tr>
         </thead>
         <tbody>
-          {ordenes.length > 0 ? (
-            ordenes.map((orden) => (
+            {filteredOrdenes.map((orden) => (
               <tr key={orden.id_pedido}>
                 <td>{orden.id_pedido}</td> 
                 <td>{orden.cliente}</td>
                 <td>{new Date(orden.fecha_pedido).toLocaleDateString()}</td>
                 <td>
                   <span className={`status-badge ${getStatusClass(orden.estado)}`}>
-                    {orden.estado}
+                    {normalizeStatus(orden.estado)}
                   </span>
                 </td>
                 <td>${Number(orden.total).toFixed(2)}</td>
@@ -132,7 +191,7 @@ const handlePrevisualizarComprobante = async (id_pedido) => {
                   <select
                     className="form-select"
                     aria-label={`Cambiar estado orden ${orden.id_pedido}`}
-                    value={orden.estado}
+                    value={normalizeStatus(orden.estado)}
                     onChange={(e) => handleEstadoChange(orden.id_pedido, e.target.value)}
                   >
                     <option value="Pendiente">Pendiente</option>
@@ -158,14 +217,10 @@ const handlePrevisualizarComprobante = async (id_pedido) => {
                   </button>
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="9">No hay órdenes para mostrar.</td>
-            </tr>
-          )}
+            ))}
         </tbody>
       </table>
+      )}
     </div>
   );
 }

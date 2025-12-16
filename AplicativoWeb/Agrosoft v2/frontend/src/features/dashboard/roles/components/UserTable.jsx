@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import RolesEditForm from "./RolesEditForm";
 import ConfirmDelete from "./ConfirmDelete";
 import { getRoles, deleteRol } from "../services/rolesService"; 
@@ -8,14 +8,15 @@ export default function Table() {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [editRol, setEditRoles] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
-  const loadRol = async () => {
+  const loadRol = useCallback(async (term = "") => {
           setLoading(true);
           setError(null);
           try {
-              const data = await getRoles();
+              const data = await getRoles(term);
               setRoles(data);
               
           } catch (err) {
@@ -24,10 +25,10 @@ export default function Table() {
           } finally {
               setLoading(false);
           }
-      };      
+      }, []);      
       useEffect(() => {
           loadRol();
-      }, []); 
+      }, [loadRol]); 
 
       const handleDeleteConfirm = async (id_rol) => {
           try {
@@ -48,6 +49,18 @@ export default function Table() {
 
   return (
     <div className="table-container">
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por nombre o descripción..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => loadRol(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <table className="user-table">
         <thead>
           <tr>

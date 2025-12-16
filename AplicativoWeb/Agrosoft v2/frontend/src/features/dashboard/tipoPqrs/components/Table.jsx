@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { getTipoPqrs } from "../services/tipoPqrsService"; 
 import TipoPqrsEditForm from "./TipoPqrsEditForm"; 
 import ConfirmDelete from "./ConfirmDelete";
@@ -11,16 +11,17 @@ export default function Table() {
     //  NUEVOS ESTADOS para la carga y errores
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [editTipoPqrs, setEditTipoPqrs] = useState(null);
     const [deleteTipoPqrs, setDeleteTipoPqrs] = useState(null);    
 
     //  FUNCIÓN DE CARGA DE DATOS
-    const loadTipoPqrs = async () => {
+    const loadTipoPqrs = useCallback(async (term = "") => {
         setLoading(true);
         setError(null);
         try {
-            const data = await getTipoPqrs();
+            const data = await getTipoPqrs(term);
             setTipoPqrs(data);
             
         } catch (err) {
@@ -29,11 +30,11 @@ export default function Table() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
     
     useEffect(() => {
         loadTipoPqrs();
-    }, []); 
+    }, [loadTipoPqrs]); 
 
     const handleDeleteConfirm = async (id_tipo_pqrs) => {
         try {
@@ -58,6 +59,18 @@ export default function Table() {
 
   return (
     <div className="table-container">
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => loadTipoPqrs(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <table className="user-table">
         <thead>
           <tr>

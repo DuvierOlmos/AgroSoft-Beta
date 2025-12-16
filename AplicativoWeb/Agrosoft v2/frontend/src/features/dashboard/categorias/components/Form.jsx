@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { createCategory } from "../services/categoryService";
-import "../styles/CategoryForm.css";
+import React, { useState } from 'react';
+import { createCategory } from '../services/categoryService';
+import { useNotification } from '../../../../context/NotificationContext';
+import '../styles/CategoryForm.css';
 
 export default function CategoryForm({ show, onClose, onSave }) {
   const [form, setForm] = useState({
-    nombre_categoria: "",
+    nombre_categoria: '',
   });
+  const { addNotification } = useNotification();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,16 +17,17 @@ export default function CategoryForm({ show, onClose, onSave }) {
     e.preventDefault();
     try {
       await createCategory(form);
-      console.log("Categoría creada:", form);
+      addNotification('Categoría creada con éxito', 'success');
       onSave();
-      onClose();     
+      onClose();
+      setForm({ nombre_categoria: '' });
     } catch (err) {
-      console.error("Error al crear categoría:", err);
+      addNotification(err.message, 'error');
     }
   };
 
   return (
-    <div className={`modal_user-overlay ${show ? "show" : ""}`}>
+    <div className={`modal_user-overlay ${show ? 'show' : ''}`}>
       <div className="modal_user">
         <h2>Nueva Categoría</h2>
         <form onSubmit={handleSubmit}>
@@ -37,10 +40,8 @@ export default function CategoryForm({ show, onClose, onSave }) {
             required
           />
 
-      
-
           <div className="form-actions">
-            <button type="submit" className="btn-primary" onClick={onClose}>Guardar</button>
+            <button type="submit" className="btn-primary">Guardar</button>
             <button type="button" className="btn-secondary" onClick={onClose}>
               Cancelar
             </button>

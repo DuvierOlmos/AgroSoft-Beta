@@ -6,6 +6,12 @@ import "../styles/PageUser.css";
 
 export default function PageUser() {
   const [showForm, setShowForm] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleUserCreated = () => {
+    setShowForm(false);
+    setRefreshKey(prev => prev + 1); // Incrementa key para forzar recarga de UserTable
+  };
 
   return (
     <div className="page-container">
@@ -16,11 +22,15 @@ export default function PageUser() {
         </button>
       </header>
 
-      <UserTable />
+      <UserTable refreshTrigger={refreshKey} />
       
 
       {/* modal_user siempre montado, pero visible según showForm */}
-      <UserForm show={showForm} onClose={() => setShowForm(false)} />
+      <UserForm 
+        show={showForm} 
+        onClose={() => setShowForm(false)} 
+        onSave={handleUserCreated}
+      />
     </div>
   );
 }

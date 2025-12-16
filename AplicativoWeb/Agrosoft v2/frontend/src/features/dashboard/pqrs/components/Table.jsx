@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { getPqrs } from "../services/pqrsService"; 
 import PqrsEditForm from "./pqrsEditForm"; 
 import "../styles/UserTable.css";
@@ -10,15 +10,16 @@ export default function Table() {
     //  NUEVOS ESTADOS para la carga y errores
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [editPqrs, setEditPqrs] = useState(null);
 
     //  FUNCIÓN DE CARGA DE DATOS
-    const loadPqrs = async () => {
+    const loadPqrs = useCallback(async (term = "") => {
         setLoading(true);
         setError(null);
         try {
-            const data = await getPqrs();
+            const data = await getPqrs(term);
             setPqrs(data);
             
         } catch (err) {
@@ -27,10 +28,10 @@ export default function Table() {
         } finally {
             setLoading(false);
         }
-    };    
+    }, []);    
     useEffect(() => {
         loadPqrs();
-    }, []); 
+    }, [loadPqrs]); 
     // --- LÓGICA DE RENDERIZADO ---    
     if (loading) {
         return <div className="table-container">Cargando Pqrs...</div>;
@@ -41,6 +42,18 @@ export default function Table() {
 
   return (
     <div className="table-container">
+      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
+        <input
+          type="text"
+          placeholder="Buscar por asunto o descripción..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "0.5rem", width: "300px" }}
+        />
+        <button className="btn-success" onClick={() => loadPqrs(searchTerm)}>
+          Buscar
+        </button>
+      </div>
       <table className="user-table">
         <thead>
           <tr>

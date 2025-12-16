@@ -128,8 +128,8 @@ export const deleteProducto = async (id) => {
   try {
     console.log(` [DEBUG] Deleting product ${id}`);
 
-    const res = await fetch(`${API_URL}/desactivar/${id}`, {
-      method: "PUT",
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
       headers: authHeaders(),
     });
 

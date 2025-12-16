@@ -8,6 +8,7 @@ const db = require("./config/db");
 
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/products_routes");
+const adminProductRoutes = require("./routes/productRoutes");
 const reviewRoutes = require("./routes/review_routes");
 const pqrsRoutes = require("./routes/pqrs_routes");
 
@@ -24,7 +25,7 @@ const pedidoRoutes = require("./routes/pedido_routes");
 
 const rolRoutes = require('./routes/rolRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
-const descuentoRoutes = require('./routes/descuentos_routes');
+const descuentoRoutes = require('./routes/descuentoRoutes');
 const productoDescuentoRoutes = require('./routes/productoDescuentoRoutes');
 const estadoPqrsRoutes = require('./routes/estadoPqrsRoutes');
 const tipoPqrsRoutes = require('./routes/tipoPqrsRoutes');
@@ -107,6 +108,8 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+const { swaggerDocs } = require('./config/swagger');
+
 /* ============================================================
    RUTAS API
 ============================================================ */
@@ -120,6 +123,7 @@ app.use('/api/descuentos-alt', descuentoRoutes);
 app.use('/api/product-discounts', productoDescuentoRoutes);
 
 app.use("/api/users", userRoutes);
+app.use("/api/products", adminProductRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/reviews", reviewRoutes);
 
@@ -148,6 +152,10 @@ app.use("/api/subcategorias", subcategoriaRoutes);
 app.use("/api/carrito", carritoRoutes);
 
 app.use("/api/roles", rolRoutes);
+
+// Documentación de Swagger
+const PORT_SWAGGER = process.env.PORT || 4000;
+swaggerDocs(app, PORT_SWAGGER);
 
 /* ============================================================
    RUTA 404

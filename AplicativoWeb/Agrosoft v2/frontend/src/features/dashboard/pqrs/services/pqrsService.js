@@ -3,21 +3,24 @@ import axios from "axios";
 const API_URL = "http://localhost:4000/api/pqrs"; 
 
 //  ver 
-export async function getPqrs() {
-  const response = await fetch(API_URL);
+export async function getPqrs(search = "") {
+  let url = API_URL;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+  const response = await fetch(url);
   if (!response.ok) throw new Error("Error al obtener pqrs");
-  return await response.json();
+  const data = await response.json();
+  return data.data; // Retornamos el array que está dentro de la propiedad data
 }
-
-
 
 //  Actualizar 
 export const updatePqrs = async (id, pqrs) => {
     
     const alertIdentifier = pqrs.id_estado_pqrs || `ID ${id}`;     
     try { 
-        const response = await axios.put(`${API_URL}/update/${id}`, pqrs);         
-        alert(` PQRS ${alertIdentifier} respondida/actualizada con éxito.`);         
+        const response = await axios.put(`${API_URL}/${id}`, pqrs); 
+        alert(` PQRS ${alertIdentifier} respondida/actualizada con éxito.`); 
         return response.data;
 
     } catch (error) {         
@@ -34,12 +37,11 @@ export const updatePqrs = async (id, pqrs) => {
                  `Fallo del servidor (Status: ${status}).`;
             }            
         }     
-        else if (error.request) {            
+        else if (error.request) { 
             errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa y el puerto sea correcto.";
         }     
-        alert(` Error al responder la PQRS ${alertIdentifier}: ${errorMessage}`);             
+        alert(` Error al responder la PQRS ${alertIdentifier}: ${errorMessage}`); 
        
         throw new Error(errorMessage);
     }
 };
-

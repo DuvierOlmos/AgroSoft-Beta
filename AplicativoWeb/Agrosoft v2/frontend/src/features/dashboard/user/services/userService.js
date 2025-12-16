@@ -20,8 +20,12 @@ const userService = {
 
 // === READ ===
 
-export async function getUsers() {
-  const response = await fetch(API_URL, { headers: authHeaders() });
+export async function getUsers(search = "") {
+  let url = API_URL;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+  const response = await fetch(url, { headers: authHeaders() });
   if (!response.ok) {
     if (response.status === 401 || response.status === 403) {
       throw new Error("No autorizado. Inicia sesión como administrador.");
@@ -88,11 +92,11 @@ export async function deleteUser(id) {
       const errorDetail = await response.json();
       errorMessage = errorDetail.message || errorMessage;
     } catch (e) {}
-    alert(` Falló la eliminación: ${errorMessage}`);
+    // alert(` Falló la eliminación: ${errorMessage}`);
     throw new Error(errorMessage);
   }
 
-  alert(" Usuario eliminado con éxito.");
+  // alert(" Usuario eliminado con éxito.");
 
   if (response.status === 204) {
     return { message: "Usuario eliminado con éxito." };
