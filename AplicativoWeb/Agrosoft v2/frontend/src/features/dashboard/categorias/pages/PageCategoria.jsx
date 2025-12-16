@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import Table from "../components/Table";
-import UserForm from "../components/Form";
-import "../../../../style/PageUser.css";
-//import "../styles/PageCategoria.css";
+import React, { useState } from 'react';
+import Table from '../components/Table';
+import UserForm from '../components/Form';
+import '../../../../style/PageUser.css';
 
 export default function PageCategoria() {
   const [showForm, setShowForm] = useState(false);
@@ -10,7 +9,7 @@ export default function PageCategoria() {
 
   const handleCategoryCreated = () => {
     setShowForm(false);
-    setRefreshKey((prev) => prev + 1); // Force table refresh
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
@@ -22,8 +21,13 @@ export default function PageCategoria() {
         </button>
       </header>
       <Table key={refreshKey} />
-      {/* modal_user siempre montado, pero visible según showForm */}
-      <UserForm show={showForm} onClose={() => setShowForm(false)} onSave={handleCategoryCreated} />
+      {showForm && (
+        <UserForm
+          show={showForm}
+          onClose={() => setShowForm(false)}
+          onSave={handleCategoryCreated}
+        />
+      )}
     </div>
   );
 }

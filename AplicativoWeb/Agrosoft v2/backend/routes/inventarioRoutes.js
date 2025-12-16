@@ -1,47 +1,110 @@
 const express = require("express");
 const router = express.Router();
-const Inventario = require("../models/inventario");
-const Producto = require("../models/producto_model");
-const User = require("../models/user_model");
-const { Op } = require("sequelize");
+const inventarioController = require("../controllers/inventarioController");
 
-// GET /api/inventarios - Obtener todo el inventario
-router.get("/", async (req, res) => {
-  try {
-    const { search } = req.query;
-    let whereClause = {};
+/**
+ * @swagger
+ * tags:
+ *   name: Inventory
+ *   description: Gestión de inventarios de productos
+ */
 
-    if (search) {
-        if (!isNaN(search) && search.trim() !== '') {
-             whereClause = { id_inventario: search };
-        } else {
-            whereClause = {
-                [Op.or]: [
-                    { '$producto.nombre_producto$': { [Op.like]: `%${search}%` } },
-                    { '$producto.agricultor.nombre_usuario$': { [Op.like]: `%${search}%` } }
-                ]
-            };
-        }
-    }
+/**
+ * @swagger
+ * /api/inventarios:
+ *   get:
+ *     summary: Listar todo el inventario
+ *     tags: [Inventory]
+ *     responses:
+ *       200:
+ *         description: Lista de inventarios
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Inventario'
+ */
+// GET /api/inventarios
+router.get("/", inventarioController.getAllInventario);
 
-    const inventarios = await Inventario.findAll({
-      where: whereClause,
-      include: [{
-        model: Producto,
-        as: 'producto',
-        include: [{
-          model: User,
-          as: 'agricultor',
-          attributes: ['id_usuario', 'nombre_usuario']
-        }]
-      }]
-    });
-    res.json(inventarios);
-  } catch (err) {
-    res.status(500).json({ error: "Error al obtener inventario" });
-  }
-});
+/**
+ * @swagger
+ * /api/inventarios/{id}:
+ *   get:
+ *     summary: Obtener inventario por ID
+ *     tags: [Inventory]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Detalle del inventario
+ *       404:
+ *         description: Inventario no encontrado
+ */
+router.get("/:id", inventarioController.getInventarioById);
 
-// Puedes agregar POST, PUT, DELETE aquí si lo necesitas
+/**
+ * @swagger
+ * /api/inventarios:
+ *   post:
+ *     summary: Crear nuevo registro de inventario
+ *     tags: [Inventory]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Inventario'
+ *     responses:
+ *       201:
+ *         description: Inventario creado
+ */
+router.post("/", inventarioController.createInventario);
+
+/**
+ * @swagger
+ * /api/inventarios/{id}:
+ *   put:
+ *     summary: Actualizar inventario
+ *     tags: [Inventory]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Inventario'
+ *     responses:
+ *       200:
+ *         description: Inventario actualizado
+ */
+router.put("/:id", inventarioController.updateInventario);
+
+/**
+ * @swagger
+ * /api/inventarios/{id}:
+ *   delete:
+ *     summary: Eliminar registro de inventario
+ *     tags: [Inventory]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Inventario eliminado
+ */
+router.delete("/:id", inventarioController.deleteInventario);
 
 module.exports = router;

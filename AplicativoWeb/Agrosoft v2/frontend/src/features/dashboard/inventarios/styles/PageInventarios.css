@@ -23,7 +23,7 @@
   margin: 0;
   font-size: 1.8em;
   font-weight: 700;
-}   
+}
 
 .btn-primary {
   background: linear-gradient(90deg, #71f65c, #45b810);
@@ -44,3 +44,4 @@
   box-shadow: 0 6px 15px rgba(69, 184, 16, 0.4);
   background: linear-gradient(90deg, #5de04b, #3da00e);
 }
+

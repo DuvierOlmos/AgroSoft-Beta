@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { deleteProduct, deleteProductPermanent } from "../services/productService";
-import "../styles/ConfirmDelete.css";
+import React, { useState } from 'react';
+import { deleteProduct, deleteProductPermanent } from '../services/productService';
+import { useNotification } from '../../../../context/NotificationContext';
+import '../styles/ConfirmDelete.css';
 
 export default function ConfirmDelete({ show, onClose, productId, onSave }) {
   const [isPermanent, setIsPermanent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { addNotification } = useNotification();
 
   const handleDelete = async () => {
     setLoading(true);
@@ -15,17 +17,18 @@ export default function ConfirmDelete({ show, onClose, productId, onSave }) {
       } else {
         response = await deleteProduct(productId);
       }
-      
+
       if (response && response.message) {
-        // Optional: toast notification here instead of alert
-        alert(response.message);
+        addNotification(response.message, 'success');
+      } else {
+        addNotification('Producto eliminado correctamente', 'success');
       }
-      onSave(); // Refresh list
+
+      onSave();
       onClose();
-      setIsPermanent(false); // Reset state
+      setIsPermanent(false);
     } catch (err) {
-      console.error("Error al eliminar:", err);
-      alert(err.message || "No se pudo eliminar el producto");
+      addNotification(err.message || 'No se pudo eliminar el producto', 'error');
     } finally {
       setLoading(false);
     }
@@ -39,9 +42,9 @@ export default function ConfirmDelete({ show, onClose, productId, onSave }) {
   if (!show) return null;
 
   return (
-    <div className={`modal_user-overlay ${show ? "show" : ""}`} onClick={handleClose}>
+    <div className={`modal_user-overlay ${show ? 'show' : ''}`} onClick={handleClose}>
       <div className="modal_user" onClick={(e) => e.stopPropagation()}>
-        
+
         <div className="modal-header">
           <div className="warning-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -55,14 +58,14 @@ export default function ConfirmDelete({ show, onClose, productId, onSave }) {
         <div className="modal-content">
           <div className="permanent-option">
             <label className="checkbox-label">
-              <input 
+              <input
                 type="checkbox"
                 checked={isPermanent}
                 onChange={(e) => setIsPermanent(e.target.checked)}
               />
               <span>Forzar eliminación permanente</span>
             </label>
-            
+
             {isPermanent && (
               <div className="warning-box">
                 <p>
@@ -78,7 +81,7 @@ export default function ConfirmDelete({ show, onClose, productId, onSave }) {
             Cancelar
           </button>
           <button className="btn btn-danger" onClick={handleDelete} disabled={loading}>
-            {loading ? "Eliminando..." : (isPermanent ? "Eliminar Definitivamente" : "Eliminar")}
+            {loading ? 'Eliminando...' : (isPermanent ? 'Eliminar Definitivamente' : 'Eliminar')}
           </button>
         </div>
 

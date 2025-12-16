@@ -1,73 +1,68 @@
-import axios from "axios";
+const API_URL = 'http://localhost:4000/api/categories/admin';
 
-const API_URL = "http://localhost:4000/api/categories/admin";
+const getToken = () => localStorage.getItem('token');
 
-const getToken = () => localStorage.getItem("token");
 const authHeaders = () => {
-    const token = getToken();
-    return token
-        ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
-        : { "Content-Type": "application/json" };
+  const token = getToken();
+  return {
+    'Content-Type': 'application/json',
+    Authorization: token ? `Bearer ${token}` : '',
+  };
+};
+
+export const getCategories = async (search = '') => {
+  let url = API_URL;
+  if (search) {
+    url += `?search=${encodeURIComponent(search)}`;
+  }
+
+  const response = await fetch(url, {
+    headers: authHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al obtener categorías');
+  }
+  return await response.json();
 };
 
 export const createCategory = async (categoria) => {
-    try {        
-        const response = await axios.post(`${API_URL}/create`, categoria, { headers: authHeaders() });        
-        alert(` Categoría "${categoria.nombre_categoria || 'creada'}" con éxito.`);             
-        return response.data;        
-    } catch (error) {        
-        let errorMessage = "Ocurrió un error inesperado al intentar crear la categoría.";        
-        if (error.response) {            
-            errorMessage = error.response.data.message || 
-             `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {            
-            errorMessage = "No se pudo conectar al servidor. Verifique la conexión.";
-        }        
-        alert(` Error al crear la categoría: ${errorMessage}`);        
-        throw new Error(errorMessage);
-    }
-};
+  const response = await fetch(`${API_URL}/create`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(categoria),
+  });
 
-export const getCategories = async (search = "") => {
-  const url = search ? `${API_URL}?search=${encodeURIComponent(search)}` : API_URL;
-  const response = await axios.get(url, { headers: authHeaders() });
-  return response.data;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Error al crear la categoría');
+  }
+  return await response.json();
 };
 
 export const updateCategory = async (id, categoria) => {
-    try {        
-        const response = await axios.put(`${API_URL}/update/${id}`, categoria, { headers: authHeaders() });       
-        alert(` Categoría "${categoria.nombre_categoria || id}" actualizada con éxito.`);         
-        return response.data;
-      } catch (error) { 
-        let errorMessage = "Ocurrió un error inesperado al intentar actualizar la categoría.";        
-        if (error.response) {
-          errorMessage = error.response.data.message || 
-             `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {            
-            errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa.";
-        }      
-        alert(` Error al actualizar la categoría: ${errorMessage}`);     
-        throw new Error(errorMessage);
-    }
+  const response = await fetch(`${API_URL}/update/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(categoria),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Error al actualizar la categoría');
+  }
+  return await response.json();
 };
 
 export const deleteCategory = async (id) => {
-    try {        
-        const response = await axios.delete(`${API_URL}/delete/${id}`, { headers: authHeaders() });
-        alert(` Categoría con ID ${id} eliminada con éxito.`);
-        return response.data;        
-    } catch (error) {       
-        let errorMessage = "Ocurrió un error inesperado al intentar eliminar la categoría.";        
-        if (error.response) {
-            errorMessage = error.response.data.message || 
-             `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {
-            errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa.";
-        }        
-        alert(` Error al eliminar la categoría: ${errorMessage}`);        
-        throw new Error(errorMessage);
-    }
+  const response = await fetch(`${API_URL}/delete/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Error al eliminar la categoría');
+  }
+  return await response.json();
 };
-
-

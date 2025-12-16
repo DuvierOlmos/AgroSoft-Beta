@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { CarritoProvider } from './context/CarritoContext';
 import { NotificationProvider } from './context/NotificationContext';
 
-// Componentes globales (cliente)
 import Navbar from "./components/Navbar.js";
 import Footer from "./components/Footer.js";
 import Login from "./components/Login.js";
 import Register from "./components/Register.js";
 
-// Páginas del cliente
 import Catalogo from "./pages/Catalogo.js";
 import Home from "./pages/Home.js";
 import Blog from "./pages/Blog.js";
 import ProductPage from "./pages/ProductPage.js";
-import Ofertas from "./pages/Ofertas.jsx"; // ← Esta es tu vista de ofertas
+import Ofertas from "./pages/Ofertas.jsx";
 import Carrito from "./pages/Carrito.js";
 import Pedidos from "./pages/Pedidos.js";
 import ConfiguracionCliente from "./pages/ConfiguracionCliente.jsx";
 
-// Aplicación del productor
 import ProductorApp from "./productorApp.jsx";
 
-// Dashboard de administrador
 import AdminApp from "./AdminApp.jsx";
 
 import "./App.css";
@@ -30,11 +26,8 @@ import "./App.css";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Estado de carga
+  const [loading, setLoading] = useState(true);
 
-  // =======================================================
-  // 1. CARGAR SESIÓN DESDE LOCALSTORAGE
-  // =======================================================
   useEffect(() => {
     const userJson = localStorage.getItem("user");
     if (userJson) {
@@ -49,17 +42,13 @@ function App() {
         setUser(finalUserData);
         setIsAuthenticated(true);
       } catch (e) {
-        console.error("Error al analizar los datos del usuario:", e);
         localStorage.removeItem("user");
       }
     }
     setLoading(false);
   }, []);
 
-  // =======================================================
-  // 2. LOGIN Y LOGOUT
-  // =======================================================
-  const handleLogin = (userData) => {
+  const handleLogin = useCallback((userData) => {
     const roleMap = { 1: "cliente", 2: "administrador", 3: "productor" };
     const finalUserData = {
       ...userData,
@@ -70,48 +59,35 @@ function App() {
     setUser(finalUserData);
     setIsAuthenticated(true);
 
-    // Mostrar mensaje de bienvenida
-    console.log(`👋 Bienvenido ${userData.nombre_usuario} (${finalUserData.role})`);
-
-    // Redirige según el rol del usuario
     if (finalUserData.role === "productor") {
       window.location.href = "/AdminView";
     } else if (finalUserData.role === "administrador") {
       window.location.href = "/admin";
     } else {
-      // Cliente va al Home
       window.location.href = "/";
     }
-  };
+  }, []);
 
-  const handleLogout = () => {
-    console.log("👋 Sesión cerrada");
+  const handleLogout = useCallback(() => {
     localStorage.removeItem("user");
-    localStorage.removeItem("carrito"); // Limpiar también el carrito
+    localStorage.removeItem("carrito");
     setUser(null);
     setIsAuthenticated(false);
     window.location.href = "/login";
-  };
+  }, []);
 
-  // =======================================================
-  // 3. LAYOUT GENERAL (Navbar y Footer)
-  // =======================================================
   const Layout = ({ children }) => (
     <>
       <Navbar
         isAuthenticated={isAuthenticated}
         user={user}
         onLogout={handleLogout}
-        showOfertasLink={true} // Asegúrate de que el Navbar muestre el link a ofertas
+        showOfertasLink={true}
       />
       <div className="page-content">{children}</div>
       <Footer />
     </>
   );
-
-  // =======================================================
-  // 4. RUTAS CONDICIONALES Y PROTEGIDAS
-  // =======================================================
 
   const ProtectedRoute = ({ element }) =>
     isAuthenticated ? element : <Navigate to="/login" replace />;
@@ -123,14 +99,6 @@ function App() {
     return element;
   };
 
-  const AdminGuard = ({ element }) => {
-    if (isAuthenticated && user?.role === "administrador") {
-      return <Navigate to="/admin" replace />;
-    }
-    return element;
-  };
-
-  // Pantalla de carga mientras verifica autenticación
   if (loading) {
     return (
       <div className="app-loading">
@@ -140,18 +108,13 @@ function App() {
     );
   }
 
-  // =======================================================
-  // 5. RUTAS DE LA APLICACIÓN
-  // =======================================================
   return (
     <NotificationProvider>
       <CarritoProvider>
         <Router>
           <Routes>
-            {/* 1. RUTA RAÍZ (Home) - INICIA SIEMPRE AQUÍ */}
             <Route path="/" element={<Layout><Home /></Layout>} />
 
-            {/* 2. RUTAS PÚBLICAS DEL CLIENTE (Protegidas por ProducerGuard) */}
             <Route path="/catalogo" element={
               <ProducerGuard element={<Layout><Catalogo /></Layout>} />
             } />
@@ -164,7 +127,6 @@ function App() {
               <ProducerGuard element={<Layout><Blog /></Layout>} />
             } />
 
-            {/* RUTA DE OFERTAS - Conectada a tu base de datos */}
             <Route path="/ofertas" element={
               <ProducerGuard element={<Layout><Ofertas /></Layout>} />
             } />
@@ -175,7 +137,6 @@ function App() {
               } />
             } />
 
-            {/* 3. RUTAS PROTEGIDAS DEL CLIENTE */}
             <Route path="/carrito" element={
               <ProducerGuard element={
                 <ProtectedRoute element={<Layout><Carrito /></Layout>} />
@@ -188,7 +149,6 @@ function App() {
               } />
             } />
 
-            {/* 4. RUTAS DE AUTENTICACIÓN */}
             <Route path="/login" element={
               isAuthenticated && user?.role === "productor"
                 ? <Navigate to="/AdminView" replace />
@@ -201,7 +161,6 @@ function App() {
               isAuthenticated ? <Navigate to="/" /> : <Register onLogin={handleLogin} />
             } />
 
-            {/* 5. RUTA PRINCIPAL DEL PRODUCTOR */}
             <Route path="/AdminView/*" element={
               isAuthenticated && user?.role === "productor" ? (
                 <ProductorApp
@@ -214,7 +173,6 @@ function App() {
               )
             } />
 
-            {/* 6. RUTA PRINCIPAL DEL ADMINISTRADOR */}
             <Route path="/admin/*" element={
               isAuthenticated && user?.role === "administrador" ? (
                 <AdminApp user={user} onLogout={handleLogout} />
@@ -223,7 +181,6 @@ function App() {
               )
             } />
 
-            {/* 7. RUTA POR DEFECTO */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Router>

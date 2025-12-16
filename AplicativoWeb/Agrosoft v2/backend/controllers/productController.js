@@ -30,7 +30,7 @@ exports.getAllProductsAdmin = async (req, res) => {
       include:[
         { 
             model: SubCategoria, 
-            as: 'SubCategory',
+            as: 'SubCategoria',
             attributes: ['id_SubCategoria', 'nombre'] 
         }
       ],
@@ -95,7 +95,7 @@ exports.getProductById = async (req, res) => {
       include: [
         {
           model: SubCategoria,
-          as: 'SubCategory',
+          as: 'SubCategoria',
           attributes: ['id_SubCategoria', 'nombre'],
           include: [{
             model: Categoria,

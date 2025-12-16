@@ -108,6 +108,8 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+const { swaggerDocs } = require('./config/swagger');
+
 /* ============================================================
    RUTAS API
 ============================================================ */
@@ -150,6 +152,10 @@ app.use("/api/subcategorias", subcategoriaRoutes);
 app.use("/api/carrito", carritoRoutes);
 
 app.use("/api/roles", rolRoutes);
+
+// Documentación de Swagger
+const PORT_SWAGGER = process.env.PORT || 4000;
+swaggerDocs(app, PORT_SWAGGER);
 
 /* ============================================================
    RUTA 404

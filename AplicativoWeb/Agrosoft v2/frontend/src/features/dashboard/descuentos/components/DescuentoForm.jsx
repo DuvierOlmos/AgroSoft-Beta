@@ -1,24 +1,26 @@
-import React, { useState } from "react";
-import { createDescuento } from "../services/descuentoService";
-import "../styles/DescuentoForm.css";
+import React, { useState } from 'react';
+import { createDescuento } from '../services/descuentoService';
+import { useNotification } from '../../../../context/NotificationContext';
+import '../styles/DescuentoForm.css';
 
 export default function DescuentoForm({ show, onClose, onSave }) {
   const [form, setForm] = useState({
-    nombre_descuento: "",
-    tipo_descuento: "porcentaje",
-    codigo_descuento: "",
-    valor_descuento: "",
-    fecha_inicio: "",
-    fecha_fin: "",
-    estado: "Pendiente",
+    nombre_descuento: '',
+    tipo_descuento: 'porcentaje',
+    codigo_descuento: '',
+    valor_descuento: '',
+    fecha_inicio: '',
+    fecha_fin: '',
+    estado: 'Pendiente',
     activo: true,
   });
 
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const { addNotification } = useNotification();
 
   const handleChange = (e) => {
-    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setForm({ ...form, [e.target.name]: value });
   };
 
@@ -32,14 +34,14 @@ export default function DescuentoForm({ show, onClose, onSave }) {
         ...form,
         valor_descuento: parseFloat(form.valor_descuento),
       };
-      
+
       await createDescuento(dataToSend);
-      alert("Descuento creado con éxito.");
+      addNotification('Descuento creado con éxito', 'success');
       if (onSave) onSave();
       onClose();
     } catch (err) {
-      console.error("Error al crear descuento:", err);
-      setApiError(err.message || "No se pudo conectar con el servidor.");
+      setApiError(err.message || 'No se pudo conectar con el servidor.');
+      addNotification(err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -51,7 +53,7 @@ export default function DescuentoForm({ show, onClose, onSave }) {
     <div className="modal_user-overlay show" onClick={onClose}>
       <div className="modal_user" onClick={(e) => e.stopPropagation()}>
         <h2>Crear Nuevo Descuento</h2>
-        {apiError && <p style={{ color: "red", textAlign: "center" }}>{apiError}</p>}
+        {apiError && <p className="error-text">{apiError}</p>}
 
         <form onSubmit={handleSubmit}>
           <label>Nombre Descuento</label>
@@ -134,7 +136,7 @@ export default function DescuentoForm({ show, onClose, onSave }) {
           <select
             name="activo"
             value={form.activo.toString()}
-            onChange={(e) => setForm({ ...form, activo: e.target.value === "true" })}
+            onChange={(e) => setForm({ ...form, activo: e.target.value === 'true' })}
             disabled={loading}
           >
             <option value="true">Activo</option>
@@ -143,7 +145,7 @@ export default function DescuentoForm({ show, onClose, onSave }) {
 
           <div className="form-actions">
             <button type="submit" className="btn-primary" disabled={loading}>
-              {loading ? "Creando..." : "Crear Descuento"}
+              {loading ? 'Creando...' : 'Crear Descuento'}
             </button>
             <button
               type="button"

@@ -1,58 +1,60 @@
-import React, { useState, useEffect } from "react";
-import { createProduct, updateProduct, getSubcategories } from "../services/productService";
-import "../styles/ProductForm.css";
+import React, { useState, useEffect, useCallback } from 'react';
+import { createProduct, updateProduct, getSubcategories } from '../services/productService';
+import { useNotification } from '../../../../context/NotificationContext';
+import '../styles/ProductForm.css';
 
 export default function ProductForm({ show, onClose, product, onSave }) {
   const [formData, setFormData] = useState({
-    nombre_producto: "",
-    descripcion_producto: "",
-    precio_unitario: "",
-    unidad_medida: "",
-    id_SubCategoria: "",
+    nombre_producto: '',
+    descripcion_producto: '',
+    precio_unitario: '',
+    unidad_medida: '',
+    id_SubCategoria: '',
     cantidad: 0,
-    estado_producto: "activo",
-    id_usuario: ""
+    estado_producto: 'activo',
+    id_usuario: '',
   });
 
   const [subcategories, setSubcategories] = useState([]);
+  const { addNotification } = useNotification();
+
+  const loadSubcategories = useCallback(async () => {
+    try {
+      const data = await getSubcategories();
+      setSubcategories(data);
+    } catch (error) {
+      addNotification('Error cargando subcategorías', 'error');
+    }
+  }, [addNotification]);
 
   useEffect(() => {
     if (show) {
-       loadSubcategories();
-       if (product) {
-         setFormData({
-            nombre_producto: product.nombre_producto || "",
-            descripcion_producto: product.descripcion_producto || "",
-            precio_unitario: product.precio_unitario || "",
-            unidad_medida: product.unidad_medida || "",
-            id_SubCategoria: product.id_SubCategoria || "",
-            cantidad: product.cantidad || 0,
-            estado_producto: product.estado_producto || "activo",
-            id_usuario: product.id_usuario || ""
-         });
-       } else {
-         setFormData({
-            nombre_producto: "",
-            descripcion_producto: "",
-            precio_unitario: "",
-            unidad_medida: "",
-            id_SubCategoria: "",
-            cantidad: 0,
-            estado_producto: "activo",
-            id_usuario: ""
-         });
-       }
-    }
-  }, [show, product]);
-
-  const loadSubcategories = async () => {
-      try {
-          const data = await getSubcategories();
-          setSubcategories(data);
-      } catch (error) {
-          console.error("Error loading subcategories", error);
+      loadSubcategories();
+      if (product) {
+        setFormData({
+          nombre_producto: product.nombre_producto || '',
+          descripcion_producto: product.descripcion_producto || '',
+          precio_unitario: product.precio_unitario || '',
+          unidad_medida: product.unidad_medida || '',
+          id_SubCategoria: product.id_SubCategoria || '',
+          cantidad: product.cantidad || 0,
+          estado_producto: product.estado_producto || 'activo',
+          id_usuario: product.id_usuario || '',
+        });
+      } else {
+        setFormData({
+          nombre_producto: '',
+          descripcion_producto: '',
+          precio_unitario: '',
+          unidad_medida: '',
+          id_SubCategoria: '',
+          cantidad: 0,
+          estado_producto: 'activo',
+          id_usuario: '',
+        });
       }
-  };
+    }
+  }, [show, product, loadSubcategories]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,22 +66,24 @@ export default function ProductForm({ show, onClose, product, onSave }) {
     try {
       if (product) {
         await updateProduct(product.id_producto, formData);
+        addNotification('Producto actualizado correctamente', 'success');
       } else {
         await createProduct(formData);
+        addNotification('Producto creado correctamente', 'success');
       }
       onSave();
       onClose();
     } catch (error) {
-      alert("Error al guardar el producto: " + error.message);
+      addNotification(error.message || 'Error al guardar el producto', 'error');
     }
   };
 
   if (!show) return null;
 
   return (
-    <div className={`modal_user-overlay ${show ? "show" : ""}`}>
+    <div className={`modal_user-overlay ${show ? 'show' : ''}`}>
       <div className="modal_user">
-        <h2>{product ? "Editar Producto" : "Nuevo Producto"}</h2>
+        <h2>{product ? 'Editar Producto' : 'Nuevo Producto'}</h2>
         <form onSubmit={handleSubmit}>
           <label>Nombre del Producto:</label>
           <input
@@ -125,14 +129,14 @@ export default function ProductForm({ show, onClose, product, onSave }) {
           >
             <option value="">-- Seleccione --</option>
             {subcategories.map((sub) => (
-                <option key={sub.id_SubCategoria} value={sub.id_SubCategoria}>
-                    {sub.nombre_categoria} - {sub.nombre_subcategoria}
-                </option>
+              <option key={sub.id_SubCategoria} value={sub.id_SubCategoria}>
+                {sub.nombre_categoria} - {sub.nombre_subcategoria}
+              </option>
             ))}
           </select>
 
           <label>Cantidad (Stock):</label>
-           <input
+          <input
             type="number"
             name="cantidad"
             value={formData.cantidad}
@@ -155,8 +159,8 @@ export default function ProductForm({ show, onClose, product, onSave }) {
             value={formData.estado_producto}
             onChange={handleChange}
           >
-             <option value="Activo">Activo</option>
-             <option value="Inactivo">Inactivo</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
           </select>
 
           <div className="form-actions">

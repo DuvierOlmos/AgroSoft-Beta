@@ -1,33 +1,37 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { getProducts } from "../services/productService";
-import Form from "./Form";
-import ConfirmDelete from "./ConfirmDelete";
-import "../styles/ProductTable.css";
+import React, { useState, useEffect, useCallback } from 'react';
+import { getProducts } from '../services/productService';
+import Form from './Form';
+import ConfirmDelete from './ConfirmDelete';
+import { useNotification } from '../../../../context/NotificationContext';
+import '../styles/ProductTable.css';
 
 export default function Table() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [editProduct, setEditProduct] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  
-  // Filtros nuevos
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
 
-  const fetchProducts = useCallback(async (term = "") => {
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  const { addNotification } = useNotification();
+
+  const fetchProducts = useCallback(async (term = '') => {
     try {
       setLoading(true);
+      setError(null);
       const data = await getProducts(term);
       setProducts(data);
     } catch (err) {
       setError(err.message);
+      addNotification(err.message, 'error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [addNotification]);
 
   useEffect(() => {
     fetchProducts();
@@ -58,41 +62,41 @@ export default function Table() {
 
   return (
     <div className="table-container">
-      <div className="search-container" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+      <div className="search-container" style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
         <input
           type="text"
           placeholder="Buscar por nombre..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ padding: "0.5rem", width: "200px" }}
+          style={{ padding: '0.5rem', width: '200px' }}
         />
         <button className="btn-success" onClick={() => fetchProducts(searchTerm)}>
           Buscar
         </button>
 
-        <select 
-          value={statusFilter} 
+        <select
+          value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ padding: "0.5rem" }}
+          style={{ padding: '0.5rem' }}
         >
           <option value="">Todos los estados</option>
           <option value="activo">Activo</option>
           <option value="inactivo">Inactivo</option>
         </select>
 
-        <input 
-          type="number" 
-          placeholder="Min Precio" 
-          value={minPrice} 
+        <input
+          type="number"
+          placeholder="Min Precio"
+          value={minPrice}
           onChange={(e) => setMinPrice(e.target.value)}
-          style={{ padding: "0.5rem", width: "100px" }}
+          style={{ padding: '0.5rem', width: '100px' }}
         />
-        <input 
-          type="number" 
-          placeholder="Max Precio" 
-          value={maxPrice} 
+        <input
+          type="number"
+          placeholder="Max Precio"
+          value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
-          style={{ padding: "0.5rem", width: "100px" }}
+          style={{ padding: '0.5rem', width: '100px' }}
         />
       </div>
       <table className="user-table">
