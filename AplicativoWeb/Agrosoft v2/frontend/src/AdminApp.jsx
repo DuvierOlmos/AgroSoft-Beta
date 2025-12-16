@@ -3,6 +3,7 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/protectedRoute';
 import AppRoutes from './app/routes';
+import Footer from './components/Footer';
 
 function AdminApp({ onLogout }) {
   return (
@@ -12,8 +13,10 @@ function AdminApp({ onLogout }) {
         path="/*"
         element={
           <ProtectedRoute requiredRole={2}> 
-          <AppRoutes onLogout={onLogout} />
-            
+            <>
+              <AppRoutes onLogout={onLogout} />
+              <Footer />
+            </>
           </ProtectedRoute>
         }
       />
