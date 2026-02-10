@@ -233,7 +233,7 @@ function Navbar({ isAuthenticated, user, onLogout }) {
                   </Link>
 
                   <Link
-                    to="/Pedidos"
+                    to="/mis-resenas"
                     className="dropdown-item d-flex align-items-center"
                     onClick={() => setShowDropdown(false)}
                   >

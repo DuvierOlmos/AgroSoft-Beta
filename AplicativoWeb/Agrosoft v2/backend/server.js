@@ -10,6 +10,7 @@ const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/products_routes");
 const adminProductRoutes = require("./routes/productRoutes");
 const reviewRoutes = require("./routes/review_routes");
+const clienteResenaRoutes = require("./routes/cliente_Resena");
 const pqrsRoutes = require("./routes/pqrs_routes");
 
 const ofertasRoutes = require("./routes/ofertas_routes"); // ← TU RUTA CORRECTA (codigos, validar, productos)
@@ -121,7 +122,7 @@ app.use("/api/ofertas", ofertasRoutes);
 app.use("/api/descuentos", descuentosRoutes);
 app.use('/api/descuentos-alt', descuentoRoutes);
 app.use('/api/product-discounts', productoDescuentoRoutes);
-
+app.use('/api/clienteresenas', clienteResenaRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", adminProductRoutes);
 app.use("/api/products", productRoutes);
