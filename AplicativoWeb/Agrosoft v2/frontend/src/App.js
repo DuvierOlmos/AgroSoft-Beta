@@ -17,6 +17,7 @@ import Ofertas from "./pages/Ofertas.jsx";
 import Carrito from "./pages/Carrito.js";
 import Pedidos from "./pages/Pedidos.js";
 import ConfiguracionCliente from "./pages/ConfiguracionCliente.jsx";
+import MisPqrs from "./pages/MisPqrs.jsx";
 
 import ProductorApp from "./productorApp.jsx";
 
@@ -63,6 +64,12 @@ const AppRoutes = ({ isAuthenticated, user, handleLogin, handleLogout, Layout, P
         <Route path="/pedidos" element={
           <ProducerGuard element={
             <ProtectedRoute element={<Layout><Pedidos /></Layout>} />
+          } />
+        } />
+
+        <Route path="/mis-pqrs" element={
+          <ProducerGuard element={
+            <ProtectedRoute element={<Layout><MisPqrs /></Layout>} />
           } />
         } />
 

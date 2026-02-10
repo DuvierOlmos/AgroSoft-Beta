@@ -730,3 +730,55 @@
     flex-direction: column;
   }
 }
+
+/* ------------------ MisPqrs styles ------------------ */
+.mis-pqrs-page.container {
+  padding: 28px 18px;
+  background: transparent;
+}
+.page-title {
+  font-size: 1.6rem;
+  margin-bottom: 18px;
+  color: #2c3e50;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+}
+.card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(18, 52, 86, 0.06);
+}
+.card-title { margin-bottom: 8px; font-size:1.1rem }
+.pqrs-form label { display:block; margin-top:10px; font-weight:600 }
+.pqrs-form input, .pqrs-form select, .pqrs-form textarea {
+  width:100%; padding:10px; border:1px solid #e6e9ee; border-radius:8px; margin-top:8px; font-size:0.95rem;
+}
+.pqrs-form textarea { min-height:110px }
+.btn-primary { background:#2b9d3b; color:#fff; padding:10px 14px; border:none; border-radius:8px; cursor:pointer; margin-top:12px; font-weight:700 }
+.btn-outline { background:transparent; border:1px solid #2b9d3b; color:#2b9d3b; padding:8px 12px; border-radius:8px; cursor:pointer }
+.btn-disabled { background:#f3f3f3; color:#9a9a9a; border:1px solid #eee; padding:8px 12px; border-radius:8px }
+.pqrs-list { display:flex; flex-direction:column; gap:12px }
+.pqrs-item { display:flex; justify-content:space-between; align-items:flex-start; padding:12px }
+.pqrs-item.card { padding:14px }
+.pqrs-item-main { max-width:75% }
+.pqrs-asunto { margin:0 0 6px 0; font-size:1.05rem }
+.pqrs-sub { display:flex; gap:8px; align-items:center; margin-bottom:8px }
+.badge { display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px }
+.badge.tipo { background:#eef9f0; color:#1f7a2c }
+.badge.estado.pending { background:#fff7e6; color:#b36b00 }
+.badge.estado.answered { background:#eef3ff; color:#2232a8 }
+.pqrs-desc { margin:0; color:#333; line-height:1.5 }
+.pqrs-fecha { color:#777; margin-left:6px }
+.modal-content.card { max-width:720px; margin:40px auto; }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px }
+
+@media (max-width: 900px) {
+  .grid-2 { grid-template-columns: 1fr }
+  .pqrs-item-main { max-width: 100% }
+}
+
+/* end MisPqrs styles */

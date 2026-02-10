@@ -7,6 +7,7 @@ import {
   FaCog,
   FaBox,
   FaStar,
+  FaEnvelope,
   FaHome,
   FaShoppingBag,
   FaBlog,
@@ -146,6 +147,16 @@ function Navbar({ isAuthenticated, user, onLogout }) {
                 </Link>
               </li>
 
+              <li className="nav-item">
+                <Link
+                  className={`nav-link d-flex align-items-center ${location.pathname === "/mis-pqrs" ? "active" : ""}`}
+                  to="/mis-pqrs"
+                >
+                  <FaEnvelope className="nav-icon me-2" />
+                  Mis PQRS
+                </Link>
+              </li>
+
             </>
           )}
         </ul>
@@ -210,6 +221,15 @@ function Navbar({ isAuthenticated, user, onLogout }) {
                   >
                     <FaBox className="me-2" />
                     Mis Pedidos
+                  </Link>
+
+                  <Link
+                    to="/mis-pqrs"
+                    className="dropdown-item d-flex align-items-center"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    <FaEnvelope className="me-2" />
+                    Mis PQRS
                   </Link>
 
                   <Link

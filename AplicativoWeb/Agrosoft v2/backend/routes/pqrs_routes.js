@@ -107,4 +107,7 @@ router.get("/", pqrsController.getAllPqrs);
  */
 router.put("/:id_pqrs", pqrsController.updatePqrsStatus);
 
+// Permitir a un usuario editar su propia PQRS si aún no ha sido respondida
+router.patch('/:id_pqrs', pqrsController.editPqrsByUser);
+
 module.exports = router;

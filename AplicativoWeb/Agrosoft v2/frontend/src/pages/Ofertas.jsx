@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "../style/Oferta.css";
+import { useNavigate } from "react-router-dom";
+import { useCarrito } from "../context/CarritoContext";
+import { useNotification } from "../context/NotificationContext";
 
 export default function Ofertas() {
   const API = "http://localhost:4000/api/ofertas";
@@ -35,6 +38,9 @@ export default function Ofertas() {
 
       const dataCodigos = await resCodigos.json();
       const dataProductos = await resProductos.json();
+
+      console.log("[Ofertas] dataCodigos:", dataCodigos);
+      console.log("[Ofertas] dataProductos:", dataProductos);
 
       if (dataCodigos.success) {
         setCodigos(dataCodigos.codigos || []);
@@ -126,8 +132,50 @@ export default function Ofertas() {
   };
 
   const copiarCodigo = (codigo) => {
-    navigator.clipboard.writeText(codigo);
-    mostrarToast(`Código copiado: ${codigo}`, "success");
+    (async () => {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(codigo);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = codigo;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        mostrarToast(`Código copiado: ${codigo}`, "success");
+      } catch (err) {
+        console.error('[Ofertas] copiarCodigo error', err);
+        mostrarToast('No se pudo copiar el código', 'error');
+      }
+    })();
+  };
+
+  const navigate = useNavigate();
+  const { agregarAlCarrito: contextAgregarAlCarrito } = useCarrito();
+  const { addNotification } = useNotification();
+
+  const handleAgregarAlCarrito = async (producto) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+        addNotification('Por favor inicia sesión para agregar al carrito', 'warning');
+        navigate('/login');
+        return;
+      }
+
+      if (user.id_rol !== 1) {
+        addNotification('Solo los clientes pueden agregar productos al carrito', 'warning');
+        return;
+      }
+
+      await contextAgregarAlCarrito(producto.id_producto, 1);
+      addNotification(`¡${producto.nombre_producto} agregado al carrito!`, 'success');
+    } catch (err) {
+      console.error('[Ofertas] handleAgregarAlCarrito error', err);
+      addNotification(err.message || 'Error al agregar al carrito', 'error');
+    }
   };
 
   const codigosVigentes = codigos.filter(codigo => !codigo.esta_expirado);
@@ -472,8 +520,8 @@ export default function Ofertas() {
                 <div className="modal-actions">
                   <button
                     className="btn-comprar"
-                    onClick={() => {
-                      mostrarToast("Producto agregado al carrito", "success");
+                    onClick={async () => {
+                      await handleAgregarAlCarrito(modalProducto);
                       setModalProducto(null);
                     }}
                   >

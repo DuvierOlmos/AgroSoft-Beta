@@ -196,3 +196,36 @@ exports.getPqrsById = async (req, res) => {
         });
     }
 };
+
+// Editar PQRS por el propio usuario (solo si está en estado pendiente / no respondida)
+exports.editPqrsByUser = async (req, res) => {
+    try {
+        const { id_pqrs } = req.params;
+        const { id_usuario, asunto, descripcion } = req.body;
+
+        if (!id_usuario || !asunto || !descripcion) {
+            return res.status(400).json({ success: false, error: 'id_usuario, asunto y descripcion son requeridos' });
+        }
+
+        const pqrs = await Pqrs.findByPk(id_pqrs);
+        if (!pqrs) {
+            return res.status(404).json({ success: false, error: 'PQRS no encontrado' });
+        }
+
+        if (pqrs.id_usuario != id_usuario) {
+            return res.status(403).json({ success: false, error: 'No tienes permisos para editar esta PQRS' });
+        }
+
+        // Solo permitir editar si está pendiente (id_estado_pqrs === 1)
+        if (pqrs.id_estado_pqrs !== 1) {
+            return res.status(400).json({ success: false, error: 'Solo se pueden editar PQRS que no han sido respondidas' });
+        }
+
+        await pqrs.update({ asunto, descripcion, fecha_ultima_actualizacion: new Date() });
+
+        return res.json({ success: true, message: 'PQRS actualizada correctamente', data: { id_pqrs: pqrs.id_pqrs, asunto: pqrs.asunto, descripcion: pqrs.descripcion } });
+    } catch (err) {
+        console.error('Error editando PQRS por usuario:', err);
+        return res.status(500).json({ success: false, error: 'Error interno al editar la PQRS' });
+    }
+};
