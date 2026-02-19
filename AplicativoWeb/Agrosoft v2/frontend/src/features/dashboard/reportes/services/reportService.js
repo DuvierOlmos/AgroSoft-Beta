@@ -1,81 +1,82 @@
-import axios from "axios";
+// src/services/finanzasService.js
+import { api } from "../../../../config/api";
 
-// Ajusta la URL base según corresponda.
-const API_URL = "http://localhost:4000/api/finanzas";
+// Base URL relativa (Axios ya usa API_BASE_URL)
+const BASE_URL = "/api/finanzas";
 
-const getToken = () => localStorage.getItem("token");
+// Manejo centralizado de errores
+const handleError = (error, action = "realizar la acción") => {
+  console.error("FinanzasService Error:", error);
 
-const authHeaders = () => ({
-  headers: {
-    Authorization: `Bearer ${getToken()}`,
-  },
-});
+  let message = `Ocurrió un error al ${action}`;
+  if (error.response) {
+    const status = error.response.status;
+    message =
+      error.response.data?.message ||
+      error.response.data?.error ||
+      `Error del servidor (Status: ${status})`;
+  } else if (error.request) {
+    message = "No se pudo conectar al servidor. Verifica tu conexión y que la API esté activa.";
+  } else if (error.message) {
+    message = error.message;
+  }
 
-const buildUrlWithUserId = (endpoint, id_usuario) => {
-  let url = `${API_URL}${endpoint}`;
-  if (id_usuario) url += `?id_usuario=${id_usuario}`;
-  return url;
+  throw new Error(message);
 };
+
+// Helper para construir URLs filtradas por usuario
+const buildUrlWithUserId = (endpoint = "", id_usuario) =>
+  id_usuario ? `${BASE_URL}${endpoint}?id_usuario=${id_usuario}` : `${BASE_URL}${endpoint}`;
 
 // =======================================================
 // 👤 FUNCIONES PRODUCTOR (Filtrado por usuario)
 // =======================================================
 
-export const getReport = async (type, format) => {
-  try {
-    const response = await axios.get(`${API_URL}/reportes/${type}`, {
-      ...authHeaders(),
-      params: { format },
-      responseType: format === 'html' ? 'text' : (format === 'pdf' || format === 'excel' ? 'blob' : 'json'), 
-    });
-    return response.data;
-  } catch (error) {
-    console.error(`Error al obtener el reporte ${type}:`, error);
-    throw error;
-  }
-};
-
 export const getFinanzasData = async (id_usuario) => {
   try {
-    const url = buildUrlWithUserId("", id_usuario);
-    const response = await axios.get(url, authHeaders());
+    const response = await api.get(buildUrlWithUserId("", id_usuario));
     return response.data;
   } catch (error) {
-    console.error("Error finanaza data:", error);
-    throw error;
+    handleError(error, "obtener datos financieros");
   }
 };
 
 export const getVentasPorMes = async (id_usuario) => {
   try {
-    const url = buildUrlWithUserId("/ventas-por-mes", id_usuario);
-    const response = await axios.get(url, authHeaders());
+    const response = await api.get(buildUrlWithUserId("/ventas-por-mes", id_usuario));
     return response.data;
   } catch (error) {
-    console.error("Error ventas mes:", error);
-    throw error;
+    handleError(error, "obtener ventas por mes");
   }
 };
 
 export const getProductosMasVendidos = async (id_usuario) => {
   try {
-    const url = buildUrlWithUserId("/productos-mas-vendidos", id_usuario);
-    const response = await axios.get(url, authHeaders());
+    const response = await api.get(buildUrlWithUserId("/productos-mas-vendidos", id_usuario));
     return response.data;
   } catch (error) {
-    console.error("Error productos top:", error);
-    throw error;
+    handleError(error, "obtener productos más vendidos");
   }
 };
 
 export const getOrdenesEstado = async (id_usuario) => {
   try {
-    const url = buildUrlWithUserId("/ordenes-estado", id_usuario);
-    const response = await axios.get(url, authHeaders());
+    const response = await api.get(buildUrlWithUserId("/ordenes-estado", id_usuario));
     return response.data;
   } catch (error) {
-    console.error("Error ordenes estado:", error);
-    throw error;
+    handleError(error, "obtener órdenes por estado");
+  }
+};
+
+export const getReport = async (type, format = "json") => {
+  try {
+    const response = await api.get(`${BASE_URL}/reportes/${type}`, {
+      params: { format },
+      responseType: format === "html" ? "text" : format === "pdf" || format === "excel" ? "blob" : "json",
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error, `obtener reporte ${type}`);
   }
 };
 
@@ -84,36 +85,65 @@ export const getOrdenesEstado = async (id_usuario) => {
 // =======================================================
 
 export const getFinanzasDataAdmin = async () => {
-    const response = await axios.get(`${API_URL}/admin/stats`, authHeaders());
+  try {
+    const response = await api.get(`${BASE_URL}/admin/stats`);
     return response.data;
+  } catch (error) {
+    handleError(error, "obtener datos financieros admin");
+  }
 };
 
 export const getVentasPorMesAdmin = async () => {
-    const response = await axios.get(`${API_URL}/admin/ventas-por-mes`, authHeaders());
+  try {
+    const response = await api.get(`${BASE_URL}/admin/ventas-por-mes`);
     return response.data;
+  } catch (error) {
+    handleError(error, "obtener ventas por mes admin");
+  }
 };
 
 export const getProductosMasVendidosAdmin = async () => {
-    const response = await axios.get(`${API_URL}/admin/productos-mas-vendidos`, authHeaders());
+  try {
+    const response = await api.get(`${BASE_URL}/admin/productos-mas-vendidos`);
     return response.data;
+  } catch (error) {
+    handleError(error, "obtener productos más vendidos admin");
+  }
 };
 
 export const getOrdenesEstadoAdmin = async () => {
-    const response = await axios.get(`${API_URL}/admin/ordenes-estado`, authHeaders());
+  try {
+    const response = await api.get(`${BASE_URL}/admin/ordenes-estado`);
     return response.data;
+  } catch (error) {
+    handleError(error, "obtener órdenes por estado admin");
+  }
 };
 
-export const getReportAdmin = async (type, format) => {
-    try {
-        const response = await axios.get(`${API_URL}/admin/reportes/${type}`, {
-            ...authHeaders(),
-            params: { format },
-            // Si el formato es html, esperamos texto. Si es pdf/excel, blob. Si es json (o null), json default.
-            responseType: format === 'html' ? 'text' : (format === 'pdf' || format === 'excel' ? 'blob' : 'json'), 
-        });
-        return response.data;
-    } catch (error) {
-        console.error(`Error report admin ${type}:`, error);
-        throw error;
-    }
+export const getReportAdmin = async (type, format = "json") => {
+  try {
+    const response = await api.get(`${BASE_URL}/admin/reportes/${type}`, {
+      params: { format },
+      responseType: format === "html" ? "text" : format === "pdf" || format === "excel" ? "blob" : "json",
+    });
+    return response.data;
+  } catch (error) {
+    handleError(error, `obtener reporte admin ${type}`);
+  }
 };
+
+// Exportando un objeto para importar todas las funciones fácilmente
+const finanzasService = {
+  getFinanzasData,
+  getVentasPorMes,
+  getProductosMasVendidos,
+  getOrdenesEstado,
+  getReport,
+  getFinanzasDataAdmin,
+  getVentasPorMesAdmin,
+  getProductosMasVendidosAdmin,
+  getOrdenesEstadoAdmin,
+  getReportAdmin,
+};
+
+export default finanzasService;

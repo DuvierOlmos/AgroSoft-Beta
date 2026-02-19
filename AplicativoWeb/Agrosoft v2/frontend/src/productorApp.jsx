@@ -8,6 +8,8 @@ import OrdenesPage from "./pages/OrdenesPage.jsx";
 import ReseñasView from "./pages/ReseñasView.jsx";
 
 function ProductorApp({ isAuthenticated, user, onLogout }) { // Se añaden user y onLogout si son necesarias para Navbar
+  console.log(" ProductorApp props:", { isAuthenticated, user, hasOnLogout: !!onLogout });
+  
   return (
     <motion.div
       initial={{ opacity: 0 }}

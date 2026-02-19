@@ -235,24 +235,37 @@ const obtenerPedidosUsuario = async (req, res) => {
             type: sequelize.QueryTypes.SELECT
         });
 
-        for (let pedido of pedidos) {
-            const detalles = await sequelize.query(`
-        SELECT 
-          dp.*,
-          p.nombre_producto,
-          p.url_imagen,
-          p.unidad_medida
-        FROM detalle_pedido dp
-        INNER JOIN producto p ON dp.id_producto = p.id_producto
-        WHERE dp.id_pedido = ?
-      `, {
-                replacements: [pedido.id_pedido],
-                type: sequelize.QueryTypes.SELECT
-            });
+                if (pedidos.length > 0) {
+                        // Evitar N+1 queries: obtener todos los detalles en una sola consulta
+                        const ids = pedidos.map(p => p.id_pedido);
+                        const placeholders = ids.map(() => '?').join(',');
+                        const detallesAll = await sequelize.query(`
+                SELECT 
+                    dp.*,
+                    p.nombre_producto,
+                    p.url_imagen,
+                    p.unidad_medida
+                FROM detalle_pedido dp
+                INNER JOIN producto p ON dp.id_producto = p.id_producto
+                WHERE dp.id_pedido IN (${placeholders})
+            `, {
+                                replacements: ids,
+                                type: sequelize.QueryTypes.SELECT
+                        });
 
-            pedido.detalles = detalles;
-            pedido.items = detalles;
-        }
+                        // Agrupar por id_pedido
+                        const grupos = {};
+                        for (const d of detallesAll) {
+                                if (!grupos[d.id_pedido]) grupos[d.id_pedido] = [];
+                                grupos[d.id_pedido].push(d);
+                        }
+
+                        for (let pedido of pedidos) {
+                                const detalles = grupos[pedido.id_pedido] || [];
+                                pedido.detalles = detalles;
+                                pedido.items = detalles;
+                        }
+                }
 
         res.json({
             success: true,

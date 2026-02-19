@@ -1,72 +1,78 @@
-import axios from "axios";
+// src/services/rolesService.js
+import { api } from "../../../../config/api";
 
-const API_URL = "http://localhost:4000/api/roles/admin"; // ⚡ cambia la URL a la de tu backend
+const BASE_URL = "/api/roles/admin";
 
+// Manejo centralizado de errores
+const handleError = (error, action = "realizar la acción") => {
+  console.error("RolesService Error:", error);
 
-export async function getRoles(search = "") {
-  let url = API_URL;
-  if (search) {
-    url += `?search=${encodeURIComponent(search)}`;
+  let message = `Ocurrió un error al ${action}`;
+  if (error.response) {
+    const status = error.response.status;
+    message =
+      error.response.data?.message ||
+      error.response.data?.error ||
+      `Fallo del servidor (Status: ${status})`;
+  } else if (error.request) {
+    message = "No se pudo conectar al servidor. Verifica tu conexión y que la API esté activa.";
+  } else if (error.message) {
+    message = error.message;
   }
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Error al obtener usuarios");
-  return await response.json();
-}
 
-export const createRol = async (roles) => {
-    try {        
-        const response = await axios.post(`${API_URL}/create`, roles);        
-        alert(` tipo de pqrs "${roles.nombre_rol || 'creada'}" con éxito.`);             
-        return response.data;        
-    } catch (error) {        
-        let errorMessage = "Ocurrió un error inesperado al intentar crear el tipo de pqrs.";        
-        if (error.response) {            
-            errorMessage = error.response.data.message || 
-             `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {            
-            errorMessage = "No se pudo conectar al servidor. Verifique la conexión.";
-        }        
-        alert(` Error al crear el tipo de pqrs: ${errorMessage}`);        
-        throw new Error(errorMessage);
-    }
+  throw new Error(message);
 };
 
-export const updateRol = async (id, roles) => {
-    try {        
-        const response = await axios.put(`${API_URL}/update/${id}`, roles);       
-        alert(` Categoría "${roles.nombre_rol || id}" actualizada con éxito.`);         
-        return response.data;
-      } catch (error) { 
-        let errorMessage = "Ocurrió un error inesperado al intentar actualizar el rol.";
-        
-        if (error.response) {
-          errorMessage = error.response.data.message || 
-             `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {            
-            errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa.";
-        }      
-        alert(` Error al actualizar el rol: ${errorMessage}`);     
-        throw new Error(errorMessage);
+// ================================
+// Funciones principales de Roles
+// ================================
+
+export const getRoles = async (search = "") => {
+  try {
+    let url = BASE_URL;
+    if (search) {
+      url += `?search=${encodeURIComponent(search)}`;
     }
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    handleError(error, "obtener roles");
+  }
+};
+
+export const createRol = async (rolData) => {
+  try {
+    const response = await api.post(`${BASE_URL}/create`, rolData);
+    return response.data;
+  } catch (error) {
+    handleError(error, "crear rol");
+  }
+};
+
+export const updateRol = async (id, rolData) => {
+  try {
+    const response = await api.put(`${BASE_URL}/update/${id}`, rolData);
+    return response.data;
+  } catch (error) {
+    handleError(error, "actualizar rol");
+  }
 };
 
 export const deleteRol = async (id) => {
-    try {        
-        const response = await axios.delete(`${API_URL}/delete/${id}`);
-        alert(` rol con con ID ${id} eliminado con éxito.`);
-        return response.data;        
-    } catch (error) {              
-        let errorMessage = 
-        "Ocurrió un error inesperado al intentar "+
-        "eliminar la categoría.";        
-        if (error.response) {
-            errorMessage = error.response.data.message || 
-             `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {
-            errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa.";
-        }        
-        alert(` Error al eliminar el rol: ${errorMessage}`);
-        
-        throw new Error(errorMessage);
-    }
+  try {
+    const response = await api.delete(`${BASE_URL}/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, "eliminar rol");
+  }
 };
+
+// Exportación de todas las funciones
+const rolesService = {
+  getRoles,
+  createRol,
+  updateRol,
+  deleteRol,
+};
+
+export default rolesService;

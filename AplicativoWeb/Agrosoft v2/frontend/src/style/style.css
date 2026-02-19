@@ -30,6 +30,12 @@ main {
     margin: 0 auto; 
 }
 
+@media (max-width: 480px) {
+    main {
+        padding: 0 4px;
+    }
+}
+
 h2 {
     font-family: 'Montserrat', sans-serif;
     color: var(--primary-green);
@@ -125,6 +131,37 @@ label {
     min-height: 0; 
 }
 
+@media (max-width: 768px) {
+    .contenedor {
+        padding: 0 10px;
+        gap: 15px;
+        margin: 15px auto;
+    }
+
+    .contenedor > div {
+        padding: 15px;
+    }
+
+    .contenedor > div.anadir,
+    .contenedor > div.Editar,
+    .contenedor > div.eliminar {
+        flex: 1 1 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .contenedor {
+        padding: 0 8px;
+        gap: 10px;
+        margin: 10px auto;
+    }
+
+    .contenedor > div {
+        padding: 12px;
+        border-radius: 8px;
+    }
+}
+
 
 
 .Editar form, .eliminar form {
@@ -158,7 +195,25 @@ label {
 
 .Editar input[type="button"], #botonEliminar {
     background: var(--accent-blue); 
-    margin-top: auto; 
+    margin-top: 15px;
+    min-height: 44px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 12px 20px;
+}
+
+.Editar input[type="button"]:hover, #botonEliminar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
+}
+
+.Editar input[type="button"]:active, #botonEliminar:active {
+    transform: translateY(0);
 }
 .contenedorProductos {
     margin-top: 40px;
@@ -336,6 +391,81 @@ label {
     .contenedor > div.Editar, .contenedor > div.eliminar { flex-basis: 100%; }
 }
 
+/* Mejoras para móvil - Productos admin */
+@media (max-width: 768px) {
+    .admin-view .mostrarProductos {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .admin-view .contenedorProducto {
+        padding: 10px;
+    }
+
+    .admin-view .contenedorProducto img {
+        height: 120px;
+    }
+
+    .admin-view .nombre {
+        font-size: 0.95rem;
+    }
+
+    .admin-view .descripcion {
+        font-size: 0.8rem;
+        min-height: 20px;
+    }
+
+    .admin-view .precio {
+        font-size: 0.85rem;
+        padding: 3px 8px;
+    }
+
+    .admin-view .existencia {
+        font-size: 0.75rem;
+    }
+}
+
+/* Mejoras para pantallas muy pequeñas (móvil vertical) */
+@media (max-width: 480px) {
+    .admin-view .mostrarProductos {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .admin-view .contenedorProducto {
+        padding: 8px;
+    }
+
+    .admin-view .contenedorProducto img {
+        height: 100px;
+    }
+
+    .admin-view .nombre {
+        font-size: 0.9rem;
+        margin-bottom: 1px;
+    }
+
+    .admin-view .descripcion {
+        font-size: 0.75rem;
+        min-height: 18px;
+        -webkit-line-clamp: 1;
+    }
+
+    .admin-view .precio {
+        font-size: 0.8rem;
+        padding: 2px 6px;
+    }
+
+    .admin-view .existencia {
+        font-size: 0.7rem;
+        margin-top: 2px;
+    }
+}
+
 /* =========================================
    NUEVOS ESTILOS FORMULARIO ADMIN (GRID)
    ========================================= */
@@ -363,6 +493,40 @@ label {
 
 @media (max-width: 768px) {
     .span-8, .span-6, .span-4, .span-3 { grid-column: span 12; }
+    
+    .form-grid-layout {
+        gap: 15px;
+    }
+
+    .anadir input[type="submit"],
+    .Editar input[type="submit"],
+    .Editar button {
+        height: 44px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-grid-layout {
+        gap: 12px;
+    }
+
+    .form-group-admin label {
+        font-size: 0.9rem;
+    }
+
+    .form-group-admin input,
+    .form-group-admin select {
+        font-size: 16px !important;
+        padding: 10px !important;
+    }
+
+    .anadir input[type="submit"],
+    .Editar input[type="submit"],
+    .Editar button {
+        height: 40px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Styling specifically for the 'Anadir' section header */
@@ -371,6 +535,60 @@ label {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #e5e7eb;
+}
+
+/* Estilos para header del formulario colapsable */
+.header-anadir {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.header-anadir h2 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.btn-toggle-form {
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-toggle-form:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-toggle-form:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+    .header-anadir {
+        flex-wrap: wrap;
+    }
+
+    .header-anadir h2 {
+        flex: 1 1 100%;
+        font-size: 1.1rem;
+    }
+
+    .btn-toggle-form {
+        flex: 1 1 auto;
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
 }
 
 .anadir input[type="submit"] {

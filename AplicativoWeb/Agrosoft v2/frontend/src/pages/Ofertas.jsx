@@ -1,10 +1,11 @@
+// src/pages/Ofertas.js
+
 import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { api } from "../config/api"; // <-- usar API centralizada
 import "../style/Oferta.css";
 
 export default function Ofertas() {
-  const API = "http://localhost:4000/api/ofertas";
-
   const COP = (valor) => {
     if (!valor && valor !== 0) return "0";
     return Number(valor).toLocaleString("es-CO", {
@@ -29,19 +30,16 @@ export default function Ofertas() {
       setError("");
 
       const [resCodigos, resProductos] = await Promise.all([
-        fetch(`${API}/codigos`),
-        fetch(`${API}/productos`)
+        api.get("/api/ofertas/codigos"),
+        api.get("/api/ofertas/productos")
       ]);
 
-      const dataCodigos = await resCodigos.json();
-      const dataProductos = await resProductos.json();
-
-      if (dataCodigos.success) {
-        setCodigos(dataCodigos.codigos || []);
+      if (resCodigos.data.success) {
+        setCodigos(resCodigos.data.codigos || []);
       }
 
-      if (dataProductos.success) {
-        const productosData = dataProductos.productos || [];
+      if (resProductos.data.success) {
+        const productosData = resProductos.data.productos || [];
         setProductos(productosData);
         setProductosFiltrados(productosData);
       }
@@ -72,9 +70,8 @@ export default function Ofertas() {
 
     try {
       setLoading(true);
-
-      const res = await fetch(`${API}/validar/${codigoManual}`);
-      const data = await res.json();
+      const res = await api.get(`/api/ofertas/validar/${codigoManual}`);
+      const data = res.data;
 
       if (data.success) {
         setValidacion(data);
@@ -99,10 +96,8 @@ export default function Ofertas() {
 
   const filtrarPorCodigo = (codigo) => {
     const filtrados = productos.filter(p =>
-      p.codigo_mostrar === codigo ||
-      p.codigo_promocion === codigo
+      p.codigo_mostrar === codigo || p.codigo_promocion === codigo
     );
-
     setProductosFiltrados(filtrados);
     setValidacion(null);
     setCodigoManual("");
@@ -121,10 +116,7 @@ export default function Ofertas() {
     mostrarToast("Mostrando todos los productos", "info");
   };
 
-  const formatearFecha = (fecha) => {
-    return new Date(fecha).toLocaleDateString("es-CO");
-  };
-
+  const formatearFecha = (fecha) => new Date(fecha).toLocaleDateString("es-CO");
   const copiarCodigo = (codigo) => {
     navigator.clipboard.writeText(codigo);
     mostrarToast(`Código copiado: ${codigo}`, "success");
@@ -149,20 +141,13 @@ export default function Ofertas() {
       </AnimatePresence>
 
       <div className="layout-ofertas">
-
-        {/* =============================== */}
-        {/* COLUMNA IZQUIERDA - CÓDIGOS */}
-        {/* =============================== */}
         <div className="left-column">
-
-          {/* ⭐ NUEVO BOTÓN VOLVER AL INICIO */}
           <button
             className="btn-volver-inicio"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
             Volver al inicio
           </button>
-
           <h2 className="section-title">Códigos de Descuento</h2>
 
           {error && <div className="error-message">{error}</div>}
@@ -175,7 +160,6 @@ export default function Ofertas() {
             <div className="codigos-list">
               {codigosVigentes.map(codigo => {
                 const expirado = codigo.esta_expirado;
-
                 return (
                   <motion.div
                     key={`${codigo.tipo}-${codigo.id}`}
@@ -185,26 +169,18 @@ export default function Ofertas() {
                   >
                     <div className="codigo-header">
                       <strong className="codigo-nombre">{codigo.codigo_mostrar}</strong>
-                      <span className="codigo-valor">
-                        {codigo.valor_formateado}
-                      </span>
+                      <span className="codigo-valor">{codigo.valor_formateado}</span>
                     </div>
 
                     <div className="codigo-body">
                       <p className="codigo-descripcion">{codigo.nombre}</p>
-
                       <div className="codigo-tiempo">
                         {expirado ? (
                           <span className="tiempo-expirado">Expirado</span>
                         ) : codigo.dias_restantes > 0 ? (
-                          <span className="tiempo-restante">
-                            {codigo.dias_restantes} días restantes
-                          </span>
-                        ) : (
-                          <span>Finaliza hoy</span>
-                        )}
+                          <span className="tiempo-restante">{codigo.dias_restantes} días restantes</span>
+                        ) : <span>Finaliza hoy</span>}
                       </div>
-
                       <div className="codigo-fechas">
                         <div className="fecha-item">
                           <span>Válido hasta:</span>
@@ -238,14 +214,9 @@ export default function Ofertas() {
           )}
         </div>
 
-        {/* =================================================== */}
-        {/* COLUMNA DERECHA - VALIDACIÓN & PRODUCTOS */}
-        {/* =================================================== */}
         <div className="right-column">
-
           <div className="validador-container">
             <h2 className="section-title">Validar Código</h2>
-
             <div className="validador-box">
               <div className="input-group">
                 <input
@@ -274,9 +245,7 @@ export default function Ofertas() {
                   <div className="resultado-header">
                     <strong>{validacion.valido ? "Código Válido" : "Código Inválido"}</strong>
                   </div>
-
                   <p className="resultado-mensaje">{validacion.mensaje}</p>
-
                   {validacion.valido && validacion.promocion && (
                     <div className="descuento-info">
                       <p><strong>Promoción:</strong> {validacion.promocion.nombre_descuento || validacion.promocion.nombre_oferta}</p>
@@ -293,15 +262,11 @@ export default function Ofertas() {
               <h2 className="section-title">
                 {productosFiltrados.length === productos.length
                   ? `Productos con Descuento (${productos.length})`
-                  : `Productos Filtrados (${productosFiltrados.length})`
-                }
+                  : `Productos Filtrados (${productosFiltrados.length})`}
               </h2>
 
               {productosFiltrados.length !== productos.length && (
-                <button
-                  className="btn-limpiar"
-                  onClick={limpiarFiltros}
-                >
+                <button className="btn-limpiar" onClick={limpiarFiltros}>
                   Mostrar todos
                 </button>
               )}
@@ -331,56 +296,40 @@ export default function Ofertas() {
                       <img
                         src={producto.url_imagen || "https://via.placeholder.com/300x200?text=Sin+Imagen"}
                         alt={producto.nombre_producto}
-                        onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/300x200?text=Sin+Imagen";
-                        }}
+                        onError={(e) => { e.target.src = "https://via.placeholder.com/300x200?text=Sin+Imagen"; }}
                       />
-
                       {producto.descuento_info && (
-                        <span className="badge-descuento">
-                          {producto.descuento_info}
-                        </span>
+                        <span className="badge-descuento">{producto.descuento_info}</span>
                       )}
                     </div>
-
                     <div className="producto-info">
                       <h3 className="producto-nombre">{producto.nombre_producto}</h3>
                       <p className="producto-descripcion">
                         {producto.descripcion_producto?.substring(0, 80) || "Sin descripción"}
                         {producto.descripcion_producto?.length > 80 && "..."}
                       </p>
-
                       <div className="producto-categoria">
                         {producto.categoria_nombre} • {producto.subcategoria_nombre}
                       </div>
-
                       <div className="producto-precios">
                         {producto.tiene_descuento || producto.tiene_oferta ? (
                           <>
                             <div className="precio-container">
-                              <span className="precio-original">
-                                ${producto.precio_original_format}
-                              </span>
-                              <span className="precio-final">
-                                ${producto.precio_final_format}
-                              </span>
+                              <span className="precio-original">${producto.precio_original_format}</span>
+                              <span className="precio-final">${producto.precio_final_format}</span>
                             </div>
                             <span className="ahorro">
                               Ahorras: ${COP(producto.precio_original - producto.precio_final)}
                             </span>
                           </>
                         ) : (
-                          <span className="precio-final">
-                            ${producto.precio_original_format}
-                          </span>
+                          <span className="precio-final">${producto.precio_original_format}</span>
                         )}
                       </div>
-
                       <div className="producto-detalles">
                         <div>Unidad: {producto.unidad_medida}</div>
                         <div>Stock: {producto.cantidad || "Disponible"}</div>
                       </div>
-
                       <div className="producto-codigo">
                         Código: <strong>{producto.codigo_mostrar}</strong>
                       </div>
@@ -393,7 +342,7 @@ export default function Ofertas() {
         </div>
       </div>
 
-      {/* MODAL SIMPLE */}
+      {/* MODAL */}
       <AnimatePresence>
         {modalProducto && (
           <motion.div
@@ -410,27 +359,16 @@ export default function Ofertas() {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                className="modal-close"
-                onClick={() => setModalProducto(null)}
-              >
-                ×
-              </button>
-
+              <button className="modal-close" onClick={() => setModalProducto(null)}>×</button>
               <div className="modal-imagen">
                 <img
                   src={modalProducto.url_imagen || "https://via.placeholder.com/500x350?text=Sin+Imagen"}
                   alt={modalProducto.nombre_producto}
                 />
               </div>
-
               <div className="modal-info">
                 <h2>{modalProducto.nombre_producto}</h2>
-
-                <p className="modal-descripcion">
-                  {modalProducto.descripcion_producto || "No hay descripción disponible."}
-                </p>
-
+                <p className="modal-descripcion">{modalProducto.descripcion_producto || "No hay descripción disponible."}</p>
                 <div className="modal-precio-container">
                   {modalProducto.tiene_descuento || modalProducto.tiene_oferta ? (
                     <>
@@ -438,12 +376,10 @@ export default function Ofertas() {
                         <span className="label">Precio original:</span>
                         <span className="valor tachado">${modalProducto.precio_original_format}</span>
                       </div>
-
                       <div className="precio-final-modal">
                         <span className="label">Precio con descuento:</span>
                         <span className="valor destacado">${modalProducto.precio_final_format}</span>
                       </div>
-
                       <div className="ahorro-modal">
                         <span className="label">Ahorras:</span>
                         <span className="valor ahorro">${COP(modalProducto.precio_original - modalProducto.precio_final)}</span>
@@ -455,34 +391,22 @@ export default function Ofertas() {
                       <span className="valor">${modalProducto.precio_original_format}</span>
                     </div>
                   )}
-
                   <div className="codigo-modal">
                     <span className="label">Código:</span>
                     <span className="codigo-valor">{modalProducto.codigo_mostrar}</span>
                   </div>
                 </div>
-
                 <div className="modal-detalles">
                   <p><strong>Unidad:</strong> {modalProducto.unidad_medida}</p>
                   <p><strong>Stock:</strong> {modalProducto.cantidad || "No especificado"}</p>
                   <p><strong>Categoría:</strong> {modalProducto.categoria_nombre}</p>
                   <p><strong>Subcategoría:</strong> {modalProducto.subcategoria_nombre}</p>
                 </div>
-
                 <div className="modal-actions">
-                  <button
-                    className="btn-comprar"
-                    onClick={() => {
-                      mostrarToast("Producto agregado al carrito", "success");
-                      setModalProducto(null);
-                    }}
-                  >
+                  <button className="btn-comprar" onClick={() => { mostrarToast("Producto agregado al carrito", "success"); setModalProducto(null); }}>
                     Agregar al carrito
                   </button>
-                  <button
-                    className="btn-cerrar"
-                    onClick={() => setModalProducto(null)}
-                  >
+                  <button className="btn-cerrar" onClick={() => setModalProducto(null)}>
                     Cerrar
                   </button>
                 </div>

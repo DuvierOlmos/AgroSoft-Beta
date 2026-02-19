@@ -15,7 +15,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://127.0.0.1:4000',
+        url: 'http://10.1.222.251:4000',
         description: 'Servidor de Desarrollo',
       },
     ],
@@ -45,7 +45,7 @@ const swaggerDocs = (app, port) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
   });
-  console.log(` Documentación de Swagger disponible en http://127.0.0.1:${port}/api/docs`);
+  console.log(` Documentación de Swagger disponible en http://10.1.222.251:${port}/api/docs`);
 };
 
 module.exports = { swaggerDocs };

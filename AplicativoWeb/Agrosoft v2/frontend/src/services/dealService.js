@@ -1,13 +1,11 @@
-// Producer-specific endpoints live under `ofertas-alt` (authenticated)
-const API_BASE_URL = "http://localhost:4000/api/ofertasPro";
-const PRODUCT_API_URL = "http://localhost:4000/api/productor";
+import { API_BASE_URL } from "../config/api"; // tu api base dinámica
+import { authHeaders as getAuthHeaders } from "./authService";
 
-const getToken = () => localStorage.getItem("token");
+// Para endpoints de productor
+const PRODUCT_API_URL = `${API_BASE_URL}/api/productor`;
 
-const authHeaders = () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${getToken()}`,
-});
+// Reuse auth header helper that also extracts token from `user` object if needed
+const authHeaders = () => getAuthHeaders();
 
 export const getProducerProductsApi = async (idProductor) => {
   const res = await fetch(`${PRODUCT_API_URL}/usuario/${idProductor}`, {
@@ -17,19 +15,20 @@ export const getProducerProductsApi = async (idProductor) => {
   return await res.json();
 };
 
+// Endpoints de ofertas/promociones
+const OFERTAS_API_URL = `${API_BASE_URL}/api/ofertasPro`;
+
 export const getDeals = async (idProductor, includeDeleted = false) => {
   const url = includeDeleted 
-    ? `${API_BASE_URL}/productor/${idProductor}?includeDeleted=true`
-    : `${API_BASE_URL}/productor/${idProductor}`;
-  const res = await fetch(url, {
-    headers: authHeaders(),
-  });
+    ? `${OFERTAS_API_URL}/productor/${idProductor}?includeDeleted=true`
+    : `${OFERTAS_API_URL}/productor/${idProductor}`;
+  const res = await fetch(url, { headers: authHeaders() });
   if (!res.ok) throw new Error("Error al obtener promociones");
   return await res.json();
 };
 
 export const createNewOferta = async (data) => {
-  const res = await fetch(API_BASE_URL, {
+  const res = await fetch(OFERTAS_API_URL, {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify(data),
@@ -39,7 +38,7 @@ export const createNewOferta = async (data) => {
 };
 
 export const updatePromocion = async (data) => {
-  const res = await fetch(`${API_BASE_URL}/${data.idPromocion}`, {
+  const res = await fetch(`${OFERTAS_API_URL}/${data.idPromocion}`, {
     method: "PUT",
     headers: authHeaders(),
     body: JSON.stringify(data),
@@ -49,7 +48,7 @@ export const updatePromocion = async (data) => {
 };
 
 export const deletePromocion = async (idPromocion) => {
-  const res = await fetch(`${API_BASE_URL}/${idPromocion}`, {
+  const res = await fetch(`${OFERTAS_API_URL}/${idPromocion}`, {
     method: "DELETE",
     headers: authHeaders(),
   });

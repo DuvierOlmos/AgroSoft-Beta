@@ -1,78 +1,62 @@
-const API_URL = 'http://localhost:4000/api/descuentos-alt';
+// src/services/descuentoService.js
+import { api } from "../../../../config/api";
 
-const getToken = () => localStorage.getItem('token');
+const BASE_URL = "/api/descuentos-alt";
 
-const authHeaders = () => {
-  const token = getToken();
-  return {
-    'Content-Type': 'application/json',
-    Authorization: token ? `Bearer ${token}` : '',
-  };
+// Authorization header injected by api interceptor
+
+// Manejo de errores centralizado
+const handleError = (error) => {
+  const message =
+    error.response?.data?.message ||
+    error.response?.data?.error ||
+    error.message ||
+    "Ocurrió un error inesperado";
+  throw new Error(message);
 };
 
-async function handleResponse(response) {
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('Sesión expirada o permisos insuficientes. Por favor inicia sesión nuevamente.');
-    }
-
-    let errorData = {};
-    try {
-      errorData = await response.json();
-    } catch (e) {
-      throw new Error(`Error de conexión con el servidor (Status: ${response.status})`);
-    }
-
-    const message = errorData.message || errorData.error || 'Ocurrió un error inesperado al procesar la solicitud.';
-    const details = errorData.details
-      ? ` (${Array.isArray(errorData.details) ? errorData.details.join(', ') : errorData.details})`
-      : '';
-
-    throw new Error(`${message}${details}`);
+// Obtener descuentos
+export const getDescuentos = async (search = "") => {
+  try {
+    const url = search ? `${BASE_URL}/admin?search=${encodeURIComponent(search)}` : `${BASE_URL}/admin`;
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    handleError(error);
   }
-
-  if (response.status === 204) {
-    return { success: true };
-  }
-
-  return await response.json();
-}
-
-export const getDescuentos = async (search = '') => {
-  let url = `${API_URL}/admin`;
-  if (search) {
-    url += `?search=${encodeURIComponent(search)}`;
-  }
-  const response = await fetch(url, { headers: authHeaders() });
-  return await handleResponse(response);
 };
 
+// Crear descuento
 export const createDescuento = async (descuentoData) => {
-  const response = await fetch(`${API_URL}/create`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify(descuentoData),
-  });
-  return await handleResponse(response);
+  try {
+    const response = await api.post(`${BASE_URL}/create`, descuentoData);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
+// Actualizar descuento
 export const updateDescuento = async (id, descuentoData) => {
-  const response = await fetch(`${API_URL}/update/${id}`, {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify(descuentoData),
-  });
-  return await handleResponse(response);
+  try {
+    const response = await api.put(`${BASE_URL}/update/${id}`, descuentoData);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
+// Eliminar descuento
 export const deleteDescuento = async (id) => {
-  const response = await fetch(`${API_URL}/delete/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders(),
-  });
-  return await handleResponse(response);
+  try {
+    const response = await api.delete(`${BASE_URL}/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
+// Exportar como objeto para import fácil
 const descuentoService = {
   getDescuentos,
   createDescuento,

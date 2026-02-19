@@ -1,6 +1,23 @@
 
 .custom-navbar-productor {
-   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  min-height: 60px;
+  position: relative;
+  z-index: 999;
+  width: 100%;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #028b20;
+  margin: 0;
+  white-space: nowrap;
 }
 
 
@@ -14,6 +31,19 @@
   color: #ff6600e0;
   border-bottom: 3px solid #ff6600e0;
   padding-bottom: 2px;
+  transition: color .2s ease, border-color .2s ease, opacity .2s ease;
+}
+
+/* Cuando el dropdown está abierto, atenuar/ocultar el color naranja del logo */
+.custom-navbar-productor.dropdown-open .brand-text .highlight {
+  color: #ffffff !important;
+  border-bottom-color: transparent !important;
+  opacity: 0.85;
+}
+
+/* Desaturar la imagen del logo para que no destaque detrás del dropdown */
+.custom-navbar-productor.dropdown-open .navbar-brand img {
+  filter: grayscale(100%) brightness(70%);
 }
 
 
@@ -94,7 +124,24 @@
   padding: 10px;
   width: 180px;
   box-shadow: 0 4px 8px rgba(255, 102, 0, 0.5);
-  z-index: 1000;
+  /* Elevar z-index para que el dropdown siempre quede por encima de elementos fijos */
+  z-index: 100002;
+}
+
+/* Forzar color neutro de iconos dentro del dropdown cuando está abierto */
+.custom-navbar-productor.dropdown-open .dropdown-menu-custom svg,
+.custom-navbar-productor.dropdown-open .dropdown-menu-custom .nav-icon {
+  color: #222 !important;
+  fill: currentColor !important;
+  stroke: none !important;
+  filter: none !important;
+}
+
+/* Quitar borde naranja del avatar si el dropdown está abierto */
+.custom-navbar-productor.dropdown-open .user-avatar,
+.custom-navbar-productor.dropdown-open .user-avatar-icon {
+  border-color: transparent !important;
+  color: #222 !important;
 }
 
 .dropdown-username {
@@ -141,9 +188,25 @@
 
 /* Mejoras para el dropdown */
 .dropdown-header {
-  text-align: center;
+  position: relative;
+  text-align: left;
   padding: 10px;
   border-bottom: 1px solid #eee;
+}
+
+.dropdown-header .dropdown-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  color: #ff6600;
+  background: transparent;
+  border-radius: 50%;
+}
+
+.dropdown-header .dropdown-close:focus {
+  outline: 2px solid rgba(255,102,0,0.12);
+  box-shadow: 0 0 0 3px rgba(255,102,0,0.12);
 }
 
 .dropdown-email {
@@ -205,7 +268,6 @@
   text-decoration: none;
 }
 
-/* Efecto de subrayado al hover para coincidir con el estilo existente */
 .auth-buttons .nav-link {
   position: relative;
 }
@@ -242,5 +304,33 @@
   
   .auth-buttons .nav-link {
     padding: 8px 12px;
+  }
+}
+
+/* Centrar dropdown de usuario en pantallas pequeñas */
+@media (max-width: 480px) {
+  .user-dropdown {
+    position: relative; /* asegurar contexto */
+  }
+
+  .dropdown-menu-custom {
+    /* Posicionar respecto a la ventana para evitar heredar tamaños del contenedor */
+    position: fixed !important;
+    left: 20px !important;
+    right: 20px !important;
+    top: 70px !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: calc(100% - 40px) !important;
+    max-height: calc(100vh - 120px) !important;
+    overflow-y: auto !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25) !important;
+    border-radius: 10px !important;
+    z-index: 100002 !important;
+  }
+
+  /* Ajustes para que el botón del avatar no provoque overflow */
+  .user-btn {
+    z-index: 2100;
   }
 }

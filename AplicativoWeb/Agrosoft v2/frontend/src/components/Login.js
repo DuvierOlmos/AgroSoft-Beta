@@ -1,7 +1,9 @@
+// src/components/Login.jsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import './login.css';
 import { Link, useNavigate } from 'react-router-dom';
+import { api } from "../config/api"; // <- Axios con URL dinámica
 
 function Login({ switchToRegister, onLogin }) {
   const [formData, setFormData] = useState({
@@ -36,20 +38,9 @@ function Login({ switchToRegister, onLogin }) {
     try {
       console.log('🔐 [LOGIN] Starting login process...');
 
-      const response = await fetch(
-        "http://localhost:4000/api/users/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData)
-        }
-      );
+      // 🔹 Usando Axios con API dinámica
+      const { data } = await api.post("/api/users/login", formData);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
       console.log('🔐 [LOGIN] Response:', data);
 
       if (data.status === "error") {
@@ -59,11 +50,8 @@ function Login({ switchToRegister, onLogin }) {
         setMessage(data.message);
         setErrors({});
 
-        console.log('💾 [LOGIN] Saving token and user data...');
-
+        // Guardar token y datos del usuario
         localStorage.setItem('token', data.token);
-        console.log(' [LOGIN] Token saved to localStorage');
-
         const userData = {
           id_usuario: data.user.id_usuario,
           id_rol: data.user.id_rol,
@@ -71,22 +59,16 @@ function Login({ switchToRegister, onLogin }) {
           email: data.user.correo_electronico,
           token: data.token 
         };
-
         localStorage.setItem('user', JSON.stringify(userData));
-        console.log(' [LOGIN] User data saved:', userData);
-        
-        // Call parent handler to update global state
-        if (typeof onLogin === 'function') {
-          onLogin(userData);
-        } else {
-          localStorage.setItem('user', JSON.stringify(userData));
-        }
 
-        console.log(` [LOGIN] User role: ${data.user.id_rol}, redirecting...`);
-        // Navigation is handled by App.js state change or redundant navigate here
-        // We keep navigate just in case, but App.js might unmount this component first
+        // Llamar callback del componente padre
+        if (typeof onLogin === 'function') onLogin(userData);
+
+        // Redirección según rol: 3 -> productor, 2 -> administrador, otros -> home
         if (data.user.id_rol === 3) {
           navigate('/AdminView', { replace: true });
+        } else if (data.user.id_rol === 2) {
+          navigate('/admin', { replace: true });
         } else {
           navigate('/', { replace: true });
         }

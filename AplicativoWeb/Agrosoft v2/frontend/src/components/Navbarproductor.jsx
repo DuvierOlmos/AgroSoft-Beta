@@ -6,7 +6,6 @@ import {
   FaCog,
   FaBox,
   FaStar,
-  FaHome,
   FaUserPlus,
   FaSignInAlt,
   FaUserCircle,
@@ -21,6 +20,23 @@ function Navbarproductor({ isAuthenticated, user, onLogout }) {
   const [showDropdown, setShowDropdown] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // Si estamos en AdminView pero isAuthenticated es false, significa que hay user pero props no se pasó correctamente
+  // En ese caso, verificamos el localStorage
+  const effectiveAuth = isAuthenticated || !!user;
+
+  useEffect(() => {
+    // Debug: confirmar montaje y props
+    // Abre la consola del navegador para ver este mensaje cuando cargues /AdminView
+    console.log(" Navbarproductor mounted", { 
+      isAuthenticated, 
+      effectiveAuth,
+      user, 
+      userRole: user?.role,
+      userName: user?.nombre,
+      pathname: location.pathname
+    });
+  }, [isAuthenticated, user, location.pathname, effectiveAuth]);
 
   const userImage = user?.imagen || "/images/user.jpg";
 
@@ -42,7 +58,7 @@ function Navbarproductor({ isAuthenticated, user, onLogout }) {
   }, [showDropdown]);
 
   return (
-    <nav className="navbar navbar-expand-lg custom-navbar-productor px-3">
+    <nav className={"navbar navbar-expand-lg custom-navbar-productor px-3" + (showDropdown ? " dropdown-open" : "")}>
       <Link className="navbar-brand d-flex align-items-center" to="/">
         <img
           src="/img/1.png"
@@ -113,7 +129,7 @@ function Navbarproductor({ isAuthenticated, user, onLogout }) {
         </ul>
 
         <div className="d-flex align-items-center">
-          {isAuthenticated ? (
+          {effectiveAuth ? (
             <div className="user-dropdown">
               <button
                 className="btn user-btn d-flex align-items-center"

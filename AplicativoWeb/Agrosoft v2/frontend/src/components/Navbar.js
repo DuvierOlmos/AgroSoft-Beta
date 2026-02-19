@@ -1,164 +1,129 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
+  FaBars,
+  FaTimes,
   FaShoppingCart,
-  FaUser,
-  FaSignOutAlt,
-  FaCog,
-  FaBox,
-  FaStar,
   FaHome,
   FaShoppingBag,
   FaBlog,
   FaTag,
-  FaUserPlus,
+  FaBox,
+  FaUser,
+  FaUserCircle,
+  FaSignOutAlt,
   FaSignInAlt,
-  FaUserCircle
+  FaUserPlus
 } from "react-icons/fa";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./Navbar.css";
+import "./Navbarproductor.css";
+import { api } from "../config/api";
 
-function Navbar({ isAuthenticated, user, onLogout }) {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [cartItemsCount, setCartItemsCount] = useState(0);
+const Navbar = ({ isAuthenticated, user, onLogout }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
   const location = useLocation();
   const navigate = useNavigate();
   const isCliente = user?.id_rol === 1;
 
-  const userImage = user?.imagen || "/images/user.jpg";
-
-  // Función para obtener el número de items del carrito
-  const fetchCartItemsCount = async () => {
-    if (!isAuthenticated || !isCliente) return;
-
-    try {
-      const response = await fetch(`http://localhost:4000/api/carrito/numero-items/${user.id_usuario}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setCartItemsCount(data.data);
-      }
-    } catch (error) {
-      console.error("Error obteniendo número de items del carrito:", error);
-    }
+  const closeAll = () => {
+    setMenuOpen(false);
+    setUserOpen(false);
   };
 
+  // 🔹 cerrar con ESC
   useEffect(() => {
-    if (isAuthenticated && isCliente) {
-      fetchCartItemsCount();
+    const esc = (e) => e.key === "Escape" && closeAll();
+    window.addEventListener("keydown", esc);
+    return () => window.removeEventListener("keydown", esc);
+  }, []);
 
-      // Actualizar cada 30 segundos (opcional)
-      const interval = setInterval(fetchCartItemsCount, 30000);
-      return () => clearInterval(interval);
-    } else {
-      setCartItemsCount(0);
+  // 🔹 carrito
+  useEffect(() => {
+    if (!isAuthenticated || !isCliente) {
+      setCartCount(0);
+      return;
     }
-  }, [isAuthenticated, user, isCliente]);
 
-  const handleLogout = () => {
+    api
+      .get(`/api/carrito/numero-items/${user.id_usuario}`)
+      .then((res) => {
+        if (res.data?.success) {
+          const value = res.data.data?.total_items ?? res.data.data ?? 0;
+          setCartCount(typeof value === 'object' ? (value.total_items ?? 0) : value);
+        }
+      })
+      .catch(() => {});
+  }, [isAuthenticated, isCliente, user]);
+
+  const logout = () => {
     onLogout();
-    setShowDropdown(false);
-    setCartItemsCount(0); // Resetear contador al cerrar sesión
+    closeAll();
     navigate("/");
   };
 
-  useEffect(() => {
-    const handleClickOutside = () => {
-      if (showDropdown) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [showDropdown]);
-
   return (
-    <nav className="navbar navbar-expand-lg custom-navbar px-3">
-      <Link className="navbar-brand d-flex align-items-center" to="/">
-        <img
-          src="/img/1.png"
-          alt="AgroSoft Logo"
-          style={{ width: "50px", height: "50px", marginRight: "8px" }}
-        />
-        <span className="brand-text">
-          Agro<span className="highlight">Soft</span>
-        </span>
-      </Link>
+    <>
+      {/* OVERLAY */}
+      {menuOpen && <div className="nav-overlay" onClick={closeAll} />}
 
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
+      <nav className={"navbar navbar-expand-lg custom-navbar-productor px-0" + (userOpen ? " dropdown-open" : "")}>
+        {/* BRAND - estilo Navbarproductor */}
+        <Link className="navbar-brand d-flex align-items-center" to="/" onClick={closeAll}>
+          <img
+            src="/img/1.png"
+            alt="AgroSoft Logo"
+            style={{ width: "50px", height: "50px", marginRight: "8px" }}
+          />
+          <span className="brand-text">
+            Agro<span className="highlight">Soft</span>
+          </span>
+        </Link>
 
-      <div className="collapse navbar-collapse" id="navbarNav">
+        {/* DESKTOP LINKS (estructura como Navbarproductor) */}
         <ul className="navbar-nav me-auto nav-links">
           <li className="nav-item">
-            <Link
-              className={`nav-link d-flex align-items-center ${location.pathname === "/" ? "active" : ""}`}
-              to="/"
-            >
+            <Link className={`nav-link d-flex align-items-center ${location.pathname === "/" ? "active" : ""}`} to="/">
               <FaHome className="nav-icon me-2" />
               Home
             </Link>
           </li>
           <li className="nav-item">
-            <Link
-              className={`nav-link d-flex align-items-center ${location.pathname === "/catalogo" ? "active" : ""}`}
-              to="/catalogo"
-            >
+            <Link className={`nav-link d-flex align-items-center ${location.pathname === "/catalogo" ? "active" : ""}`} to="/catalogo">
               <FaShoppingBag className="nav-icon me-2" />
               Catálogo
             </Link>
           </li>
           <li className="nav-item">
-            <Link
-              className={`nav-link d-flex align-items-center ${location.pathname === "/blog" ? "active" : ""}`}
-              to="/blog"
-            >
+            <Link className={`nav-link d-flex align-items-center ${location.pathname === "/blog" ? "active" : ""}`} to="/blog">
               <FaBlog className="nav-icon me-2" />
               Blog
             </Link>
           </li>
           <li className="nav-item">
-            <Link
-              className={`nav-link d-flex align-items-center ${location.pathname === "/ofertas" ? "active" : ""}`}
-              to="/ofertas"
-            >
+            <Link className={`nav-link d-flex align-items-center ${location.pathname === "/ofertas" ? "active" : ""}`} to="/ofertas">
               <FaTag className="nav-icon me-2" />
               Ofertas
             </Link>
           </li>
-
           {isAuthenticated && isCliente && (
-            <>
-              <li className="nav-item">
-                <Link
-                  className={`nav-link d-flex align-items-center ${location.pathname === "/mis-pedidos" ? "active" : ""}`}
-                  to="/Pedidos"
-                >
-                  <FaBox className="nav-icon me-2" />
-                  Mis Pedidos
-                </Link>
-              </li>
-
-            </>
+            <li className="nav-item">
+              <Link className={`nav-link d-flex align-items-center ${location.pathname === "/pedidos" ? "active" : ""}`} to="/pedidos">
+                <FaBox className="nav-icon me-2" />
+                Mis pedidos
+              </Link>
+            </li>
           )}
         </ul>
 
+        {/* RIGHT */}
         <div className="d-flex align-items-center">
           {isAuthenticated && isCliente && (
-            <Link to="/carrito" className="nav-link position-relative me-3 cart-link">
-              <FaShoppingCart size={22} />
-              {cartItemsCount > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {cartItemsCount}
-                </span>
-              )}
+            <Link to="/carrito" className="cart-btn me-3">
+              <FaShoppingCart />
+              {cartCount > 0 && <span>{cartCount}</span>}
             </Link>
           )}
 
@@ -166,26 +131,27 @@ function Navbar({ isAuthenticated, user, onLogout }) {
             <div className="user-dropdown">
               <button
                 className="btn user-btn d-flex align-items-center"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowDropdown(!showDropdown);
-                }}
+                onClick={(e) => { e.stopPropagation(); setUserOpen(!userOpen); }}
               >
                 {user?.imagen ? (
-                  <img
-                    src={userImage}
-                    alt="Perfil"
-                    className="user-avatar"
-                  />
+                  <img src={user.imagen} alt="Perfil" className="user-avatar" />
                 ) : (
                   <FaUserCircle className="user-avatar-icon" size={28} />
                 )}
               </button>
 
-              {showDropdown && (
+              {userOpen && (
                 <div className="dropdown-menu-custom">
                   <div className="dropdown-header">
-                    <FaUserCircle size={40} className="mb-2" />
+                    <FaUserCircle
+                      size={40}
+                      className="mb-2 dropdown-close"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setUserOpen(false)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { setUserOpen(false); } }}
+                      aria-label="Cerrar menú"
+                    />
                     <p className="dropdown-username mb-1">
                       Hola, <strong>{user?.nombre || user?.email?.split('@')[0]}</strong>
                     </p>
@@ -197,53 +163,26 @@ function Navbar({ isAuthenticated, user, onLogout }) {
                   <Link
                     to="/perfil"
                     className="dropdown-item d-flex align-items-center"
-                    onClick={() => setShowDropdown(false)}
+                    onClick={closeAll}
                   >
                     <FaUser className="me-2" />
-                    Mi Perfil
+                    Perfil
                   </Link>
 
                   <Link
-                    to="/mis-pedidos"
+                    to="/pedidos"
                     className="dropdown-item d-flex align-items-center"
-                    onClick={() => setShowDropdown(false)}
+                    onClick={closeAll}
                   >
                     <FaBox className="me-2" />
-                    Mis Pedidos
-                  </Link>
-
-                  <Link
-                    to="/Pedidos"
-                    className="dropdown-item d-flex align-items-center"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    <FaStar className="me-2" />
-                    Mis Reseñas
-                  </Link>
-
-                  <Link
-                    to="/carrito"
-                    className="dropdown-item d-flex align-items-center"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    <FaShoppingCart className="me-2" />
-                    Mi Carrito {cartItemsCount > 0 && `(${cartItemsCount})`}
-                  </Link>
-
-                  <Link
-                    to="/configuracion"
-                    className="dropdown-item d-flex align-items-center"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    <FaCog className="me-2" />
-                    Configuración
+                    Pedidos
                   </Link>
 
                   <div className="dropdown-divider"></div>
 
                   <button
                     className="dropdown-item d-flex align-items-center logout-btn"
-                    onClick={handleLogout}
+                    onClick={logout}
                   >
                     <FaSignOutAlt className="me-2" />
                     Cerrar Sesión
@@ -252,27 +191,46 @@ function Navbar({ isAuthenticated, user, onLogout }) {
               )}
             </div>
           ) : (
-            <div className="auth-buttons d-flex align-items-center">
-              <Link
-                to="/login"
-                className="nav-link d-flex align-items-center me-3 login-link"
-              >
-                <FaSignInAlt className="me-2" />
-                Iniciar Sesión
-              </Link>
-              <Link
-                to="/register"
-                className="nav-link d-flex align-items-center register-link"
-              >
-                <FaUserPlus className="me-2" />
-                Registrarse
-              </Link>
+            <div className="auth-links d-flex align-items-center">
+              <Link to="/login" className="nav-link d-flex align-items-center me-3"><FaSignInAlt className="me-2"/> Iniciar Sesión</Link>
+              <Link to="/register" className="nav-link d-flex align-items-center register-link"><FaUserPlus className="me-2"/> Registrarse</Link>
             </div>
           )}
+
+          {/* HAMBURGUESA */}
+          <button
+            className="hamburger"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <FaTimes /> : <FaBars />}
+          </button>
         </div>
+      </nav>
+
+      {/* MOBILE MENU */}
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <NavMobile to="/" text="Home" close={closeAll} />
+        <NavMobile to="/catalogo" text="Catálogo" close={closeAll} />
+        <NavMobile to="/blog" text="Blog" close={closeAll} />
+        <NavMobile to="/ofertas" text="Ofertas" close={closeAll} />
+        {isAuthenticated && isCliente && (
+          <NavMobile to="/pedidos" text="Mis pedidos" close={closeAll} />
+        )}
+        {!isAuthenticated && (
+          <>
+            <NavMobile to="/login" text="Login" close={closeAll} />
+            <NavMobile to="/register" text="Registro" close={closeAll} />
+          </>
+        )}
       </div>
-    </nav>
+    </>
   );
-}
+};
+
+const NavMobile = ({ to, text, close }) => (
+  <Link to={to} className="mobile-link" onClick={close}>
+    {text}
+  </Link>
+);
 
 export default Navbar;

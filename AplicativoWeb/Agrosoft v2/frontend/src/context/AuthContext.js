@@ -1,5 +1,7 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from 'jwt-decode';
+import { api } from "../config/api"; // <-- Importamos API dinámica
 
 export const AuthContext = createContext();
 
@@ -12,8 +14,7 @@ export const useAuth = () => {
   return context;
 };
 
-// DEBUG_MODE se ubica fuera del componente para estabilidad y evitar advertencias de dependencias
-// Poner false para que el frontend consuma la API real y muestre datos desde la base de datos
+// DEBUG_MODE para desarrollo con datos simulados
 const DEBUG_MODE = false;
 
 export const AuthProvider = ({ children }) => {
@@ -36,16 +37,13 @@ export const AuthProvider = ({ children }) => {
     } else {
       const token = localStorage.getItem("token");
       if (token) {
-        // Preferir obtener perfil completo desde backend
-        fetch("http://localhost:4000/api/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-          .then((r) => r.json())
-          .then((data) => {
-            if (data && data.success && data.user) {
+        api
+          .get("/api/users/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then((res) => {
+            const data = res.data;
+            if (data?.success && data.user) {
               setUser(data.user);
               setIsAuthenticated(true);
             } else {
@@ -60,7 +58,6 @@ export const AuthProvider = ({ children }) => {
                 setIsAuthenticated(false);
               }
             }
-            setIsLoading(false);
           })
           .catch((err) => {
             console.error("Error al obtener perfil:", err);
@@ -72,55 +69,57 @@ export const AuthProvider = ({ children }) => {
               setUser(null);
               setIsAuthenticated(false);
             }
-            setIsLoading(false);
-          });
+          })
+          .finally(() => setIsLoading(false));
       } else {
         setIsLoading(false);
       }
     }
   }, []);
 
-  const login = (token) => {
+  const login = async (token) => {
     localStorage.setItem("token", token);
-    // Después de login, obtener perfil desde backend
-    fetch("http://localhost:4000/api/users/me", {
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data && data.success && data.user) setUser(data.user);
-        else {
-          try {
-            const decoded = jwtDecode(token);
-            setUser(decoded);
-          } catch (err) {
-            setUser(null);
-          }
-        }
-      })
-      .catch((err) => {
-        console.error("Error al obtener perfil tras login:", err);
+    try {
+      const res = await api.get("/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = res.data;
+      if (data?.success && data.user) {
+        setUser(data.user);
+        setIsAuthenticated(true);
+      } else {
         try {
           const decoded = jwtDecode(token);
           setUser(decoded);
-        } catch (e) {
+          setIsAuthenticated(true);
+        } catch {
           setUser(null);
+          setIsAuthenticated(false);
         }
-      });
+      }
+    } catch (err) {
+      console.error("Error al obtener perfil tras login:", err);
+      try {
+        const decoded = jwtDecode(token);
+        setUser(decoded);
+        setIsAuthenticated(true);
+      } catch {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    setIsAuthenticated(false);
   };
 
   const isCliente = () => user?.id_rol === 1;
   const isAdmin = () => user?.id_rol === 2;
   const isAgricultor = () => user?.id_rol === 3;
-
-  const hasRole = (requiredRole) => {
-    return user?.id_rol === requiredRole;
-  };
+  const hasRole = (requiredRole) => user?.id_rol === requiredRole;
 
   return (
     <AuthContext.Provider

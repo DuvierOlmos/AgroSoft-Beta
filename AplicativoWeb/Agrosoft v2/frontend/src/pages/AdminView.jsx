@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "../style/style.css";
-import { formatoCOP, parsePrecioInput } from "../utils/format";
-import Footer from "../components/Footer";
+import { formatoCOP, formatoCOPSinSimbolo, parsePrecioInput } from "../utils/format";
 import {
   getProductos,
   addProducto,
@@ -39,12 +38,16 @@ export default function AdminView() {
     precio_unitario: "",
     unidad_medida: "",
     cantidad: "",
-    url_imagen: "",
+    url_imagen_1: "",
+    url_imagen_2: "",
+    url_imagen_3: "",
     id_SubCategoria: "",
   });
   const [mensaje, setMensaje] = useState("");
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [idUsuario, setIdUsuario] = useState(null);
+  const [nombreUsuario, setNombreUsuario] = useState(null);
+  const [mostrarFormularioAnadir, setMostrarFormularioAnadir] = useState(true);
 
   useEffect(() => {
     const id = getLoggedUserId();
@@ -52,6 +55,13 @@ export default function AdminView() {
       setMensaje("Error: Debes iniciar sesión como productor.");
     } else {
       setIdUsuario(id);
+      try {
+        const userData = JSON.parse(localStorage.getItem("user"));
+        const nombre = userData?.nombre || (userData?.email ? userData.email.split('@')[0] : null);
+        setNombreUsuario(nombre);
+      } catch (e) {
+        setNombreUsuario(null);
+      }
       cargarProductos(id);
       cargarSubcategorias();
     }
@@ -85,10 +95,10 @@ export default function AdminView() {
       !nuevo.precio_unitario ||
       !nuevo.unidad_medida ||
       !nuevo.cantidad ||
-      !nuevo.url_imagen ||
+      !nuevo.url_imagen_1 ||
       !nuevo.id_SubCategoria
     ) {
-      setMensaje("Por favor llena todos los campos.");
+      setMensaje("Por favor llena al menos todos los campos requeridos y la primera imagen.");
       return;
     }
 
@@ -97,6 +107,7 @@ export default function AdminView() {
 
     const productoAEnviar = {
       ...nuevo,
+      url_imagen: nuevo.url_imagen_1,
       precio_unitario: precioParsed,
       cantidad: parseInt(nuevo.cantidad, 10),
       id_SubCategoria: parseInt(nuevo.id_SubCategoria, 10), 
@@ -124,7 +135,9 @@ export default function AdminView() {
         precio_unitario: "",
         unidad_medida: "",
         cantidad: "",
-        url_imagen: "",
+        url_imagen_1: "",
+        url_imagen_2: "",
+        url_imagen_3: "",
         id_SubCategoria: "",
       });
       cargarProductos(idUsuario);
@@ -145,19 +158,32 @@ export default function AdminView() {
     }
 
     try {
+      console.log("📝 Iniciando edición de producto:", productoSeleccionado.nombre_producto);
+      
       const precioParsed = parsePrecioInput(productoSeleccionado.precio_unitario);
 
-      await updateProducto(productoSeleccionado.id_producto, {
+      // Usar url_imagen_1 si existe, sino usar url_imagen (compatibilidad)
+      const urlImagenFinal = productoSeleccionado.url_imagen_1 || productoSeleccionado.url_imagen;
+
+      const datosActualizados = {
         nombre_producto: productoSeleccionado.nombre_producto,
         descripcion_producto: productoSeleccionado.descripcion_producto,
         precio_unitario: precioParsed,
         unidad_medida: productoSeleccionado.unidad_medida,
         cantidad: productoSeleccionado.cantidad_disponible,
-        url_imagen: productoSeleccionado.url_imagen,
-      });
+        url_imagen: urlImagenFinal,
+      };
+
+      console.log("📤 Datos a enviar:", datosActualizados);
+
+      await updateProducto(productoSeleccionado.id_producto, datosActualizados);
+      
+      console.log("✅ Producto actualizado correctamente");
       setMensaje(" Producto editado correctamente.");
+      setProductoSeleccionado(null);
       cargarProductos(idUsuario);
     } catch (err) {
+      console.error("❌ Error al editar:", err);
       setMensaje(`Error al editar producto: ${err.message}`);
       console.error(err);
     }
@@ -187,7 +213,17 @@ export default function AdminView() {
 
   const handleSelectProduct = (nombre_producto) => {
     const producto = productos.find((p) => p.nombre_producto === nombre_producto);
-    setProductoSeleccionado(producto);
+    if (producto) {
+      // Inicializar las imágenes: si no existen url_imagen_1, 2, 3, usar url_imagen
+      setProductoSeleccionado({
+        ...producto,
+        url_imagen_1: producto.url_imagen_1 || producto.url_imagen || "",
+        url_imagen_2: producto.url_imagen_2 || "",
+        url_imagen_3: producto.url_imagen_3 || "",
+        // Formatear precio para mostrar en el input (sin símbolo)
+        precio_unitario: formatoCOPSinSimbolo(producto.precio_unitario),
+      });
+    }
   };
 
   const handleChangeNuevo = (e) => {
@@ -209,8 +245,14 @@ export default function AdminView() {
       case "ExistenciaAnadir":
         fieldName = "cantidad";
         break;
-      case "ImagenAnadir":
-        fieldName = "url_imagen";
+      case "Imagen1Anadir":
+        fieldName = "url_imagen_1";
+        break;
+      case "Imagen2Anadir":
+        fieldName = "url_imagen_2";
+        break;
+      case "Imagen3Anadir":
+        fieldName = "url_imagen_3";
         break;
       case "IdSubCategoriaAnadir":
         fieldName = "id_SubCategoria";
@@ -223,13 +265,12 @@ export default function AdminView() {
 
 
   const handleChangeSeleccionado = (field, value) => {
-    if (field === "precio_unitario") {
-      setProductoSeleccionado({
-        ...productoSeleccionado,
-        [field]: value,
-      });
+    if (!productoSeleccionado) {
+      console.warn("⚠️ Intento de cambiar producto pero no hay producto seleccionado");
       return;
     }
+
+    console.log(`✏️ Actualizando ${field}:`, value);
 
     setProductoSeleccionado({
       ...productoSeleccionado,
@@ -239,13 +280,10 @@ export default function AdminView() {
 
   if (!idUsuario) {
     return (
-      <>
-        <main>
-          <h2> No tienes acceso a esta vista</h2>
-          <p>Por favor inicia sesión como <strong>productor</strong>.</p>
-        </main>
-        <Footer />
-      </>
+      <main>
+        <h2> No tienes acceso a esta vista</h2>
+        <p>Por favor inicia sesión como <strong>productor</strong>.</p>
+      </main>
     );
   }
 
@@ -256,7 +294,17 @@ export default function AdminView() {
         <div className="contenedor">
         
           <div className="anadir">
-            <h2>Añadir Nuevo Producto</h2>
+            <div className="header-anadir">
+              <h2>Añadir Nuevo Producto</h2>
+              <button 
+                type="button" 
+                className="btn-toggle-form"
+                onClick={() => setMostrarFormularioAnadir(!mostrarFormularioAnadir)}
+              >
+                {mostrarFormularioAnadir ? "▼ Ocultar" : "▶ Mostrar"}
+              </button>
+            </div>
+            {mostrarFormularioAnadir && (
             <form onSubmit={handleAdd}>
               <div className="form-grid-layout">
                 {/* Fila 1: Nombre (8) y Subcategoría (4) */}
@@ -303,10 +351,9 @@ export default function AdminView() {
                 <div className="form-group-admin span-4">
                   <label>Precio Unitario ($)</label>
                   <input
-                    type="number"
-                    step="1"
+                    type="text"
                     id="ValorAnadir"
-                    placeholder="0"
+                    placeholder="1.000"
                     value={nuevo.precio_unitario}
                     onChange={handleChangeNuevo}
                   />
@@ -334,14 +381,36 @@ export default function AdminView() {
                   />
                 </div>
   
-                {/* Fila 4: URL Imagen (12) */}
+                {/* Fila 4: URLs de Imágenes (3 imágenes) */}
                 <div className="form-group-admin span-12">
-                  <label>URL de la Imagen</label>
+                  <label>📷 Imagen Principal (Requerida)</label>
                   <input
                     type="text"
-                    id="ImagenAnadir"
-                    placeholder="https://..."
-                    value={nuevo.url_imagen}
+                    id="Imagen1Anadir"
+                    placeholder="https://... (primera imagen obligatoria)"
+                    value={nuevo.url_imagen_1}
+                    onChange={handleChangeNuevo}
+                  />
+                </div>
+
+                <div className="form-group-admin span-6">
+                  <label>📷 Imagen Secundaria 2 (Opcional)</label>
+                  <input
+                    type="text"
+                    id="Imagen2Anadir"
+                    placeholder="https://... (opcional)"
+                    value={nuevo.url_imagen_2}
+                    onChange={handleChangeNuevo}
+                  />
+                </div>
+
+                <div className="form-group-admin span-6">
+                  <label>📷 Imagen Secundaria 3 (Opcional)</label>
+                  <input
+                    type="text"
+                    id="Imagen3Anadir"
+                    placeholder="https://... (opcional)"
+                    value={nuevo.url_imagen_3}
                     onChange={handleChangeNuevo}
                   />
                 </div>
@@ -349,6 +418,7 @@ export default function AdminView() {
               
               <input type="submit" className="button button-add" value="Añadir Producto" />
             </form>
+            )}
           </div>
   
       
@@ -387,8 +457,8 @@ export default function AdminView() {
                     <div className="field-group">
                       <label>Valor</label>
                       <input
-                        type="number"
-                        step="1"
+                        type="text"
+                        placeholder="1.000"
                         value={productoSeleccionado.precio_unitario || ""}
                         onChange={(e) =>
                           handleChangeSeleccionado("precio_unitario", e.target.value)
@@ -416,12 +486,32 @@ export default function AdminView() {
                       />
                     </div>
                     <div className="field-group full-row">
-                      <label>URL Imagen</label>
+                      <label>📷 Imagen Principal</label>
                       <input
                         type="text"
-                        value={productoSeleccionado.url_imagen || ""}
+                        value={productoSeleccionado.url_imagen_1 || ""}
                         onChange={(e) =>
-                          handleChangeSeleccionado("url_imagen", e.target.value)
+                          handleChangeSeleccionado("url_imagen_1", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="field-group">
+                      <label>📷 Imagen 2 (Opcional)</label>
+                      <input
+                        type="text"
+                        value={productoSeleccionado.url_imagen_2 || ""}
+                        onChange={(e) =>
+                          handleChangeSeleccionado("url_imagen_2", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="field-group">
+                      <label>📷 Imagen 3 (Opcional)</label>
+                      <input
+                        type="text"
+                        value={productoSeleccionado.url_imagen_3 || ""}
+                        onChange={(e) =>
+                          handleChangeSeleccionado("url_imagen_3", e.target.value)
                         }
                       />
                     </div>
@@ -474,7 +564,7 @@ export default function AdminView() {
         </div>
   
         <div className="contenedorProductos">
-          <h2>Mis Productos (ID: {idUsuario})</h2>
+          <h2>Mis Productos usuario ({nombreUsuario || idUsuario})</h2>
           <div className="mostrarProductos">
             {productos.map((p) => (
               <div key={p.id_producto} className="contenedorProducto">
@@ -494,7 +584,6 @@ export default function AdminView() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   );
 }

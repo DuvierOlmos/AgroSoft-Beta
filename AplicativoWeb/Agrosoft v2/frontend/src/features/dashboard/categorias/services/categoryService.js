@@ -1,68 +1,45 @@
-const API_URL = 'http://localhost:4000/api/categories/admin';
+// src/services/categoriesService.js
+import { api } from "../../../../config/api";
 
-const getToken = () => localStorage.getItem('token');
-
-const authHeaders = () => {
-  const token = getToken();
-  return {
-    'Content-Type': 'application/json',
-    Authorization: token ? `Bearer ${token}` : '',
-  };
-};
+const BASE_URL = "/api/categories/admin";
 
 export const getCategories = async (search = '') => {
-  let url = API_URL;
-  if (search) {
-    url += `?search=${encodeURIComponent(search)}`;
+  try {
+    const url = search ? `${BASE_URL}?search=${encodeURIComponent(search)}` : BASE_URL;
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener categorías:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Error al obtener categorías');
   }
-
-  const response = await fetch(url, {
-    headers: authHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error('Error al obtener categorías');
-  }
-  return await response.json();
 };
 
 export const createCategory = async (categoria) => {
-  const response = await fetch(`${API_URL}/create`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify(categoria),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Error al crear la categoría');
+  try {
+    const response = await api.post(`${BASE_URL}/create`, categoria);
+    return response.data;
+  } catch (error) {
+    console.error("Error al crear categoría:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Error al crear la categoría');
   }
-  return await response.json();
 };
 
 export const updateCategory = async (id, categoria) => {
-  const response = await fetch(`${API_URL}/update/${id}`, {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify(categoria),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Error al actualizar la categoría');
+  try {
+    const response = await api.put(`${BASE_URL}/update/${id}`, categoria);
+    return response.data;
+  } catch (error) {
+    console.error("Error al actualizar categoría:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Error al actualizar la categoría');
   }
-  return await response.json();
 };
 
 export const deleteCategory = async (id) => {
-  const response = await fetch(`${API_URL}/delete/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders(),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || 'Error al eliminar la categoría');
+  try {
+    const response = await api.delete(`${BASE_URL}/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar categoría:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Error al eliminar la categoría');
   }
-  return await response.json();
 };

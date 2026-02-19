@@ -1,55 +1,68 @@
-const API_URL = 'http://localhost:4000/api/inventarios';
+// src/services/inventarioService.js
+import { api } from "../../../../config/api";
 
-const getToken = () => localStorage.getItem('token');
+const BASE_URL = "/api/inventarios";
 
-const authHeaders = () => {
-  const token = getToken();
-  return {
-    'Content-Type': 'application/json',
-    Authorization: token ? `Bearer ${token}` : '',
-  };
+// Función para agregar headers de autenticación
+// Authorization header injected by api interceptor
+
+// Manejo centralizado de errores
+const handleError = (error) => {
+  const message =
+    error.response?.data?.message ||
+    error.response?.data?.error ||
+    error.message ||
+    "Ocurrió un error inesperado";
+  throw new Error(message);
 };
 
-export const getInventarios = async (searchTerm = '') => {
-  let url = API_URL;
-  if (searchTerm) {
-    url += `?search=${encodeURIComponent(searchTerm)}`;
+// Obtener inventarios
+export const getInventarios = async (searchTerm = "") => {
+  try {
+    const url = searchTerm ? `${BASE_URL}?search=${encodeURIComponent(searchTerm)}` : BASE_URL;
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    handleError(error);
   }
-
-  const response = await fetch(url, {
-    headers: authHeaders(),
-  });
-  if (!response.ok) {
-    throw new Error('Error al obtener inventario');
-  }
-  return await response.json();
 };
 
+// Crear inventario
 export const createInventario = async (data) => {
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) throw new Error('Error al crear inventario');
-  return await response.json();
+  try {
+    const response = await api.post(BASE_URL, data);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
+// Actualizar inventario
 export const updateInventario = async (id, data) => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) throw new Error('Error al actualizar inventario');
-  return await response.json();
+  try {
+    const response = await api.put(`${BASE_URL}/${id}`, data);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
+// Eliminar inventario
 export const deleteInventario = async (id) => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders(),
-  });
-  if (!response.ok) throw new Error('Error al eliminar inventario');
-  return await response.json();
+  try {
+    const response = await api.delete(`${BASE_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
+
+// Exportar como objeto para import fácil
+const inventarioService = {
+  getInventarios,
+  createInventario,
+  updateInventario,
+  deleteInventario,
+};
+
+export default inventarioService;

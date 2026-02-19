@@ -1,14 +1,18 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+// services/subcategoriasService.js
+import { api } from "../config/api";
 
+// =======================================================
+// Obtener subcategorías
+// =======================================================
 export const getSubcategorias = async () => {
   try {
-    const response = await fetch(`${API_URL}/subcategorias`);
-    if (!response.ok) {
-      throw new Error('Error al obtener las subcategorías');
-    }
-    return await response.json();
+    const res = await api.get("/api/subcategorias");
+    return res.data;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("❌ Error al obtener las subcategorías:", error);
+    if (error.response?.status === 401) {
+      throw new Error("Token inválido o expirado. Inicia sesión nuevamente.");
+    }
     throw error;
   }
 };

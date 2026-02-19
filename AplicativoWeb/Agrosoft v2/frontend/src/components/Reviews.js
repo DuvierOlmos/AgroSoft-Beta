@@ -1,6 +1,8 @@
+// src/components/Reviews.jsx
 import React, { useState, useEffect } from "react";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import "./Review.css";
+import { api } from "../config/api"; // <-- Importamos la API dinámica
 
 const Reviews = ({ productId, userId, initialReviews = [], isAuthenticated = false }) => {
   const [reviews, setReviews] = useState(Array.isArray(initialReviews) ? initialReviews : []);
@@ -13,19 +15,19 @@ const Reviews = ({ productId, userId, initialReviews = [], isAuthenticated = fal
       const parsed = stored ? JSON.parse(stored) : null;
       const uid = userId || parsed?.id_usuario || "";
       const query = uid ? `?id_usuario_simulado=${uid}` : "";
-      const res = await fetch(`http://localhost:4000/api/reviews/product/${productId}${query}`);
-      const data = await res.json();
+
+      const res = await api.get(`/api/reviews/product/${productId}${query}`);
+      const data = res.data;
 
       if (data.success) {
         setReviews(data.reviews);
       } else {
-        console.error(" No se pudieron cargar reseñas:", data.message);
+        console.error("No se pudieron cargar reseñas:", data.message);
       }
     } catch (error) {
-      console.error(" Error al cargar comentarios:", error);
+      console.error("Error al cargar comentarios:", error);
     }
   };
-
 
   useEffect(() => {
     if (productId) cargarReviews();
@@ -44,18 +46,14 @@ const Reviews = ({ productId, userId, initialReviews = [], isAuthenticated = fal
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id_usuario: uid,
-          id_producto: productId,
-          calificacion: rating,
-          texto_comentario: newReview,
-        }),
+      const res = await api.post("/api/reviews", {
+        id_usuario: uid,
+        id_producto: productId,
+        calificacion: rating,
+        texto_comentario: newReview,
       });
 
-      const data = await res.json();
+      const data = res.data;
 
       if (data.success) {
         setNewReview("");
@@ -65,7 +63,7 @@ const Reviews = ({ productId, userId, initialReviews = [], isAuthenticated = fal
         alert(data.message || "No se pudo enviar la reseña");
       }
     } catch (error) {
-      console.error(" Error al enviar comentario:", error);
+      console.error("Error al enviar comentario:", error);
     }
   };
 

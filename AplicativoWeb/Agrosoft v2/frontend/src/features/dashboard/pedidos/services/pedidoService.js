@@ -1,77 +1,69 @@
-import axios from "axios";
+// src/services/ordenService.js
+import { api } from "../../../../config/api";
 
-// Ajusta la URL base según corresponda. 
-// Si antes era .../api/ordenes, ahora usaremos rutas específicas.
-const API_URL = "http://localhost:4000/api/ordenes";
+const BASE_URL = "/api/ordenes";
 
-const getToken = () => localStorage.getItem("token");
+// Authorization header injected by api interceptor
 
-const authHeaders = () => ({
-  headers: {
-    Authorization: `Bearer ${getToken()}`,
-  },
-});
+// Manejo centralizado de errores
+const handleError = (error, fallback = []) => {
+  console.error("OrdenService Error:", error);
+  if (error.response?.status === 401) {
+    throw new Error("Token inválido o expirado. Por favor inicia sesión nuevamente.");
+  }
+  const message =
+    error.response?.data?.message ||
+    error.response?.data?.error ||
+    error.message ||
+    "Ocurrió un error inesperado al procesar la solicitud.";
+  throw new Error(message || fallback);
+};
 
+// Obtener órdenes (con filtros opcionales)
 export const obtenerOrdenes = async (filtros = {}) => {
   try {
-    let url = `${API_URL}/admin/todas`;
-    
-    // Si se pasa un string (comportamiento anterior), lo convertimos a objeto
-    const params = typeof filtros === 'string' ? { search: filtros } : { ...filtros };
-    
-    // Construir query params
-    const queryParams = new URLSearchParams();
-    Object.keys(params).forEach(key => {
-      if (params[key]) {
-        queryParams.append(key, params[key]);
+    const params = new URLSearchParams();
+    Object.keys(filtros).forEach((key) => {
+      if (filtros[key] !== undefined && filtros[key] !== null) {
+        params.append(key, filtros[key]);
       }
     });
 
-    if (queryParams.toString()) {
-      url += `?${queryParams.toString()}`;
-    }
-
-    // CAMBIO IMPORTANTE: Usamos la ruta de admin para traer TODAS las órdenes
-    const response = await axios.get(url, authHeaders());
+    const url = params.toString() ? `${BASE_URL}/admin/todas?${params.toString()}` : `${BASE_URL}/admin/todas`;
+    const response = await api.get(url);
     return response.data;
   } catch (error) {
-    console.error(" Error al obtener las órdenes:", error);
-    if (error.response?.status === 401) {
-      throw new Error("Token inválido o expirado. Inicia sesión nuevamente.");
-    }
-    return [];
+    return handleError(error, []);
   }
 };
 
+// Actualizar estado de una orden
 export const actualizarEstadoOrden = async (id, estado) => {
   try {
-    const response = await axios.put(
-      `${API_URL}/${id}/estado`, 
-      { estado },
-      authHeaders()
-    );
+    const response = await api.put(`${BASE_URL}/${id}/estado`, { estado });
     return response.data;
   } catch (error) {
-    console.error(" Error al actualizar estado de la orden:", error);
-    if (error.response?.status === 401) {
-      throw new Error("Token inválido o expirado. Inicia sesión nuevamente.");
-    }
-    throw error;
+    return handleError(error);
   }
 };
 
+// Obtener comprobante de una orden
 export const obtenerComprobante = async (id_pedido) => {
   try {
-    const response = await axios.get(
-      `${API_URL}/${id_pedido}/comprobante`,
-      {
-        ...authHeaders(),
-        responseType: 'blob', 
-      }
-    );
-    return response.data; 
+    const response = await api.get(`${BASE_URL}/${id_pedido}/comprobante`, {
+      responseType: "blob", // para descargar PDF o imagen
+    });
+    return response.data;
   } catch (error) {
-    console.error(" Error al obtener el comprobante:", error);
-    throw error;
+    return handleError(error);
   }
 };
+
+// Exportar como objeto para import fácil
+const ordenService = {
+  obtenerOrdenes,
+  actualizarEstadoOrden,
+  obtenerComprobante,
+};
+
+export default ordenService;

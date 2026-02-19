@@ -115,3 +115,24 @@
   transform: scale(1.05); 
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 0 3px #ff6600; 
 }
+
+/* Ocultar sidebar en pantallas pequeñas (móvil) porque ya existe menú hamburguesa */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none !important;
+    transform: translateX(-100%);
+  }
+
+  /* Asegurar que el contenido principal ocupe todo el ancho */
+  .main-content,
+  .main-content.shifted {
+    margin-left: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Si existe un botón hamburguesa fijo, mantener su posición encima */
+  .hamburger-btn {
+    z-index: 1100;
+  }
+}

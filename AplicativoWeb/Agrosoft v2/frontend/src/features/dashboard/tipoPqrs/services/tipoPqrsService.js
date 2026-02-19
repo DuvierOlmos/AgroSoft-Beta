@@ -1,100 +1,78 @@
+// src/services/tipoPqrsService.js
+import { api } from "../../../../config/api";
 
+const BASE_URL = "/api/tipoPqrs/admin";
 
-import axios from "axios";
-const API_URL = "http://localhost:4000/api/tipoPqrs/admin";
-const getToken = () => localStorage.getItem("token");
-const authHeaders = () => {
-    const token = getToken();
-    return token
-        ? { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
-        : { "Content-Type": "application/json" };
+// Manejo centralizado de errores
+const handleError = (error, action = "realizar la acción") => {
+  console.error("TipoPQRS Service Error:", error);
+
+  let message = `Ocurrió un error al ${action}`;
+  if (error.response) {
+    const status = error.response.status;
+    message =
+      error.response.data?.message ||
+      error.response.data?.error ||
+      `Fallo del servidor (Status: ${status})`;
+  } else if (error.request) {
+    message = "No se pudo conectar al servidor. Verifica tu conexión y que la API esté activa.";
+  } else if (error.message) {
+    message = error.message;
+  }
+
+  throw new Error(message);
 };
 
-export async function getTipoPqrs(search = "") {
-    let url = API_URL;
+// ================================
+// Funciones principales de tipoPQRS
+// ================================
+
+export const getTipoPqrs = async (search = "") => {
+  try {
+    let url = BASE_URL;
     if (search) {
       url += `?search=${encodeURIComponent(search)}`;
     }
-    const response = await fetch(url, { headers: authHeaders() });
-    if (!response.ok) throw new Error("Error al obtener tipos de pqrs");
-    return await response.json();
-}
-
-// Create
-export const createTipoPqrs = async (tipoPqrs) => {
-    try {
-        const response = await axios.post(
-            `${API_URL}/create`,
-            tipoPqrs,
-            { headers: authHeaders() }
-        );
-        alert(` tipo de pqrs "${tipoPqrs.nombre_tipo || 'creada'}" con éxito.`);
-        return response.data;
-    } catch (error) {
-        let errorMessage = "Ocurrió un error inesperado al intentar crear el tipo de pqrs.";
-        if (error.response) {
-            errorMessage = error.response.data.message ||
-                `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {
-            errorMessage = "No se pudo conectar al servidor. Verifique la conexión.";
-        }
-        alert(` Error al crear el tipo de pqrs: ${errorMessage}`);
-        throw new Error(errorMessage);
-    }
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    handleError(error, "obtener tipos de PQRS");
+  }
 };
 
+export const createTipoPqrs = async (tipoPqrs) => {
+  try {
+    const response = await api.post(`${BASE_URL}/create`, tipoPqrs);
+    return response.data;
+  } catch (error) {
+    handleError(error, "crear tipo de PQRS");
+  }
+};
 
 export const updateTipoPqrs = async (id, tipoPqrs) => {
-    const alertIdentifier = tipoPqrs.nombre_tipo || `ID ${id}`;
-    try {
-        const response = await axios.put(
-            `${API_URL}/update/${id}`,
-            tipoPqrs,
-            { headers: authHeaders() }
-        );
-        alert(` Tipo de PQRS ${alertIdentifier} actualizada con éxito.`);
-        return response.data;
-    } catch (error) {
-        let errorMessage = "Ocurrió un error inesperado al intentar actualizar la PQRS.";
-        if (error.response) {
-            const status = error.response.status;
-            if (status === 404) {
-                errorMessage = `PQRS con ID ${id} no encontrada en el servidor.`;
-            } else if (status === 400) {
-                errorMessage = error.response.data.message || 'Datos inválidos. Verifica el estado o la respuesta.';
-            } else {
-                errorMessage = error.response.data.message ||
-                    `Fallo del servidor (Status: ${status}).`;
-            }
-        }
-        else if (error.request) {
-            errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa y el puerto sea correcto.";
-        }
-        alert(` Error al responder la PQRS ${alertIdentifier}: ${errorMessage}`);
-        throw new Error(errorMessage);
-    }
+  try {
+    const response = await api.put(`${BASE_URL}/update/${id}`, tipoPqrs);
+    return response.data;
+  } catch (error) {
+    handleError(error, "actualizar tipo de PQRS");
+  }
 };
-
-
 
 export const deleteTipoPqrs = async (id) => {
-    try {
-        const response = await axios.delete(
-            `${API_URL}/delete/${id}`,
-            { headers: authHeaders() }
-        );
-        alert(` Tipo de PQRS con ID ${id} eliminada con éxito.`);
-        return response.data;
-    } catch (error) {
-        let errorMessage = "Ocurrió un error inesperado al intentar eliminar el tipo de pqrs.";
-        if (error.response) {
-            errorMessage = error.response.data.message ||
-                `Fallo del servidor (Status: ${error.response.status}).`;
-        } else if (error.request) {
-            errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa.";
-        }
-        alert(` Error al eliminar la categoría: ${errorMessage}`);
-        throw new Error(errorMessage);
-    }
+  try {
+    const response = await api.delete(`${BASE_URL}/delete/${id}`);
+    return response.data;
+  } catch (error) {
+    handleError(error, "eliminar tipo de PQRS");
+  }
 };
 
+// Exportación de todas las funciones
+const tipoPqrsService = {
+  getTipoPqrs,
+  createTipoPqrs,
+  updateTipoPqrs,
+  deleteTipoPqrs,
+};
+
+export default tipoPqrsService;

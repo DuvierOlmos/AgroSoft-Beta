@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
 require("./models/associations_model");
-
 const db = require("./config/db");
 
 const userRoutes = require("./routes/userRoutes");
@@ -33,32 +32,14 @@ const estadoPedidoRoutes = require('./routes/estadoPedidoRoutes');
 
 const app = express();
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://127.0.0.1:3000',
-  'http://127.0.0.1:5173'
-];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Origen no permitido por CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: [
-    'Content-Type', 'Authorization', 'Accept', 'Origin',
-    'X-Requested-With', 'Cache-Control', 'Pragma'
-  ]
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+/* ============================================================
+   CORS
+============================================================ */
+app.use(cors({
+  origin: true,         // permite cualquier origen (web, emulador, móvil real)
+  credentials: true     // permite cookies / sesiones
+}));
 
 /* ============================================================
    MIDDLEWARE
@@ -68,12 +49,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
-  res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:3000');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.header('Access-Control-Allow-Headers',
-    'Content-Type, Authorization, Accept, Origin, X-Requested-With, Cache-Control');
-  if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
 
@@ -83,7 +58,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: " API Agrosoft funcionando correctamente",
+    message: "API Agrosoft funcionando correctamente",
     version: "1.0.0",
     timestamp: new Date().toISOString(),
     endpoints: {
@@ -107,8 +82,6 @@ app.get("/api/health", async (req, res) => {
     res.status(500).json({ success: false, status: "unhealthy" });
   }
 });
-
-const { swaggerDocs } = require('./config/swagger');
 
 /* ============================================================
    RUTAS API
@@ -154,8 +127,8 @@ app.use("/api/carrito", carritoRoutes);
 app.use("/api/roles", rolRoutes);
 
 // Documentación de Swagger
-const PORT_SWAGGER = process.env.PORT || 4000;
-swaggerDocs(app, PORT_SWAGGER);
+const { swaggerDocs } = require('./config/swagger');
+swaggerDocs(app, process.env.PORT || 4000);
 
 /* ============================================================
    RUTA 404

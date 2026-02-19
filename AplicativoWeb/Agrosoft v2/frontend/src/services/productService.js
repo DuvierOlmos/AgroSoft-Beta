@@ -1,155 +1,98 @@
 // services/productorService.js
-const API_URL = "http://localhost:4000/api/productor";
+import { api } from "../config/api";
+
 const UNAUTHORIZED_ERROR = "Token inválido o expirado. Inicia sesión nuevamente.";
 
-const getToken = () => {
-  console.log(' [DEBUG] Getting token...');
-
-  let token = localStorage.getItem("token");
-  if (token) {
-    console.log(' [DEBUG] Token found in localStorage');
-    return token;
-  }
-
+const getLoggedUserId = () => {
   try {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const usuario = JSON.parse(userData);
-      if (usuario && usuario.token) {
-        console.log(' [DEBUG] Token found in user data');
-        return usuario.token;
-      }
-    }
+    const userJson = localStorage.getItem("user");
+    if (!userJson) return null;
+    const user = JSON.parse(userJson);
+    return user?.id_usuario || user?.idUsuario || null;
   } catch (e) {
-    console.error(" [DEBUG] Error parsing user data:", e);
+    return null;
   }
-
-  console.error(' [DEBUG] No token found anywhere');
-  return null;
 };
 
-const authHeaders = () => {
-  const token = getToken();
-
-  if (!token) {
-    console.warn(' [DEBUG] No token available for request');
-    return {
-      "Content-Type": "application/json",
-    };
-  }
-
-  console.log(' [DEBUG] Adding Authorization header with token');
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-};
-
-const handleApiError = async (response) => {
-  if (response.status === 401) {
-    console.error(' [DEBUG] 401 Unauthorized - Clearing storage');
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    throw new Error(UNAUTHORIZED_ERROR);
-  }
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-  }
-
-  return response;
-};
-
-
+// =======================================================
+// 📦 Productos del productor
+// =======================================================
 export const getProductos = async (id_usuario) => {
   try {
-    console.log(`[DEBUG] Fetching products for user: ${id_usuario}`);
-
-    const res = await fetch(`${API_URL}/usuario/${id_usuario}`, {
-      headers: authHeaders(),
-    });
-
-    await handleApiError(res);
-    const data = await res.json();
-    console.log(' [DEBUG] Products fetched successfully:', data.length, 'products');
-    return data;
-
+    const id = id_usuario || getLoggedUserId();
+    if (!id) throw new Error("No se encontró id de productor. Inicia sesión.");
+    const response = await api.get(`/api/productor/usuario/${id}`);
+    return response.data;
   } catch (err) {
-    console.error(" [DEBUG] GET productos error:", err);
+    console.error("[DEBUG] GET productos error:", err);
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      throw new Error(UNAUTHORIZED_ERROR);
+    }
     throw err;
   }
 };
 
 export const addProducto = async (producto) => {
   try {
-    console.log(' [DEBUG] Adding new product:', producto);
-
-    const res = await fetch(`${API_URL}`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify(producto),
-    });
-
-    await handleApiError(res);
-    const data = await res.json();
-    console.log(' [DEBUG] Product added successfully:', data);
-    return data;
-
+    const productoToSend = { ...producto };
+    if (!productoToSend.id_usuario) {
+      const id = getLoggedUserId();
+      if (!id) throw new Error("No se encontró id de productor. Inicia sesión.");
+      productoToSend.id_usuario = id;
+    }
+    const response = await api.post("/api/productor", productoToSend);
+    return response.data;
   } catch (err) {
-    console.error(" [DEBUG] POST producto error:", err);
+    console.error("[DEBUG] POST producto error:", err);
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      throw new Error(UNAUTHORIZED_ERROR);
+    }
     throw err;
   }
 };
 
-
 export const updateProducto = async (id, producto) => {
   try {
-    console.log(` [DEBUG] Updating product ${id}:`, producto);
-
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: authHeaders(),
-      body: JSON.stringify(producto),
-    });
-
-    await handleApiError(res);
-    const data = await res.json();
-    console.log(' [DEBUG] Product updated successfully:', data);
-    return data;
-
+    const response = await api.put(`/api/productor/${id}`, producto);
+    return response.data;
   } catch (err) {
-    console.error(" [DEBUG] PUT producto error:", err);
+    console.error("[DEBUG] PUT producto error:", err);
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      throw new Error(UNAUTHORIZED_ERROR);
+    }
     throw err;
   }
 };
 
 export const deleteProducto = async (id) => {
   try {
-    console.log(` [DEBUG] Deleting product ${id}`);
-
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
-
-    await handleApiError(res);
-    const data = await res.json();
-    console.log(' [DEBUG] Product deleted successfully:', data);
-    return data;
-
+    const response = await api.delete(`/api/productor/${id}`);
+    return response.data;
   } catch (err) {
-    console.error(" [DEBUG] DELETE producto error:", err);
+    console.error("[DEBUG] DELETE producto error:", err);
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      throw new Error(UNAUTHORIZED_ERROR);
+    }
     throw err;
   }
 };
 
+// =======================================================
+// 🔍 Debug de autenticación
+// =======================================================
 export const debugAuth = () => {
-  console.log('===  AUTH DEBUG ===');
-  console.log('Token:', localStorage.getItem('token'));
-  console.log('User:', localStorage.getItem('user'));
-  console.log('Headers for next request:', authHeaders());
-  console.log('=== END DEBUG ===');
+  console.log("=== AUTH DEBUG ===");
+  console.log("Token:", localStorage.getItem("token"));
+  console.log("User:", localStorage.getItem("user"));
+  console.log("=== END DEBUG ===");
 };
 
 export { UNAUTHORIZED_ERROR };

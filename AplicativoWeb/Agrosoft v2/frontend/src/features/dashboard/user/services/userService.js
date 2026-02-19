@@ -1,107 +1,82 @@
-// features/users/services/userService.js
+// src/services/userService.js
+import { api } from "../../../../config/api";
 
-const API_URL = "http://localhost:4000/api/users";
-const getToken = () => localStorage.getItem("token");
-const authHeaders = () => {
-  const token = getToken();
-  if (!token) return { "Content-Type": "application/json" };
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+const BASE_URL = "/api/users";
+
+// Manejo centralizado de errores
+const handleError = (error, action = "realizar la acción") => {
+  console.error("UserService Error:", error);
+
+  let message = `Ocurrió un error al ${action}`;
+  if (error.response) {
+    const status = error.response.status;
+    message =
+      error.response.data?.message ||
+      error.response.data?.error ||
+      `Fallo del servidor (Status: ${status})`;
+  } else if (error.request) {
+    message = "No se pudo conectar al servidor. Verifica tu conexión y que la API esté activa.";
+  } else if (error.message) {
+    message = error.message;
+  }
+
+  throw new Error(message);
 };
 
+// ================================
+// Funciones principales de usuarios
+// ================================
+
+export const getUsers = async (search = "") => {
+  try {
+    let url = BASE_URL;
+    if (search) url += `?search=${encodeURIComponent(search)}`;
+    const response = await api.get(url);
+    return response.data;
+  } catch (error) {
+    handleError(error, "obtener usuarios");
+  }
+};
+
+export const createUser = async (userData) => {
+  try {
+    const response = await api.post(BASE_URL, userData);
+    return response.data;
+  } catch (error) {
+    handleError(error, "crear usuario");
+  }
+};
+
+export const updateUser = async (id, userData) => {
+  try {
+    const dataToSend = { ...userData };
+    if (!dataToSend.password_hash) delete dataToSend.password_hash;
+
+    const response = await api.put(`${BASE_URL}/${id}`, dataToSend);
+    return response.data;
+  } catch (error) {
+    handleError(error, "actualizar usuario");
+  }
+};
+
+export const deleteUser = async (id) => {
+  try {
+    const response = await api.delete(`${BASE_URL}/${id}`);
+    // Si status 204 → eliminado correctamente
+    return response.status === 204
+      ? { message: "Usuario eliminado con éxito." }
+      : response.data;
+  } catch (error) {
+    handleError(error, "eliminar usuario");
+  }
+};
+
+// Exportación de todas las funciones
 const userService = {
   getUsers,
+  createUser,
   updateUser,
   deleteUser,
-  createUser
 };
-
-// === READ ===
-
-export async function getUsers(search = "") {
-  let url = API_URL;
-  if (search) {
-    url += `?search=${encodeURIComponent(search)}`;
-  }
-  const response = await fetch(url, { headers: authHeaders() });
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
-      throw new Error("No autorizado. Inicia sesión como administrador.");
-    }
-    throw new Error("Error al obtener usuarios");
-  }
-  return await response.json();
-}
-
-export async function createUser(userData) {
-  const response = await fetch(`${API_URL}`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify(userData),
-  });
-
-  if (!response.ok) {
-    let errorMessage = `Error al crear usuario (Status: ${response.status}).`;
-    try {
-      const errorDetail = await response.json();
-      errorMessage = errorDetail.message || errorMessage;
-    } catch (e) {}
-
-    throw new Error(errorMessage);
-  }
-  return await response.json();
-}
-
-export async function updateUser(id, userData) {
-  const dataToSend = { ...userData };
-  if (dataToSend.password_hash === "" || dataToSend.password_hash === undefined) {
-    delete dataToSend.password_hash;
-  }
-  const url = `${API_URL}/${id}`;
-
-  const response = await fetch(url, {
-    method: "PUT",
-    headers: authHeaders(),
-    body: JSON.stringify(dataToSend),
-  });
-
-  if (!response.ok) {
-    let errorMessage = `Error al actualizar usuario (Status: ${response.status}).`;
-    try {
-      const errorDetail = await response.json();
-      errorMessage = errorDetail.message || errorMessage;
-    } catch (e) {}
-
-    throw new Error(errorMessage);
-  }
-
-  return await response.json();
-}
-
-export async function deleteUser(id) {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: authHeaders(),
-  });
-
-  if (!response.ok) {
-    let errorMessage = `Error al eliminar usuario (Status: ${response.status}).`;
-    try {
-      const errorDetail = await response.json();
-      errorMessage = errorDetail.message || errorMessage;
-    } catch (e) {}
-    // alert(` Falló la eliminación: ${errorMessage}`);
-    throw new Error(errorMessage);
-  }
-
-  // alert(" Usuario eliminado con éxito.");
-
-  if (response.status === 204) {
-    return { message: "Usuario eliminado con éxito." };
-  }
-  return await response.json();
-}
 
 export default userService;

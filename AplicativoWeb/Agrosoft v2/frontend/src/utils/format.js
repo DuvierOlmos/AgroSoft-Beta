@@ -32,3 +32,11 @@ export function parsePrecioInput(input) {
   return isNaN(n) ? NaN : n;
 }
  
+// Devuelve el número formateado con separadores de miles, sin símbolo de moneda.
+export function formatoCOPSinSimbolo(valor) {
+  if (valor === null || valor === undefined || valor === "") return "";
+  const num = Number(valor);
+  if (isNaN(num)) return "";
+  return num.toLocaleString("es-CO", { maximumFractionDigits: 0 });
+}
+ 

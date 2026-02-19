@@ -1,47 +1,60 @@
-// features/users/services/userService.js
-import axios from "axios";
-const API_URL = "http://localhost:4000/api/pqrs"; 
+// src/services/pqrsService.js
+import { api } from "../../../../config/api";
 
-//  ver 
-export async function getPqrs(search = "") {
-  let url = API_URL;
-  if (search) {
-    url += `?search=${encodeURIComponent(search)}`;
-  }
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Error al obtener pqrs");
-  const data = await response.json();
-  return data.data; // Retornamos el array que está dentro de la propiedad data
-}
+const BASE_URL = "/api/pqrs";
 
-//  Actualizar 
-export const updatePqrs = async (id, pqrs) => {
-    
-    const alertIdentifier = pqrs.id_estado_pqrs || `ID ${id}`;     
-    try { 
-        const response = await axios.put(`${API_URL}/${id}`, pqrs); 
-        alert(` PQRS ${alertIdentifier} respondida/actualizada con éxito.`); 
-        return response.data;
+// Manejo centralizado de errores
+const handleError = (error, id = "") => {
+  console.error("PQRS Service Error:", error);
 
-    } catch (error) {         
-        let errorMessage = "Ocurrió un error inesperado al intentar actualizar la PQRS.";    
-        if (error.response) {
-            const status = error.response.status;          
-            if (status === 404) {
-                errorMessage = `PQRS con ID ${id} no encontrada en el servidor.`;
-            }else if (status === 400) {          
-                errorMessage = error.response.data.message || 'Datos inválidos. Verifica el estado o la respuesta.';
-            }             
-            else {
-                errorMessage = error.response.data.message || 
-                 `Fallo del servidor (Status: ${status}).`;
-            }            
-        }     
-        else if (error.request) { 
-            errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa y el puerto sea correcto.";
-        }     
-        alert(` Error al responder la PQRS ${alertIdentifier}: ${errorMessage}`); 
-       
-        throw new Error(errorMessage);
+  let errorMessage = `Ocurrió un error inesperado al procesar la PQRS ${id || ""}`;
+
+  if (error.response) {
+    const status = error.response.status;
+    if (status === 404) {
+      errorMessage = `PQRS ${id} no encontrada en el servidor.`;
+    } else if (status === 400) {
+      errorMessage = error.response.data?.message || "Datos inválidos. Verifica la PQRS.";
+    } else {
+      errorMessage = error.response.data?.message || `Fallo del servidor (Status: ${status}).`;
     }
+  } else if (error.request) {
+    errorMessage = "No se pudo conectar al servidor. Verifique que la API esté activa y el puerto sea correcto.";
+  }
+
+  throw new Error(errorMessage);
 };
+
+// Obtener PQRS con búsqueda opcional
+export const getPqrs = async (search = "") => {
+  try {
+    let url = BASE_URL;
+    if (search) {
+      url += `?search=${encodeURIComponent(search)}`;
+    }
+
+    const response = await api.get(url);
+    return response.data.data || []; // Retornamos solo el array de PQRS
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+// Actualizar / responder PQRS
+export const updatePqrs = async (id, pqrs) => {
+  try {
+    const response = await api.put(`${BASE_URL}/${id}`, pqrs);
+    alert(`PQRS ${id} respondida/actualizada con éxito.`);
+    return response.data;
+  } catch (error) {
+    handleError(error, id);
+  }
+};
+
+// Exportar como objeto para importar fácilmente
+const pqrsService = {
+  getPqrs,
+  updatePqrs,
+};
+
+export default pqrsService;

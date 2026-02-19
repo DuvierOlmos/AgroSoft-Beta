@@ -19,10 +19,10 @@ const ReportesProductor = () => {
   const [error, setError] = useState(null);
 
   const reportes = useMemo(() => [
-    { id: 'productos', name: '📦 Productos Registrados', service: getReporteProductos },
-    { id: 'inventario', name: '📊 Inventario Actual', service: getReporteInventario },
-    { id: 'pedidos', name: '🛒 Ventas / Pedidos', service: getReportePedidos },
-    { id: 'descuentos', name: '🏷️ Descuentos y Ofertas', service: getReporteDescuentos },
+    { id: 'productos', name: ' Productos Registrados', service: getReporteProductos },
+    { id: 'inventario', name: ' Inventario Actual', service: getReporteInventario },
+    { id: 'pedidos', name: ' Ventas / Pedidos', service: getReportePedidos },
+    { id: 'descuentos', name: ' Descuentos y Ofertas', service: getReporteDescuentos },
   ], []);
 
   // Cargar datos del reporte seleccionado
@@ -92,7 +92,7 @@ const ReportesProductor = () => {
   return (
     <div className="reportes-container">
       <div className="reportes-header">
-        <h2>📋 Reportes del Productor</h2>
+        <h2> Reportes del Productor</h2>
         <p>Visualiza y descarga tus reportes en PDF, Excel o HTML</p>
       </div>
 
@@ -126,21 +126,21 @@ const ReportesProductor = () => {
           onClick={openPreview}
           disabled={loading}
         >
-          👁️ Vista previa (HTML)
+           Vista previa (HTML)
         </button>
         <button
           className="btn-pdf"
           onClick={downloadPDF}
           disabled={loading}
         >
-          📄 Descargar PDF
+           Descargar PDF
         </button>
         <button
           className="btn-excel"
           onClick={downloadExcel}
           disabled={loading}
         >
-          📊 Descargar Excel
+           Descargar Excel
         </button>
       </div>
 
