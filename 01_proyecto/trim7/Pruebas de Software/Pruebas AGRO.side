@@ -1,0 +1,338 @@
+{
+  "id": "ca8294dc-636e-4923-a91b-9b4854426506",
+  "version": "2.0",
+  "name": "Pruebas AGRO",
+  "url": "http://localhost:3000/producto/6",
+  "tests": [{
+    "id": "cb1b5923-1f0c-4da7-a8e3-12bfefec7e38",
+    "name": "Agregar producto Carrito",
+    "commands": [{
+      "id": "acb4d451-fc5b-4ee5-ba7a-f5516528b447",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/catalogo",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3adbb5e7-3874-496a-9f6f-e42ef57f4698",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1050x708",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c65be952-3df2-4144-b9bc-1710d189b5cd",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-card:nth-child(3) .btn-add-to-cart",
+      "targets": [
+        ["css=.product-card:nth-child(3) .btn-add-to-cart", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/main/div[2]/div[3]/div/div[2]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div[2]/button", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "c95fb50b-1664-46ce-900e-e8a0541bac4a",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-card:nth-child(3) .btn-review",
+      "targets": [
+        ["css=.product-card:nth-child(3) .btn-review", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/main/div[2]/div[3]/div/div[2]/button[2]", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div[2]/button[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3d7548ff-caee-44da-8323-c490cadf6f3a",
+      "comment": "",
+      "command": "runScript",
+      "target": "window.scrollTo(0,0)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "42e6ebc0-abc4-419f-ba9b-49d0afffd3b9",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-btn-cart",
+      "targets": [
+        ["css=.product-btn-cart", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/div[2]/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Agregar al Carrito')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "fb3e48d3-dcbc-4e7c-9425-981dc00a8b65",
+    "name": "Ver Carrito",
+    "commands": [{
+      "id": "b6265b85-e440-4970-9690-bbcec434ba10",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/catalogo",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "47904ea6-eac8-40d4-8a93-f2e1c5abb533",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1050x708",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6c9d570d-0fe5-4c0b-b22f-ef418d70acd8",
+      "comment": "",
+      "command": "click",
+      "target": "css=.position-relative path",
+      "targets": [
+        ["css=.position-relative path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "c244d66b-73d5-46ad-a7d4-d1f7e2b8a515",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.position-relative path",
+      "targets": [
+        ["css=.position-relative path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "f5cf14ba-184f-4186-b21c-9f63136a64b6",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.position-relative path",
+      "targets": [
+        ["css=.position-relative path", "css:finder"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "97f2629b-f095-4afb-9b97-0a5a05417c02",
+    "name": "Cantidades carrito",
+    "commands": [{
+      "id": "2933314f-2fa7-45c9-a315-6b0f297e50ac",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c825e1ef-2feb-43d6-aa8a-0d3239077137",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1050x708",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c3ecdd8c-cbc6-49c8-a599-e9045f579571",
+      "comment": "",
+      "command": "click",
+      "target": "css=.position-relative path",
+      "targets": [
+        ["css=.position-relative path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "89f12457-aabd-41c1-a0aa-0e0656d38f32",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.position-relative path",
+      "targets": [
+        ["css=.position-relative path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "056ce4e4-25a0-481b-b93f-f2fd09263bf5",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.position-relative path",
+      "targets": [
+        ["css=.position-relative path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "9f775d90-9d38-4261-b67e-c90412fd9767",
+      "comment": "",
+      "command": "click",
+      "target": "css=.cantidad-btn:nth-child(1) > svg",
+      "targets": [
+        ["css=.cantidad-btn:nth-child(1) > svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "4baa4e5d-cd9d-4007-9a99-d8faac18de62",
+      "comment": "",
+      "command": "click",
+      "target": "css=.cantidad-btn:nth-child(1) path",
+      "targets": [
+        ["css=.cantidad-btn:nth-child(1) path", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "47bdabb5-6d40-4fbe-914e-4c43e065f161",
+      "comment": "",
+      "command": "click",
+      "target": "css=.cantidad-btn:nth-child(3) > svg",
+      "targets": [
+        ["css=.cantidad-btn:nth-child(3) > svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "a19f6d11-70bc-4824-8ee6-a9f21386b881",
+      "comment": "",
+      "command": "click",
+      "target": "css=.cantidad-btn:nth-child(3) > svg",
+      "targets": [
+        ["css=.cantidad-btn:nth-child(3) > svg", "css:finder"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "ee085efa-7a09-4684-a9f0-7fc2a38da192",
+    "name": "Eliminar producto carrito",
+    "commands": [{
+      "id": "09422464-9642-43c2-ad94-68d072c75df1",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/carrito",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "35ed05e2-42a0-4259-b8f7-06d5c493092a",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1376x784",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6ac4cad0-6f01-4ab2-bcb5-2c24b17e6e12",
+      "comment": "",
+      "command": "click",
+      "target": "css=.carrito-item-card:nth-child(2) .carrito-btn-eliminar",
+      "targets": [
+        ["css=.carrito-item-card:nth-child(2) .carrito-btn-eliminar", "css:finder"],
+        ["xpath=(//button[@type='button'])[8]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/div[2]/div[2]/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div[3]/button", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "d33b9f9b-f93c-4248-935d-71dea9734d3c",
+    "name": "Ver Comentarios",
+    "commands": [{
+      "id": "ca671999-70c9-493d-bce0-3fad3b7e137d",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/catalogo",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "47ec62fd-9eba-4f4a-96fa-cadcb8951cef",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1376x784",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9a5a6f7e-22f2-4543-8ad0-e53dac52bfa7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.product-card:nth-child(3) .btn-review",
+      "targets": [
+        ["css=.product-card:nth-child(3) .btn-review", "css:finder"],
+        ["xpath=//div[@id='root']/div/main/div[2]/div[3]/div/div[2]/button[2]", "xpath:idRelative"],
+        ["xpath=//div[3]/div/div[2]/button[2]", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "6c33e9c7-9773-4f90-99c3-6ba930e88c2d",
+      "comment": "",
+      "command": "runScript",
+      "target": "window.scrollTo(0,0)",
+      "targets": [],
+      "value": ""
+    }]
+  }, {
+    "id": "bf518ef7-a13d-4028-b90a-41c9f2978557",
+    "name": "Escribir Comentario",
+    "commands": [{
+      "id": "5af198c0-4251-435d-82c5-dbf8653261eb",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:3000/producto/6",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6736afe6-657c-4d0d-88de-e7d44b2f195d",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1376x784",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6baa01c6-3b9f-4e7f-b0b1-8764b091533c",
+      "comment": "",
+      "command": "click",
+      "target": "css=textarea",
+      "targets": [
+        ["css=textarea", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/div[2]/textarea", "xpath:idRelative"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "84798fe4-9963-4980-94bf-e1d2d74a24b8",
+      "comment": "",
+      "command": "type",
+      "target": "css=textarea",
+      "targets": [
+        ["css=textarea", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/div[2]/textarea", "xpath:idRelative"],
+        ["xpath=//textarea", "xpath:position"]
+      ],
+      "value": "ME GUSTA"
+    }, {
+      "id": "94276a3a-aed9-4dc6-a8b1-a74d647ae01e",
+      "comment": "",
+      "command": "click",
+      "target": "css=select",
+      "targets": [
+        ["css=select", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/div[2]/div/div/select", "xpath:idRelative"],
+        ["xpath=//select", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "fc14ba38-093a-4266-90a1-6b376ec7df73",
+      "comment": "",
+      "command": "select",
+      "target": "css=select",
+      "targets": [],
+      "value": "label=4 estrellas"
+    }, {
+      "id": "441c73cd-8564-4945-aaeb-2c6bc871fe45",
+      "comment": "",
+      "command": "click",
+      "target": "css=.review-controls > button",
+      "targets": [
+        ["css=.review-controls > button", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div[2]/div/div[2]/div/button", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div[2]/div/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Enviar')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "2dbc239a-4d16-4fbd-871d-496cd467d4ab",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": []
+  }],
+  "urls": ["http://localhost:3000/catalogo", "http://localhost:3000/carrito", "http://localhost:3000/producto/6"],
+  "plugins": []
+}
